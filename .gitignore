@@ -1,0 +1,12 @@
+# dependencies
+/node_modules
+
+# Witcher 3 user data — local working copy of the keybinding file, NOT source code.
+# Treat input.settings as user data (see AGENTS.md). Backups are written next to it
+# as input.settings.<timestamp>.bak by server.js (createBackup).
+/input.settings
+/input.settings.*.bak
+
+# misc
+.DS_Store
+npm-debug.log*

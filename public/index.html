@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Witcher 3 Keymapper</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Witcher 3 Keymapper</h1>
+      <p id="paths">Lade lokale Dateien...</p>
+    </div>
+    <button id="refresh">Aktualisieren</button>
+  </header>
+
+  <main>
+    <section class="stats" id="stats"></section>
+
+    <section class="toolbar">
+      <input id="search" type="search" placeholder="Aktion, Taste, Mod oder Kontext suchen">
+      <select id="sourceFilter">
+        <option value="">Alle Quellen</option>
+      </select>
+      <select id="deviceFilter">
+        <option value="">Alle Eingaben</option>
+        <option value="keyboard">Tastatur</option>
+        <option value="mouse">Maus</option>
+        <option value="gamepad">Gamepad</option>
+        <option value="unbound">Ungebunden</option>
+      </select>
+    </section>
+
+    <section class="panel">
+      <div class="panelHead">
+        <h2>Konflikte</h2>
+        <span id="conflictCount"></span>
+      </div>
+      <div id="conflicts" class="conflicts"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panelHead">
+        <h2>Mappings</h2>
+        <span id="resultCount"></span>
+      </div>
+      <div id="commands" class="commands"></div>
+    </section>
+  </main>
+
+  <dialog id="remapDialog">
+    <form method="dialog" id="remapForm">
+      <h2 id="remapTitle">Mapping ändern</h2>
+      <p id="remapText"></p>
+      <label>
+        Neue Taste im Witcher-Format
+        <input id="newKey" required pattern="IK_[A-Za-z0-9_]+" placeholder="z.B. IK_NumPad3">
+      </label>
+      <div class="dialogActions">
+        <button value="cancel">Abbrechen</button>
+        <button id="applyRemap" value="default">Backup erstellen & ändern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>
