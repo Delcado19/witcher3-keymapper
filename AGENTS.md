@@ -53,3 +53,8 @@ Ein **Stop-Hook** (`.claude/settings.local.json` → `.claude/journal-update.ps1
 ## 5. Sicherheit & Konfiguration
 
 Tool ist nur für lokalen Gebrauch. Server an `127.0.0.1` gebunden lassen. Automatische Backups vor jedem Schreiben in `input.settings` erhalten; klar zwischen Projekt-Kopie und Live-Spieldatei unterscheiden.
+
+## 6. Roadmap / geplante Features
+
+- **Geräte-zentriertes UI (geplant, Details + offene Punkte in `AI_JOURNAL.md`):** Umbau zu Hersteller-Software-Stil — Tabs pro Eingabegerät mit Geräte-Schema und farblich markierten Belegungen (Unterscheidung Vanilla-Spiel vs. Mod). Backend liefert `source` (Spiel/Mod via `buildScan`) und Device-Klasse (`deviceForKey`) bereits; es fehlen HW-Erkennung (`/api/devices`), `IK_*`→Position-Layouts und das Tab-UI.
+- **Nicht bestätigt:** Cross-Platform-Geräteerkennung (Linux/macOS). Kern-Scope bleibt vorerst Windows.

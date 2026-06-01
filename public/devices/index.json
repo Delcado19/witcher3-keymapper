@@ -1,0 +1,43 @@
+[
+  {
+    "id": "iso-de-105",
+    "name": "ISO-DE 105 Full-Size (ROCCAT Vulcan 100 AIMO)",
+    "type": "keyboard",
+    "layout": "iso-de-105",
+    "vid": "1E7D",
+    "pid": "307A"
+  },
+  {
+    "id": "iso-de-87",
+    "name": "ISO-DE 87 TKL",
+    "type": "keyboard",
+    "layout": "iso-de-87",
+    "fallback": true
+  },
+  {
+    "id": "ansi-us-104",
+    "name": "ANSI-US 104 Full-Size",
+    "type": "keyboard",
+    "layout": "ansi-us-104"
+  },
+  {
+    "id": "ansi-us-87",
+    "name": "ANSI-US 87 TKL",
+    "type": "keyboard",
+    "layout": "ansi-us-87"
+  },
+  {
+    "id": "mouse-5btn",
+    "name": "Generic 5-Button Mouse",
+    "type": "mouse",
+    "layout": "mouse-5btn",
+    "fallback": true
+  },
+  {
+    "id": "xbox-ctrl",
+    "name": "Xbox Controller",
+    "type": "gamepad",
+    "layout": "xbox-ctrl",
+    "fallback": true
+  }
+]

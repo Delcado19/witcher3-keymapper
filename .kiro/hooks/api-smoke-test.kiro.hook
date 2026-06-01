@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "API Smoke Test after Server Changes",
+  "description": "After server.js is edited, runs a quick smoke test against /api/scan to verify the parser still works",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "server.js"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "server.js was just edited. If the app is running on http://127.0.0.1:5177, run a quick smoke test by calling /api/scan and check that the response is valid JSON with no errors. Report the result briefly. If the server is not running, remind the user to start it with `npm start` and test manually."
+  }
+}

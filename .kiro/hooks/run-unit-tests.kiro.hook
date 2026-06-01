@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Run Unit Tests",
+  "description": "Runs unit tests after each spec task is marked as completed",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm test"
+  }
+}
