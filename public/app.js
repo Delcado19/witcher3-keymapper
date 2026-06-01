@@ -119,27 +119,56 @@ function render() {
   renderCommands();
 }
 
+// Witcher 3 repeats the same bindings across many context sections (Boat,
+// Combat, Exploration, *_Replacer_Ciri …), so the per-section scanner reports
+// the *same* logical conflict dozens of times. Group identical conflicts
+// (same key + same command set) into one entry that lists the affected sections,
+// instead of showing raw line numbers — much shorter and not "doppelt/dreifach".
+function groupConflicts(conflicts) {
+  const map = new Map();
+  for (const c of conflicts) {
+    const sig = `${c.key}|${[...c.commands].sort().join(",")}`;
+    const existing = map.get(sig);
+    if (!existing) {
+      map.set(sig, {
+        key: c.key, keyLabel: c.keyLabel, commands: c.commands,
+        sources: c.sources || [], severity: c.severity, sections: [c.section]
+      });
+    } else {
+      if (!existing.sections.includes(c.section)) existing.sections.push(c.section);
+      if (c.severity === "high") existing.severity = "high";
+    }
+  }
+  return [...map.values()].sort((a, b) =>
+    (a.severity === b.severity ? 0 : a.severity === "high" ? -1 : 1) ||
+    b.sections.length - a.sections.length);
+}
+
 function renderConflicts() {
-  els.conflictCount.textContent = `${scan.conflicts.length} Treffer`;
-  if (!scan.conflicts.length) {
+  const groups = groupConflicts(scan.conflicts);
+  els.conflictCount.textContent = `${groups.length} Konflikte`;
+  if (!groups.length) {
     els.conflicts.innerHTML = `<div class="empty muted">Keine Konflikte gefunden.</div>`;
     return;
   }
   // data-conflict-key lets the SVG popover scroll to & highlight the entry
   // (Requirement 5.5); sources[] shows vanilla vs. mod per command (Req 5.3).
-  els.conflicts.innerHTML = scan.conflicts.slice(0, 80).map((conflict) => {
-    const chips = conflict.commands.map((name, i) => {
-      const src = (conflict.sources && conflict.sources[i]) || "unknown";
+  els.conflicts.innerHTML = groups.slice(0, 120).map((grp) => {
+    const chips = grp.commands.map((name, i) => {
+      const src = grp.sources[i] || "unknown";
       return `<span class="chip" title="${escapeHtml(src)}">${escapeHtml(name)} <span class="chip-src">${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
+    const shown = grp.sections.slice(0, 3).map(escapeHtml).join(", ");
+    const extra = grp.sections.length > 3 ? ` +${grp.sections.length - 3} weitere` : "";
+    const count = grp.sections.length > 1 ? ` · ${grp.sections.length} Sektionen` : "";
     return `
-    <article class="conflict ${conflict.severity}" data-conflict-key="${escapeHtml(conflict.key)}" tabindex="0">
+    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
       <div>
-        <div class="commandTitle">${escapeHtml(conflict.keyLabel)}</div>
-        <span class="source">${escapeHtml(conflict.section)} | Zeilen ${conflict.lines.join(", ")}</span>
+        <div class="commandTitle">${escapeHtml(grp.keyLabel)}</div>
+        <span class="source">${shown}${extra}${count}</span>
       </div>
       <div class="chips">${chips}</div>
-      <div class="muted">${conflict.severity === "high" ? "Kritisch prüfen" : "Kontext-Doppelbelegung"}</div>
+      <div class="muted">${grp.severity === "high" ? "Kritisch prüfen" : "Kontext-Doppelbelegung"}</div>
       <div></div>
     </article>`;
   }).join("");
@@ -618,7 +647,8 @@ function buildLegend(topMods, hasOther, hasVanilla) {
 /* ---------------- Tasks 5 & 6: SVG_Renderer ---------------- */
 const UNIT = 54;  // px per key unit
 const PAD = 8;    // viewBox padding
-const RADIUS = 6; // key corner radius
+const RADIUS = 8; // key corner radius
+const GAP = 5;    // visual gap between adjacent keys (px), so rounding is visible
 
 function svgNode(tag, attrs = {}) {
   const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -626,27 +656,20 @@ function svgNode(tag, attrs = {}) {
   return node;
 }
 
-// L-shaped ISO-Enter path: full width on the top row, inset on the lower stem.
-function isoEnterPath(x, y, w, h) {
-  const X = x * UNIT, Y = y * UNIT, W = w * UNIT, H = h * UNIT;
-  const notch = 0.25 * UNIT, rowH = UNIT;
-  return `M${X} ${Y} h${W} v${H} h${-(W - notch)} v${-(H - rowH)} h${-notch} Z`;
-}
-
+// Every key (including ISO-Enter and wide keys) renders as a rounded rect inset
+// by GAP, so spacing and corner rounding are uniform across the whole device.
 function buildKeyEl(key) {
   const g = svgNode("g", { class: "key", "data-key": key.ik, tabindex: "0", role: "button" });
   g.setAttribute("aria-label", `${key.label || key.ik}: unbelegt`);
-  const shape = key.shape === "iso-enter"
-    ? svgNode("path", { d: isoEnterPath(key.x, key.y, key.w, key.h), class: "key-shape" })
-    : svgNode("rect", {
-        x: key.x * UNIT, y: key.y * UNIT,
-        width: Math.max(key.w * UNIT - 2, 1), height: Math.max(key.h * UNIT - 2, 1),
-        rx: RADIUS, class: "key-shape"
-      });
+  const shape = svgNode("rect", {
+    x: key.x * UNIT + GAP, y: key.y * UNIT + GAP,
+    width: Math.max(key.w * UNIT - 2 * GAP, 1), height: Math.max(key.h * UNIT - 2 * GAP, 1),
+    rx: RADIUS, class: "key-shape"
+  });
   g.appendChild(shape);
   const text = svgNode("text", {
-    x: key.x * UNIT + (key.w * UNIT) / 2 - 1,
-    y: key.y * UNIT + (key.h * UNIT) / 2 - 1,
+    x: key.x * UNIT + (key.w * UNIT) / 2,
+    y: key.y * UNIT + (key.h * UNIT) / 2,
     class: "key-label", "text-anchor": "middle", "dominant-baseline": "central"
   });
   text.textContent = key.label || "";
@@ -654,22 +677,25 @@ function buildKeyEl(key) {
   return g;
 }
 
-function deviceViewBox(profile) {
-  let w, h;
-  if (profile.size && profile.size.w) { w = profile.size.w; h = profile.size.h; }
-  else {
-    w = Math.max(...profile.keys.map((k) => k.x + k.w));
-    h = Math.max(...profile.keys.map((k) => k.y + k.h));
-  }
-  return `0 0 ${w * UNIT + PAD * 2} ${h * UNIT + PAD * 2}`;
+function deviceExtent(profile) {
+  if (profile.size && profile.size.w) return { w: profile.size.w, h: profile.size.h };
+  return {
+    w: Math.max(...profile.keys.map((k) => k.x + k.w)),
+    h: Math.max(...profile.keys.map((k) => k.y + k.h))
+  };
 }
 
-// All three device types share the same key schema (x/y/w/h/shape), so one core
-// builder serves keyboard, mouse and gamepad; wrappers add a device backdrop.
-function buildDeviceSvg(profile, extraClass) {
-  const svg = svgNode("svg", { class: `device-svg ${extraClass}`, viewBox: deviceViewBox(profile), role: "group" });
+// pad widens the viewBox so a device backdrop (e.g. the gamepad body) has room
+// around the keys instead of clipping them.
+function buildDeviceSvg(profile, extraClass, pad = PAD) {
+  const { w, h } = deviceExtent(profile);
+  const svg = svgNode("svg", {
+    class: `device-svg ${extraClass}`,
+    viewBox: `0 0 ${w * UNIT + pad * 2} ${h * UNIT + pad * 2}`,
+    role: "group"
+  });
   svg.setAttribute("aria-label", profile.name);
-  const root = svgNode("g", { transform: `translate(${PAD} ${PAD})` });
+  const root = svgNode("g", { transform: `translate(${pad} ${pad})` });
   svg.appendChild(root);
   for (const key of profile.keys) root.appendChild(buildKeyEl(key));
   return { svg, root };
@@ -680,22 +706,28 @@ function renderKeyboardSvg(profile) {
 }
 
 function renderMouseSvg(profile) {
-  const { svg, root } = buildDeviceSvg(profile, "mouse-svg");
-  const size = profile.size || { w: 4, h: 6 };
+  const pad = 20;
+  const { svg, root } = buildDeviceSvg(profile, "mouse-svg", pad);
+  const { w, h } = deviceExtent(profile);
+  const W = w * UNIT, H = h * UNIT, m = pad - 6;
   const body = svgNode("rect", {
-    x: -6, y: -6, width: size.w * UNIT + 12, height: size.h * UNIT + 12,
-    rx: (size.w * UNIT) / 2, class: "device-body"
+    class: "device-body", x: -m, y: -m, width: W + 2 * m, height: H + 2 * m,
+    rx: W / 2 + m, ry: W / 2 + m
   });
   root.insertBefore(body, root.firstChild);
   return svg;
 }
 
 function renderGamepadSvg(profile) {
-  const { svg, root } = buildDeviceSvg(profile, "gamepad-svg");
-  const size = profile.size || { w: 10, h: 6 };
+  const pad = 46;
+  const { svg, root } = buildDeviceSvg(profile, "gamepad-svg", pad);
+  const { w, h } = deviceExtent(profile);
+  const W = w * UNIT, H = h * UNIT, m = pad - 10;
+  // Generous rounded body (taller ry gives a controller-like oval) with a 36px
+  // margin so all buttons sit well inside the housing.
   const body = svgNode("rect", {
-    x: -6, y: -6, width: size.w * UNIT + 12, height: size.h * UNIT + 12,
-    rx: 48, class: "device-body"
+    class: "device-body", x: -m, y: -m, width: W + 2 * m, height: H + 2 * m,
+    rx: 44, ry: 80
   });
   root.insertBefore(body, root.firstChild);
   return svg;
@@ -786,6 +818,6 @@ if (typeof module !== "undefined" && module.exports) {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
     renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg,
-    applyColoring, applyConflicts, isoEnterPath
+    applyColoring, applyConflicts
   };
 }

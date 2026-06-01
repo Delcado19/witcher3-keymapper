@@ -83,11 +83,11 @@ ok("every key carries data-key, tabindex and an aria-label", () => {
   }
 });
 
-ok("ISO-Enter renders as an L-shaped path", () => {
+ok("ISO-Enter renders as a rounded rect", () => {
   const svg = ui.renderKeyboardSvg(profile);
   const enter = svg.querySelectorAll("[data-key]").find((g) => g.getAttribute("data-key") === "IK_Enter");
-  const pathChild = enter.children.find((c) => c.tag === "path");
-  assert.ok(pathChild && pathChild.getAttribute("d").includes("Z"), "expected closed L path");
+  const rect = enter.children.find((c) => c.tag === "rect");
+  assert.ok(rect && Number(rect.getAttribute("rx")) > 0, "expected rounded rect");
 });
 
 ok("applyColoring sets --key-fill per source (vanilla gold, mod colour)", () => {
