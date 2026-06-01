@@ -4,7 +4,8 @@
   "private": true,
   "description": "Local Witcher 3 input.settings mapper and conflict scanner.",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node test/device-ui.test.js"
   },
   "engines": {
     "node": ">=20"

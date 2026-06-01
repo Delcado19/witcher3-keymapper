@@ -63,7 +63,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - `node --check server.js` ausführen und alle Fehler beheben
   - Sicherstellen, dass `/api/scan`, `/api/remap`, `/api/load`, `/api/save`, `/api/devices` alle registriert sind
 
-- [ ] 4. Client: `Device_Registry`-Modul in `public/app.js` implementieren
+- [x] 4. Client: `Device_Registry`-Modul in `public/app.js` implementieren
   - `loadRegistry()` — lädt `public/devices/index.json` per `fetch`, gibt `Array<ProfileMeta>` zurück
   - `loadProfile(profileId)` — lädt `public/devices/<profileId>/profile.json` per `fetch`, gibt `Profile` zurück
   - `matchDevice(vid, pid, registry, inputLanguage)` — Fallback-Logik in vier Stufen:
@@ -73,10 +73,10 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
     4. Kein Treffer + `inputLanguage` ist `null` oder leer → `null` zurückgeben
   - Profil-Validierung: Pflichtfelder `id`, `name`, `type`, `layout`, `keys` prüfen; bei fehlendem Feld Profil überspringen und `console.error` ausgeben
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 8.6, 8.7, 8.8_
-  - [ ]* 4.1 Property-Test: Device_Registry Round-Trip
+  - [x]* 4.1 Property-Test: Device_Registry Round-Trip
     - **Property 1: Geräteprofil Round-Trip**
     - **Validates: Requirements 3.7** — Für alle validen Profile: `JSON.parse(JSON.stringify(profile))` ergibt äquivalentes Objekt
-  - [ ]* 4.2 Property-Tests: matchDevice Fallback-Logik
+  - [x]* 4.2 Property-Tests: matchDevice Fallback-Logik
     - **Property 2: DE-Sprache wählt iso-de-105**
     - Für alle Sprach-Tags der Form `"de-XX"` (z. B. `"de-DE"`, `"de-AT"`, `"de-CH"`, `"de-LU"`): `matchDevice(null, null, registry, inputLanguage)` gibt Profil mit `id === "iso-de-105"` zurück
     - **Validates: Requirements 8.6**
@@ -84,7 +84,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
     - Für alle nicht-leeren Sprach-Tags, die nicht mit `"de-"` beginnen (z. B. `"en-US"`, `"fr-FR"`, `"pl-PL"`): `matchDevice(null, null, registry, inputLanguage)` gibt Profil mit `id === "ansi-us-104"` zurück
     - **Validates: Requirements 8.7**
 
-- [ ] 5. Client: `SVG_Renderer` für Tastatur-Layouts implementieren
+- [x] 5. Client: `SVG_Renderer` für Tastatur-Layouts implementieren
   - `renderKeyboardSvg(profile)` — iteriert über `profile.keys`, erzeugt `<rect>`- bzw. `<path>`-Elemente (ISO-Enter als L-Pfad, breite Tasten als `<rect>` mit angepasster Breite)
   - Koordinaten: `x * unitSize`, `y * unitSize`, `w * unitSize`, `h * unitSize` (Standard `unitSize = 54`)
   - Jede Taste erhält `data-key="<ik>"`, `tabindex="0"`, `aria-label="<label>: unbelegt"` (wird später durch Colorizer aktualisiert)
@@ -93,7 +93,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - `renderDeviceSvg(profile)` — delegiert an `renderKeyboardSvg`, `renderMouseSvg` oder `renderGamepadSvg` je nach `profile.type`
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 6.5, 6.9_
 
-- [ ] 6. Client: `SVG_Renderer` für Maus und Gamepad implementieren
+- [x] 6. Client: `SVG_Renderer` für Maus und Gamepad implementieren
   - `renderMouseSvg(profile)` — generiert Maus-Silhouette mit 5 Tasten (Links, Rechts, Mitte, Mouse4, Mouse5) und Scrollrad-Indikator; alle Tasten mit `data-key`, `tabindex`, `aria-label`
   - `renderGamepadSvg(profile)` — generiert Xbox-Controller-Silhouette mit allen Buttons (A/B/X/Y), Triggern (LT/RT), Schultertasten (LB/RB), Thumbsticks (L3/R3), D-Pad (4 Richtungen), Start/Back; alle Elemente mit `data-key`, `tabindex`, `aria-label`
   - `applyColoring(svgEl, colorMap)` — setzt `fill` und `filter: drop-shadow(0 0 4px <farbe>)` (innerer Glow) auf jedes `[data-key]`-Element; aktualisiert `aria-label` mit Binding-Zusammenfassung
@@ -101,17 +101,17 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - IF SVG-Generierung fehlschlägt: `showToast(message, 'error')` aufrufen, vorheriges SVG beibehalten
   - _Requirements: 2.6, 2.7, 2.8, 5.1, 5.2, 9.5_
 
-- [ ] 7. Client: `Key_Colorizer` implementieren
+- [x] 7. Client: `Key_Colorizer` implementieren
   - `computeTopMods(commands)` — zählt Bindings je `source`, sortiert absteigend, gibt Top-5 zurück; weist jeder Mod eine distinkte Farbe aus einer festen Palette zu (z.B. 5 Farben: `#4e9af1`, `#a78bfa`, `#34d399`, `#fb923c`, `#f472b6`)
   - `buildColorMap(commands, conflicts)` — iteriert über alle Commands; Vanilla → `#d2a657`; Top-5-Mod → Mod-Farbe; Sonstige → `#6b7280`; Konflikt (Taste in `conflicts`) → `#ef4444` (high) oder `#f59e0b` (medium); unbelegt → `var(--panel)` (neutral)
   - `buildLegend(topMods, hasOther, hasVanilla)` — gibt Array `{ label, color }` zurück für Legende
   - Farbzuweisung der Top-5-Mods bleibt stabil solange `commands`-Array unverändert (deterministisch nach Sortierung)
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8_
-  - [ ]* 7.1 Property-Test: Colorizer-Konsistenz
+  - [x]* 7.1 Property-Test: Colorizer-Konsistenz
     - **Property 2: Farb-Determinismus**
     - **Validates: Requirements 4.7, 4.8** — Für alle Commands-Arrays: `buildColorMap` liefert bei zweimaligem Aufruf mit denselben Daten identische Maps
 
-- [ ] 8. Client: `Toast_Manager` implementieren
+- [x] 8. Client: `Toast_Manager` implementieren
   - `showToast(message, type)` — erstellt `<div class="toast toast-<type>">` und hängt es an `document.body`
   - Toast erscheint unten rechts, fährt per CSS-Transition ein, verschwindet nach 4 s automatisch
   - Mehrere Toasts stapeln sich vertikal
