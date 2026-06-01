@@ -9,6 +9,11 @@
   --accent: #d2a657;
   --danger: #ef6f6c;
   --ok: #71c58b;
+  /* Witcher-3 device-centric UI additions (Task 17) */
+  --gold: #d2a657;
+  --conflict-high: #ef4444;
+  --conflict-medium: #f59e0b;
+  --glow-size: 6px;
 }
 
 * {
@@ -244,4 +249,234 @@ dialog input {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+/* =====================================================================
+ * Witcher-3 device-centric UI (Task 17, Requirement 9)
+ * ===================================================================== */
+
+/* Subtle background texture — inline SVG noise, no external image (Req 9.4) */
+body {
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(210, 166, 87, 0.05), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+h1, h2 { letter-spacing: 0.08em; }
+
+/* Ornamental divider under panel heads (Req 9.2) */
+.panelHead {
+  position: relative;
+}
+.panelHead::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
+}
+
+/* Visible focus rings for all interactive elements (Req 9.8, WCAG 2.1) */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.device-tab:focus-visible,
+[data-key]:focus-visible,
+.conflict:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.hidden { display: none !important; }
+
+/* ---- Device tabs (trapezoid, Req 1.5/1.6) ---- */
+.device-head {
+  align-items: stretch;
+  padding: 0;
+}
+.device-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 8px 0;
+}
+.device-tab {
+  border: 1px solid var(--line);
+  border-bottom: none;
+  border-radius: 0;
+  background: var(--panel-2);
+  color: var(--muted);
+  padding: 10px 22px;
+  letter-spacing: 0.06em;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+.device-tab:hover:not(:disabled) { color: var(--text); }
+.device-tab.is-active {
+  color: #1a1d20;
+  background: linear-gradient(180deg, #e6bd72, var(--gold));
+  border-color: var(--gold);
+  font-weight: 650;
+}
+.device-tab.is-disabled,
+.device-tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.layout-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.layout-select select { min-height: 32px; padding: 4px 8px; }
+
+/* ---- Device stage / SVG ---- */
+.device-stage {
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px;
+  overflow-x: auto;
+}
+.device-svg-host { width: 100%; display: flex; justify-content: center; }
+.device-svg {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+}
+.device-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+}
+.device-body {
+  fill: #15181b;
+  stroke: var(--line);
+  stroke-width: 1.5;
+}
+
+/* Keys: fill driven by --key-fill set per key by applyColoring (Req 9.5 glow) */
+.key { cursor: pointer; }
+.key-shape {
+  fill: var(--key-fill, #2a2f3a);
+  stroke: rgba(0, 0, 0, 0.35);
+  stroke-width: 1;
+  transition: filter 0.12s ease, transform 0.12s ease;
+}
+.key.bound .key-shape {
+  filter: drop-shadow(0 0 var(--glow-size) var(--key-fill));
+}
+.key:hover .key-shape,
+.key:focus-visible .key-shape {
+  filter: drop-shadow(0 0 calc(var(--glow-size) + 4px) var(--key-fill, var(--gold)));
+}
+.key-label {
+  fill: #f4f6f7;
+  font: 600 11px/1 "Segoe UI", system-ui, sans-serif;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 2px;
+}
+
+/* Conflict markers on keys (Req 5.1/5.2, pulsing) */
+.key.conflict-high .key-shape { stroke: var(--conflict-high); stroke-width: 2.5; animation: pulseConflict 1.1s ease-in-out infinite; }
+.key.conflict-medium .key-shape { stroke: var(--conflict-medium); stroke-width: 2.5; animation: pulseConflict 1.4s ease-in-out infinite; }
+@keyframes pulseConflict {
+  0%, 100% { filter: drop-shadow(0 0 2px currentColor); opacity: 1; }
+  50% { filter: drop-shadow(0 0 10px currentColor); opacity: 0.7; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .key.conflict-high .key-shape,
+  .key.conflict-medium .key-shape { animation: none; }
+}
+
+/* ---- Legend (Req 4.6) ---- */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+}
+.legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.legend-swatch {
+  width: 14px; height: 14px; border-radius: 3px;
+  background: var(--sw);
+  box-shadow: 0 0 6px var(--sw);
+}
+
+.chip-src { color: var(--muted); font-size: 11px; }
+.conflict.highlight {
+  background: rgba(210, 166, 87, 0.15);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.empty { padding: 16px; }
+
+/* ---- Popover (Req 6.1) ---- */
+.popover {
+  position: absolute;
+  z-index: 20;
+  min-width: 240px;
+  max-width: 340px;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 0.5);
+  display: grid;
+  gap: 8px;
+}
+.pop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.pop-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.pop-actions { display: flex; gap: 6px; }
+.pop-actions button { padding: 4px 8px; font-size: 12px; }
+.pop-actions .danger { border-color: var(--danger); color: var(--danger); }
+.pop-conflict { color: var(--conflict-medium); font-size: 12px; }
+
+/* ---- Toasts (Req 9.6) ---- */
+.toast-host {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  min-width: 220px;
+  max-width: 360px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.45);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.toast.show { opacity: 1; transform: translateX(0); }
+.toast-success { border-left: 4px solid var(--ok); }
+.toast-error { border-left: 4px solid var(--danger); }
+.toast-info { border-left: 4px solid var(--gold); }
+
+/* ---- Loading bar (Req 9.7) ---- */
+.loading-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 60;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: loadingSlide 1s linear infinite;
+}
+@keyframes loadingSlide {
+  0% { background-position: -40% 0; }
+  100% { background-position: 140% 0; }
 }

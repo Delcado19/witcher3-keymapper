@@ -5,7 +5,7 @@
   "description": "Local Witcher 3 input.settings mapper and conflict scanner.",
   "scripts": {
     "start": "node server.js",
-    "test": "node test/device-ui.test.js"
+    "test": "node test/device-ui.test.js && node test/render-smoke.test.js"
   },
   "engines": {
     "node": ">=20"

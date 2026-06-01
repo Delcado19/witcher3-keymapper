@@ -15,8 +15,33 @@
     <button id="refresh">Aktualisieren</button>
   </header>
 
+  <div id="loadingBar" class="loading-bar" hidden></div>
+
   <main>
     <section class="stats" id="stats"></section>
+
+    <section class="panel device-view">
+      <div class="panelHead device-head">
+        <div class="device-tabs" id="deviceTabs" role="tablist" aria-label="Eingabegerät wählen">
+          <button class="device-tab is-active" data-device="keyboard" role="tab" aria-selected="true">Tastatur</button>
+          <button class="device-tab" data-device="mouse" role="tab" aria-selected="false">Maus</button>
+          <button class="device-tab" data-device="gamepad" role="tab" aria-selected="false">Gamepad</button>
+        </div>
+        <label class="layout-select hidden" id="layoutSelectWrap">
+          <span>Layout</span>
+          <select id="layoutSelect" aria-label="Tastaturlayout wählen">
+            <option value="">Layout wählen…</option>
+            <option value="iso-de-105">ISO-DE 105</option>
+            <option value="ansi-us-104">ANSI-US 104</option>
+          </select>
+        </label>
+      </div>
+      <div class="device-stage">
+        <div id="deviceSvg" class="device-svg-host" aria-live="polite"></div>
+        <p id="deviceEmpty" class="device-empty hidden"></p>
+      </div>
+      <div id="legend" class="legend" aria-label="Farb-Legende"></div>
+    </section>
 
     <section class="toolbar">
       <input id="search" type="search" placeholder="Aktion, Taste, Mod oder Kontext suchen">

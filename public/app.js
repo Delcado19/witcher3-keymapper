@@ -19,14 +19,82 @@ const els = (typeof document !== "undefined") ? {
   remapTitle: document.querySelector("#remapTitle"),
   remapText: document.querySelector("#remapText"),
   newKey: document.querySelector("#newKey"),
-  remapForm: document.querySelector("#remapForm")
+  remapForm: document.querySelector("#remapForm"),
+  deviceTabs: document.querySelector("#deviceTabs"),
+  deviceSvg: document.querySelector("#deviceSvg"),
+  deviceEmpty: document.querySelector("#deviceEmpty"),
+  legend: document.querySelector("#legend"),
+  layoutSelect: document.querySelector("#layoutSelect"),
+  layoutSelectWrap: document.querySelector("#layoutSelectWrap"),
+  loadingBar: document.querySelector("#loadingBar")
 } : {};
 
+// Session state for the device-centric view (Tasks 11/12). Not persisted.
+const state = {
+  registry: [],
+  devices: [],
+  inputLanguage: null,
+  activeDevice: "keyboard",
+  keyboardProfileId: null,   // matched/chosen keyboard profile id
+  showLayoutDropdown: false,
+  profileCache: new Map(),   // id -> profile
+  colorMap: new Map(),
+  topMods: [],
+  hasVanilla: false,
+  hasOther: false,
+  currentSvg: null
+};
+
 async function load() {
-  const response = await fetch("/api/scan");
-  scan = await response.json();
-  if (!response.ok) throw new Error(scan.error || "Scan fehlgeschlagen");
-  render();
+  showLoading(true);
+  try {
+    // Scan, hardware detection and the device registry load in parallel (design.md
+    // "Datenfluss beim Seitenstart"). Devices/registry degrade gracefully.
+    const [scanRes, devRes, registry] = await Promise.all([
+      fetch("/api/scan"),
+      fetch("/api/devices").catch(() => null),
+      state.registry.length ? Promise.resolve(state.registry) : loadRegistry().catch(() => [])
+    ]);
+    scan = await scanRes.json();
+    if (!scanRes.ok) throw new Error(scan.error || "Scan fehlgeschlagen");
+    state.registry = Array.isArray(registry) ? registry : [];
+    if (devRes && devRes.ok) {
+      const dev = await devRes.json();
+      state.devices = dev.devices || [];
+      state.inputLanguage = dev.inputLanguage || null;
+    } else if (devRes === null) {
+      showToast("Hardware-Erkennung nicht verfügbar", "info");
+    }
+    resolveKeyboardProfile();
+    render();
+    await renderDeviceView();
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Pick the keyboard profile: an exact VID:PID hit on any detected device wins;
+// otherwise fall back by input language; otherwise show the manual dropdown
+// (Requirement 8.5–8.8). type is only a hint, so matchDevice keys on VID:PID.
+function resolveKeyboardProfile() {
+  let matched = null;
+  for (const device of state.devices) {
+    const hit = matchDevice(device.vid, device.pid, state.registry, null);
+    if (hit && hit.type === "keyboard") { matched = hit; break; }
+  }
+  if (!matched) matched = matchDevice(null, null, state.registry, state.inputLanguage);
+  if (matched) {
+    state.keyboardProfileId = matched.id;
+    state.showLayoutDropdown = false;
+  } else {
+    state.keyboardProfileId = null;
+    state.showLayoutDropdown = true;
+  }
+}
+
+function showLoading(on) {
+  if (els.loadingBar) els.loadingBar.hidden = !on;
+  if (typeof document !== "undefined") document.body.setAttribute("aria-busy", on ? "true" : "false");
 }
 
 function render() {
@@ -53,17 +121,32 @@ function render() {
 
 function renderConflicts() {
   els.conflictCount.textContent = `${scan.conflicts.length} Treffer`;
-  els.conflicts.innerHTML = scan.conflicts.slice(0, 80).map((conflict) => `
-    <article class="conflict ${conflict.severity}">
+  if (!scan.conflicts.length) {
+    els.conflicts.innerHTML = `<div class="empty muted">Keine Konflikte gefunden.</div>`;
+    return;
+  }
+  // data-conflict-key lets the SVG popover scroll to & highlight the entry
+  // (Requirement 5.5); sources[] shows vanilla vs. mod per command (Req 5.3).
+  els.conflicts.innerHTML = scan.conflicts.slice(0, 80).map((conflict) => {
+    const chips = conflict.commands.map((name, i) => {
+      const src = (conflict.sources && conflict.sources[i]) || "unknown";
+      return `<span class="chip" title="${escapeHtml(src)}">${escapeHtml(name)} <span class="chip-src">${escapeHtml(shortSource(src))}</span></span>`;
+    }).join("");
+    return `
+    <article class="conflict ${conflict.severity}" data-conflict-key="${escapeHtml(conflict.key)}" tabindex="0">
       <div>
         <div class="commandTitle">${escapeHtml(conflict.keyLabel)}</div>
         <span class="source">${escapeHtml(conflict.section)} | Zeilen ${conflict.lines.join(", ")}</span>
       </div>
-      <div class="chips">${conflict.commands.map((name) => `<span class="chip">${escapeHtml(name)}</span>`).join("")}</div>
+      <div class="chips">${chips}</div>
       <div class="muted">${conflict.severity === "high" ? "Kritisch prüfen" : "Kontext-Doppelbelegung"}</div>
       <div></div>
-    </article>
-  `).join("");
+    </article>`;
+  }).join("");
+}
+
+function shortSource(src) {
+  return src === "game/input.xml" ? "Vanilla" : src;
 }
 
 function renderCommands() {
@@ -145,6 +228,25 @@ if (typeof document !== "undefined") {
   els.sourceFilter.addEventListener("change", renderCommands);
   els.deviceFilter.addEventListener("change", renderCommands);
   els.refresh.addEventListener("click", load);
+
+  // Device tabs: switch active device, keep choice for the session (no storage).
+  els.deviceTabs?.addEventListener("click", (event) => {
+    const tab = event.target.closest(".device-tab");
+    if (!tab || tab.disabled) return;
+    state.activeDevice = tab.dataset.device;
+    closePopover();
+    renderDeviceView();
+  });
+
+  // Manual layout choice when no device/language could pre-select one (Req 8.8).
+  els.layoutSelect?.addEventListener("change", () => {
+    const id = els.layoutSelect.value;
+    if (!id) return;
+    state.keyboardProfileId = id;
+    state.showLayoutDropdown = false;
+    state.activeDevice = "keyboard";
+    renderDeviceView();
+  });
 }
 
 function escapeHtml(value) {
@@ -155,6 +257,224 @@ function escapeHtml(value) {
     "\"": "&quot;",
     "'": "&#039;"
   }[char]));
+}
+
+/* =====================================================================
+ * Device-centric UI — Wave 9–14 integration (Tasks 9,10,11,12,14).
+ * Wires the building blocks into the page: tabs, hardware pre-selection,
+ * colouring, conflicts, key popovers and conflict-sidebar linking.
+ * ===================================================================== */
+
+function deviceLabel(device) {
+  return device === "keyboard" ? "Tastatur" : device === "mouse" ? "Maus" : "Gamepad";
+}
+
+function deviceHasBindings(device) {
+  return scan.commands.some((c) => c.keys.some((k) => k.device === device && k.key !== "IK_None"));
+}
+
+function activeProfileId() {
+  if (state.activeDevice === "mouse") return "mouse-5btn";
+  if (state.activeDevice === "gamepad") return "xbox-ctrl";
+  return state.keyboardProfileId;
+}
+
+async function getProfile(id) {
+  if (!id) return null;
+  if (state.profileCache.has(id)) return state.profileCache.get(id);
+  const profile = await loadProfile(id);
+  if (profile) state.profileCache.set(id, profile);
+  return profile;
+}
+
+// Colour map + legend flags are derived once per scan and reused across tab
+// switches (Requirement 4.7/4.8 determinism).
+function rebuildColorMap() {
+  state.colorMap = buildColorMap(scan.commands, scan.conflicts);
+  state.topMods = computeTopMods(scan.commands);
+  state.hasVanilla = scan.commands.some((c) => c.source === "game/input.xml");
+  const top5 = new Set(state.topMods.map((m) => m.source));
+  state.hasOther = scan.commands.some((c) => c.source !== "game/input.xml" && !top5.has(c.source));
+}
+
+async function renderDeviceView() {
+  if (!els.deviceSvg) return;
+  rebuildColorMap();
+  updateTabState();
+
+  const isKeyboard = state.activeDevice === "keyboard";
+  els.layoutSelectWrap?.classList.toggle("hidden", !(isKeyboard && state.showLayoutDropdown));
+  if (isKeyboard && state.showLayoutDropdown && !state.keyboardProfileId) {
+    showDeviceEmpty("Kein Tastaturlayout erkannt — bitte Layout wählen.");
+    return;
+  }
+  if (!deviceHasBindings(state.activeDevice)) {
+    showDeviceEmpty(`Keine Belegung für „${deviceLabel(state.activeDevice)}" gefunden.`);
+    return;
+  }
+
+  const profile = await getProfile(activeProfileId());
+  if (!profile) { showDeviceEmpty("Geräteprofil konnte nicht geladen werden."); return; }
+  const svg = renderDeviceSvg(profile);
+  if (!svg) return; // SVG failed -> toast already shown, keep previous view
+
+  applyColoring(svg, state.colorMap, scan);
+  applyConflicts(svg, scan.conflicts);
+  attachKeyInteractions(svg);
+
+  els.deviceEmpty.classList.add("hidden");
+  els.deviceSvg.innerHTML = "";
+  els.deviceSvg.appendChild(svg);
+  state.currentSvg = svg;
+  renderLegend();
+}
+
+function showDeviceEmpty(message) {
+  els.deviceSvg.innerHTML = "";
+  els.deviceEmpty.textContent = message;
+  els.deviceEmpty.classList.remove("hidden");
+  els.legend.innerHTML = "";
+}
+
+function updateTabState() {
+  els.deviceTabs.querySelectorAll(".device-tab").forEach((tab) => {
+    const device = tab.dataset.device;
+    const has = deviceHasBindings(device);
+    tab.disabled = !has;
+    tab.classList.toggle("is-disabled", !has);
+    const active = device === state.activeDevice;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", active ? "true" : "false");
+  });
+}
+
+function renderLegend() {
+  const items = buildLegend(state.topMods, state.hasOther, state.hasVanilla);
+  els.legend.innerHTML = items.map((item) =>
+    `<span class="legend-item"><span class="legend-swatch" style="--sw:${item.color}"></span>${escapeHtml(item.label)}</span>`
+  ).join("");
+}
+
+// Task 10: hover tooltip (native SVG <title>) + keyboard activation.
+function attachKeyInteractions(svg) {
+  svg.querySelectorAll("[data-key]").forEach((g) => {
+    const ik = g.getAttribute("data-key");
+    let title = g.querySelector("title");
+    if (!title) {
+      title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      g.appendChild(title);
+    }
+    title.textContent = g.getAttribute("aria-label") || ik;
+    g.addEventListener("click", () => openPopover(ik, g));
+    g.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openPopover(ik, g); }
+    });
+  });
+}
+
+/* ---------------- Task 9: Popover_Controller ---------------- */
+let popoverEl = null;
+
+function closePopover() {
+  if (popoverEl) { popoverEl.remove(); popoverEl = null; }
+  document.removeEventListener("keydown", onPopoverKeydown);
+  document.removeEventListener("click", onOutsideClick, true);
+}
+
+function onPopoverKeydown(event) { if (event.key === "Escape") closePopover(); }
+function onOutsideClick(event) {
+  if (popoverEl && !popoverEl.contains(event.target) && !event.target.closest("[data-key]")) closePopover();
+}
+
+function openPopover(ik, anchorEl) {
+  closePopover(); // at most one popover open (Requirement 6.8)
+  const cmds = scan.commands.filter((c) => c.keys.some((k) => k.key === ik));
+  const conflicts = scan.conflicts.filter((cf) => cf.key === ik);
+  const label = anchorEl.querySelector(".key-label")?.textContent || ik;
+
+  const pop = document.createElement("div");
+  pop.className = "popover";
+  pop.setAttribute("role", "dialog");
+  const body = cmds.length
+    ? cmds.map((c) => `
+        <div class="pop-row">
+          <div><div class="commandTitle">${escapeHtml(c.id)}</div><span class="source">${escapeHtml(shortSource(c.source))}</span></div>
+          <div class="pop-actions">
+            <button data-act="remap" data-cmd="${escapeHtml(c.id)}">Ändern</button>
+            <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">Löschen</button>
+          </div>
+        </div>`).join("")
+    : `<p class="muted">Unbelegt</p>`;
+  const conflictNote = conflicts.length
+    ? `<div class="pop-conflict">⚠ Konflikt in: ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
+    : "";
+  pop.innerHTML = `<div class="pop-head"><strong>${escapeHtml(label)}</strong><span class="muted">${escapeHtml(ik)}</span></div>${body}${conflictNote}`;
+  document.body.appendChild(pop);
+  positionPopover(pop, anchorEl);
+  popoverEl = pop;
+
+  pop.querySelectorAll('[data-act="remap"]').forEach((b) =>
+    b.addEventListener("click", () => { closePopover(); openRemap(b.dataset.cmd); }));
+  pop.querySelectorAll('[data-act="clear"]').forEach((b) =>
+    b.addEventListener("click", () => confirmClear(b, ik, b.dataset.cmd)));
+
+  if (conflicts.length) highlightConflicts(ik);
+
+  document.addEventListener("keydown", onPopoverKeydown);
+  // Defer so the opening click itself doesn't immediately close the popover.
+  setTimeout(() => document.addEventListener("click", onOutsideClick, true), 0);
+}
+
+function positionPopover(pop, anchorEl) {
+  const rect = anchorEl.getBoundingClientRect();
+  pop.style.top = `${window.scrollY + rect.bottom + 8}px`;
+  pop.style.left = `${window.scrollX + rect.left}px`;
+  requestAnimationFrame(() => {
+    const pr = pop.getBoundingClientRect();
+    if (pr.right > window.innerWidth - 8) {
+      pop.style.left = `${Math.max(8, window.innerWidth - pr.width - 8)}px`;
+    }
+  });
+}
+
+// Inline two-step confirm instead of confirm() (Requirement 6.3 / 9.6).
+function confirmClear(button, ik, commandId) {
+  if (button.dataset.confirm !== "1") {
+    button.dataset.confirm = "1";
+    button.textContent = "Wirklich? (Backup + löschen)";
+    return;
+  }
+  clearBinding(ik, commandId);
+}
+
+async function clearBinding(ik, commandId) {
+  const command = scan.commands.find((c) => c.id === commandId);
+  if (!command) return;
+  showLoading(true);
+  try {
+    // oldKey restricts the null-out to THIS key, not every binding of the action.
+    const res = await fetch("/api/remap", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ actions: command.actions, newKey: "IK_None", oldKey: ik })
+    });
+    const result = await res.json();
+    if (!res.ok) { showToast(result.error || "Löschen fehlgeschlagen", "error"); return; }
+    closePopover();
+    showToast(`Gelöscht: ${result.changed} Binding(s) · Backup: ${result.backup}`, "success");
+    await load();
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Task 14: clicking a conflicting key highlights & scrolls the sidebar entry.
+function highlightConflicts(ik) {
+  els.conflicts.querySelectorAll(".conflict.highlight").forEach((el) => el.classList.remove("highlight"));
+  const matches = els.conflicts.querySelectorAll(`[data-conflict-key="${ik}"]`);
+  matches.forEach((el, i) => {
+    el.classList.add("highlight");
+    if (i === 0) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  });
 }
 
 /* =====================================================================
@@ -464,6 +784,8 @@ if (typeof document !== "undefined") {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     validateProfile, loadRegistry, loadProfile, matchDevice,
-    computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE
+    computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
+    renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg,
+    applyColoring, applyConflicts, isoEnterPath
   };
 }

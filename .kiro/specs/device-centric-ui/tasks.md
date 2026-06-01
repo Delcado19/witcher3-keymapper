@@ -118,7 +118,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - `alert()` und `confirm()` aus `app.js` entfernen und durch `showToast` bzw. Popover-Bestätigung ersetzen
   - _Requirements: 9.6, 7.6, 7.7, 8.6_
 
-- [ ] 9. Client: `Popover_Controller` implementieren
+- [x] 9. Client: `Popover_Controller` implementieren
   - `openPopover(ikKey, anchorEl, scanData)` — baut Popover-HTML mit: Tastenname, Actions-Liste, Binding-Quelle (Vanilla/Mod-Name), Konflikt-Hinweis falls vorhanden, Schaltflächen „Ändern" und „Löschen"
   - „Ändern"-Button ruft bestehende `openRemap(commandId)` auf
   - „Löschen"-Button: zeigt Inline-Bestätigung (kein `confirm()`), ruft dann `/api/remap` mit `newKey: "IK_None"` auf, erstellt Backup, aktualisiert UI
@@ -128,13 +128,13 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - Klick auf konfliktbehaftete Taste: Konflikt-Eintrag im Sidebar-Panel hervorheben (`scrollIntoView` + CSS-Klasse)
   - _Requirements: 6.1, 6.2, 6.3, 6.7, 6.8_
 
-- [ ] 10. Client: Hover-Tooltip und Keyboard-Navigation für SVG-Tasten
+- [x] 10. Client: Hover-Tooltip und Keyboard-Navigation für SVG-Tasten
   - `mouseenter`-Handler auf `[data-key]`-Elementen: zeigt nativen `title`-Tooltip oder Custom-Tooltip mit Action-Name und Binding-Quelle
   - `keydown`-Handler auf `[data-key]`-Elementen: Enter oder Space → `openPopover()`
   - `focus`-Handler: visuellen Fokus-Ring sicherstellen (CSS `outline` nicht entfernen)
   - _Requirements: 6.4, 6.5, 6.6, 9.8_
 
-- [ ] 11. Client: Geräte-Tabs und Tab-UI implementieren
+- [x] 11. Client: Geräte-Tabs und Tab-UI implementieren
   - Drei Tab-Elemente in `index.html` anlegen: „Tastatur", „Maus", „Gamepad" (trapezförmige Form via CSS `clip-path` oder `transform: skewX`)
   - Aktiver Tab: Gold-Akzent `#d2a657`, erhöhter Kontrast
   - Tab-Wechsel: `activeDevice`-State aktualisieren, SVG neu rendern, Colorizer neu anwenden
@@ -143,7 +143,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - Legende unterhalb des SVG rendern (aus `buildLegend()`)
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
 
-- [ ] 12. Client: Hardware-Erkennung und automatische Profil-Vorauswahl
+- [x] 12. Client: Hardware-Erkennung und automatische Profil-Vorauswahl
   - Beim Seitenstart parallel `/api/scan` und `/api/devices` aufrufen
   - `/api/devices`-Antwort hat Format `{ devices, inputLanguage }`; `matchDevice(vid, pid, registry, inputLanguage)` mit viertem Parameter aufrufen
   - Passendes Profil laden und als aktives Profil setzen; SVG rendern
@@ -160,7 +160,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - Geladene Datei gilt nur für aktuelle Session (kein Persistieren)
   - _Requirements: 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 9.7_
 
-- [ ] 14. Client: Konflikt-Sidebar und SVG-Konflikt-Verknüpfung
+- [x] 14. Client: Konflikt-Sidebar und SVG-Konflikt-Verknüpfung
   - Bestehende Konflikt-Liste (`#conflicts`) ins neue Layout als Sidebar-Panel integrieren
   - Konflikte nach Severity absteigend sortieren (`"high"` vor `"medium"`)
   - Jeder Konflikt-Eintrag zeigt: Sektion, betroffene Commands, Mod-Quellen (`sources`-Feld aus erweitertem Scan)
@@ -181,7 +181,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - `/api/scan` und `/api/remap` unverändert lassen
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
-- [ ] 17. Witcher-3-Styling in `public/styles.css` und `public/index.html`
+- [x] 17. Witcher-3-Styling in `public/styles.css` und `public/index.html`
   - Bestehende CSS-Variablen (`--bg`, `--panel`, `--accent`, `--danger`, `--ok`) beibehalten; neue Variablen ergänzen: `--gold: #d2a657`, `--conflict-high: #ef4444`, `--conflict-medium: #f59e0b`, `--glow-size: 6px`
   - Ornamentale Trennelemente zwischen Hauptbereichen (CSS `::before`/`::after` mit SVG-Daten-URI oder Border-Muster)
   - Überschriften: `letter-spacing: 0.08em` oder mehr
