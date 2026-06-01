@@ -12,7 +12,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
 
 ## Tasks
 
-- [ ] 1. Geräte-Registry: JSON-Profildateien und index.json anlegen
+- [x] 1. Geräte-Registry: JSON-Profildateien und index.json anlegen
   - Verzeichnis `public/devices/` erstellen
   - `public/devices/index.json` mit den sechs Profil-Einträgen anlegen (iso-de-105, iso-de-87, ansi-us-104, ansi-us-87, mouse-5btn, xbox-ctrl); jeder Eintrag enthält `fallback` und `fallbackLocales`:
     - `iso-de-105`: `"fallback": true, "fallbackLocales": ["de"]` — primäres DE-Fallback (Full-Size)
@@ -32,20 +32,20 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - `shape`-Werte: `"rect"` (Standard), `"iso-enter"` (ISO-Enter), `"wide"` (breite Tasten)
   - _Requirements: 2.1, 3.1, 3.2, 3.4_
 
-- [ ] 2. Server: `/api/load`, `/api/save` und `/api/devices` implementieren
-  - [ ] 2.1 `/api/load` (POST, `multipart/form-data`) in `server.js` implementieren
+- [x] 2. Server: `/api/load`, `/api/save` und `/api/devices` implementieren
+  - [x] 2.1 `/api/load` (POST, `multipart/form-data`) in `server.js` implementieren
     - Rohen Request-Body einlesen, `file`-Feld aus Multipart-Daten extrahieren (ohne externe Bibliothek)
     - Datei im Speicher parsen (`parseInputSettings` auf Buffer-Inhalt), `buildScan()`-äquivalentes Ergebnis zurückgeben
     - Serverseitigen `defaults.inputSettings`-Pfad nicht verändern
     - Bei ungültigem Format: `400` mit `{ error: "..." }` zurückgeben
     - _Requirements: 7.1, 7.8_
-  - [ ] 2.2 `/api/save` (POST, JSON `{ targetPath, content }`) in `server.js` implementieren
+  - [x] 2.2 `/api/save` (POST, JSON `{ targetPath, content }`) in `server.js` implementieren
     - Zieldatei auf Existenz prüfen; falls vorhanden, Backup mit `timestamp()`-Suffix erstellen
     - Inhalt in Zieldatei schreiben
     - Antwort: `{ saved: targetPath, backup: backupPath | null }`
     - Falls Backup-Erstellung fehlschlägt: Schreibvorgang abbrechen, `500` zurückgeben
     - _Requirements: 7.2, 7.3, 12.1, 12.2, 12.3_
-  - [ ] 2.3 `handleDevices` / `detectDevicesWin32` / `detectLayoutLanguageWin32` in `server.js` implementieren
+  - [x] 2.3 `handleDevices` / `detectDevicesWin32` / `detectLayoutLanguageWin32` in `server.js` implementieren
     - `GET /api/devices` Route registrieren
     - Auf `process.platform !== 'win32'`: sofort `{ devices: [], inputLanguage: null }` zurückgeben
     - `detectDevicesWin32()`: PowerShell-Befehl `Get-PnpDevice -Class HIDClass -Status OK | Select-Object FriendlyName,DeviceID | ConvertTo-Json` via `child_process.execFile` ausführen; VID/PID per Regex `VID_([0-9A-F]{4})&PID_([0-9A-F]{4})` aus `DeviceID` extrahieren; Gerätetyp aus `FriendlyName` ableiten (Heuristik: enthält „keyboard" → `"keyboard"`, „mouse" → `"mouse"`, sonst `"gamepad"`)
@@ -54,12 +54,12 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
     - API-Antwort: `{ devices: [...], inputLanguage: string | null }`
     - Bei Fehler der Geräteabfrage: `devices: []` zurückgeben (kein 500)
     - _Requirements: 8.1, 8.2, 8.3, 8.6, 8.7_
-  - [ ] 2.4 `findConflicts` um `sources`-Feld erweitern
+  - [x] 2.4 `findConflicts` um `sources`-Feld erweitern
     - Für jeden Konflikt-Eintrag `sources: string[]` parallel zu `commands[]` befüllen (Binding-Quelle je Command aus `modSources`-Map)
     - Bestehende Signatur und Rückgabestruktur ansonsten unverändert lassen
     - _Requirements: 5.4, 13.5_
 
-- [ ] 3. Checkpoint — Serverseitige Syntax und API-Routen prüfen
+- [x] 3. Checkpoint — Serverseitige Syntax und API-Routen prüfen
   - `node --check server.js` ausführen und alle Fehler beheben
   - Sicherstellen, dass `/api/scan`, `/api/remap`, `/api/load`, `/api/save`, `/api/devices` alle registriert sind
 

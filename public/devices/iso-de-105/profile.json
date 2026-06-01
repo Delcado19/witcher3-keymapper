@@ -5,6 +5,8 @@
   "layout": "iso-de-105",
   "vid": "1E7D",
   "pid": "307A",
+  "fallback": true,
+  "fallbackLocales": ["de"],
   "size": { "w": 22.5, "h": 6.5 },
   "keys": [
     { "ik": "IK_Escape",      "label": "Esc",        "x": 0,     "y": 0,   "w": 1,    "h": 1, "shape": "rect" },
@@ -23,7 +25,6 @@
     { "ik": "IK_PrintScrn",   "label": "PrtSc",      "x": 14,    "y": 0,   "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_ScrollLock",  "label": "ScrLk",      "x": 15,    "y": 0,   "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_Pause",       "label": "Pause",      "x": 16,    "y": 0,   "w": 1,    "h": 1, "shape": "rect" },
-
     { "ik": "IK_Tilde",       "label": "^",          "x": 0,     "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_1",           "label": "1",          "x": 1,     "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_2",           "label": "2",          "x": 2,     "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
@@ -42,10 +43,9 @@
     { "ik": "IK_Home",        "label": "Home",       "x": 16.25, "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_PageUp",      "label": "PgUp",       "x": 17.25, "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumLock",     "label": "NumLk",      "x": 18.5,  "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
-    { "ik": "IK_Divide",      "label": "Num /",      "x": 19.5,  "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
-    { "ik": "IK_Multiply",    "label": "Num *",      "x": 20.5,  "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
+    { "ik": "IK_NumSlash",    "label": "Num /",      "x": 19.5,  "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
+    { "ik": "IK_NumStar",     "label": "Num *",      "x": 20.5,  "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumMinus",    "label": "Num -",      "x": 21.5,  "y": 1.5, "w": 1,    "h": 1, "shape": "rect" },
-
     { "ik": "IK_Tab",         "label": "Tab",        "x": 0,     "y": 2.5, "w": 1.5,  "h": 1, "shape": "wide" },
     { "ik": "IK_Q",           "label": "Q",          "x": 1.5,   "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_W",           "label": "W",          "x": 2.5,   "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
@@ -57,8 +57,8 @@
     { "ik": "IK_I",           "label": "I",          "x": 8.5,   "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_O",           "label": "O",          "x": 9.5,   "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_P",           "label": "P",          "x": 10.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
-    { "ik": "IK_LBracket",    "label": "Ü",          "x": 11.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
-    { "ik": "IK_RBracket",    "label": "+",          "x": 12.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
+    { "ik": "IK_LeftBracket", "label": "Ü",          "x": 11.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
+    { "ik": "IK_RightBracket","label": "+",          "x": 12.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_Enter",       "label": "Enter",      "x": 13.5,  "y": 2.5, "w": 1.5,  "h": 2, "shape": "iso-enter" },
     { "ik": "IK_Delete",      "label": "Del",        "x": 15.25, "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_End",         "label": "End",        "x": 16.25, "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
@@ -67,7 +67,6 @@
     { "ik": "IK_NumPad8",     "label": "8",          "x": 19.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumPad9",     "label": "9",          "x": 20.5,  "y": 2.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumPlus",     "label": "Num +",      "x": 21.5,  "y": 2.5, "w": 1,    "h": 2, "shape": "wide" },
-
     { "ik": "IK_CapsLock",    "label": "Caps",       "x": 0,     "y": 3.5, "w": 1.75, "h": 1, "shape": "wide" },
     { "ik": "IK_A",           "label": "A",          "x": 1.75,  "y": 3.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_S",           "label": "S",          "x": 2.75,  "y": 3.5, "w": 1,    "h": 1, "shape": "rect" },
@@ -84,9 +83,8 @@
     { "ik": "IK_NumPad4",     "label": "4",          "x": 18.5,  "y": 3.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumPad5",     "label": "5",          "x": 19.5,  "y": 3.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumPad6",     "label": "6",          "x": 20.5,  "y": 3.5, "w": 1,    "h": 1, "shape": "rect" },
-
     { "ik": "IK_LShift",      "label": "Shift",      "x": 0,     "y": 4.5, "w": 1.25, "h": 1, "shape": "wide" },
-    { "ik": "IK_OEM102",      "label": "<",          "x": 1.25,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
+    { "ik": "IK_OEM_102",     "label": "<",          "x": 1.25,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_Y",           "label": "Y",          "x": 2.25,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_X",           "label": "X",          "x": 3.25,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_C",           "label": "C",          "x": 4.25,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
@@ -103,7 +101,6 @@
     { "ik": "IK_NumPad2",     "label": "2",          "x": 19.5,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumPad3",     "label": "3",          "x": 20.5,  "y": 4.5, "w": 1,    "h": 1, "shape": "rect" },
     { "ik": "IK_NumEnter",    "label": "Enter",      "x": 21.5,  "y": 4.5, "w": 1,    "h": 2, "shape": "wide" },
-
     { "ik": "IK_LControl",    "label": "Ctrl",       "x": 0,     "y": 5.5, "w": 1.25, "h": 1, "shape": "wide" },
     { "ik": "IK_LWin",        "label": "Win",        "x": 1.25,  "y": 5.5, "w": 1.25, "h": 1, "shape": "wide" },
     { "ik": "IK_Alt",         "label": "Alt",        "x": 2.5,   "y": 5.5, "w": 1.25, "h": 1, "shape": "wide" },

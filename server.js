@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const http = require("node:http");
 const { URL } = require("node:url");
+const { execFile } = require("node:child_process");
 
 const root = __dirname;
 const publicDir = path.join(root, "public");
@@ -50,20 +51,29 @@ const keyLabels = new Map(Object.entries({
   IK_None: "Unbound"
 }));
 
-function readText(file) {
-  const data = fs.readFileSync(file);
-  // Witcher 3 config XMLs are commonly UTF-16LE with BOM, while
-  // input.settings is usually plain ASCII/UTF-8. Decode by BOM so mod labels
-  // and action metadata are not silently missed.
+// Witcher 3 config XMLs are commonly UTF-16LE with BOM, while input.settings is
+// usually plain ASCII/UTF-8. Decode by BOM so mod labels and action metadata are
+// not silently missed. Shared by file reads (readText) and in-memory uploads
+// (/api/load), so both honor the same encoding rules (Requirement 11.4).
+function decodeBuffer(data, label = "buffer") {
   if (data[0] === 0xff && data[1] === 0xfe) return data.toString("utf16le").replace(/^\uFEFF/, "");
   if (data[0] === 0xfe && data[1] === 0xff) {
-    throw new Error(`Unsupported UTF-16BE file: ${file}`);
+    throw new Error(`Unsupported UTF-16BE file: ${label}`);
   }
   return data.toString("utf8").replace(/^\uFEFF/, "");
 }
 
+function readText(file) {
+  return decodeBuffer(fs.readFileSync(file), file);
+}
+
+// parseInputSettings reads from disk; parseInputSettingsText parses an already
+// decoded string so /api/load can scan an uploaded buffer without touching disk.
 function parseInputSettings(file) {
-  const text = readText(file);
+  return parseInputSettingsText(readText(file));
+}
+
+function parseInputSettingsText(text) {
   const lines = text.split(/\r?\n/);
   let section = "";
   const entries = [];
@@ -182,8 +192,10 @@ function collectRelevantFiles(dir, files, modName, depth = 0) {
   }
 }
 
-function buildScan() {
-  const input = parseInputSettings(defaults.inputSettings);
+// input defaults to the server-side input.settings, but /api/load passes a
+// pre-parsed in-memory upload so a loaded file is scanned without changing the
+// default path (Requirement 7.1, 7.10).
+function buildScan(input = parseInputSettings(defaults.inputSettings)) {
   const vars = parseInputXml(defaults.gameInputXml);
   const knownActions = new Set(vars.flatMap((item) => item.actions));
   const allActions = [...new Set(input.entries.map((entry) => entry.action).filter(Boolean))];
@@ -239,6 +251,10 @@ function buildScan() {
       }));
   }
 
+  // Binding source per command id, so findConflicts can report which
+  // colliding commands are vanilla vs. mod-owned (Requirement 5.4, 13.5).
+  const sourceByCommandId = new Map([...commandMap.values()].map((command) => [command.id, command.source]));
+
   return {
     paths: defaults,
     stats: {
@@ -250,12 +266,15 @@ function buildScan() {
       modActions: [...modSources.keys()].length
     },
     commands: [...commandMap.values()].sort((a, b) => a.id.localeCompare(b.id)),
-    conflicts: findConflicts(input.entries, commandByAction),
+    conflicts: findConflicts(input.entries, commandByAction, sourceByCommandId),
     unlistedActions: allActions.filter((action) => !knownActions.has(action)).sort()
   };
 }
 
-function findConflicts(entries, commandByAction) {
+// sourceByCommandId (optional) maps a command id to its binding source so each
+// conflict can expose a `sources[]` array parallel to `commands[]`
+// (Requirement 5.4, 13.5). Omitting it keeps the previous behavior.
+function findConflicts(entries, commandByAction, sourceByCommandId) {
   const groups = new Map();
   for (const entry of entries) {
     if (entry.key === "IK_None") continue;
@@ -276,6 +295,7 @@ function findConflicts(entries, commandByAction) {
       keyLabel: labelKey(key),
       severity: riskyKey(key, commands) ? "high" : "medium",
       commands,
+      sources: commands.map((command) => sourceByCommandId?.get(command) || "unknown"),
       lines: items.map((item) => item.lineNumber)
     });
   }
@@ -331,6 +351,120 @@ function timestamp() {
   return new Date().toISOString().replace(/[:.]/g, "-");
 }
 
+// Minimal multipart/form-data extractor for /api/load — returns the raw bytes of
+// the first part named "file" (or any part with a filename) so the upload can be
+// decoded with the same BOM rules as on-disk files. Dependency-free by design
+// (AGENTS.md): no busboy/formidable. Operates on a Buffer to preserve UTF-16.
+function extractMultipartFile(buffer, boundary) {
+  const dash = Buffer.from(`--${boundary}`);
+  const headerSep = Buffer.from("\r\n\r\n");
+  const parts = [];
+  let start = buffer.indexOf(dash);
+  if (start === -1) return null;
+  start += dash.length;
+  while (start < buffer.length) {
+    if (buffer[start] === 0x2d && buffer[start + 1] === 0x2d) break; // closing "--"
+    if (buffer[start] === 0x0d && buffer[start + 1] === 0x0a) start += 2; // skip CRLF
+    const next = buffer.indexOf(dash, start);
+    if (next === -1) break;
+    const segment = buffer.slice(start, next);
+    const sep = segment.indexOf(headerSep);
+    if (sep !== -1) {
+      const headers = segment.slice(0, sep).toString("utf8");
+      let body = segment.slice(sep + headerSep.length);
+      if (body[body.length - 2] === 0x0d && body[body.length - 1] === 0x0a) body = body.slice(0, -2);
+      parts.push({ headers, body });
+    }
+    start = next + dash.length;
+  }
+  const filePart = parts.find((p) => /name="file"/i.test(p.headers)) ||
+    parts.find((p) => /filename="/i.test(p.headers));
+  return filePart ? filePart.body : null;
+}
+
+// POST /api/save — write Bindings to a client-chosen target file. Backs up an
+// existing target first; if the backup fails the write is aborted (Requirement
+// 7.2, 7.3, 12.1–12.3). statusCode distinguishes bad input (400) from IO (500).
+function handleSave(body) {
+  const targetPath = String(body.targetPath || "").trim();
+  const content = typeof body.content === "string" ? body.content : null;
+  if (!targetPath || content === null) {
+    const error = new Error("Need targetPath and content.");
+    error.statusCode = 400;
+    throw error;
+  }
+  let backup = null;
+  if (fs.existsSync(targetPath)) {
+    backup = `${targetPath}.${timestamp()}.bak`;
+    try {
+      fs.copyFileSync(targetPath, backup);
+    } catch (cause) {
+      const error = new Error(`Backup failed, write aborted: ${cause.message}`);
+      error.statusCode = 500;
+      throw error;
+    }
+  }
+  fs.writeFileSync(targetPath, content, "utf8");
+  return { saved: targetPath, backup };
+}
+
+// Windows-only hardware detection for /api/devices. PowerShell PnP query for
+// USB-HID devices + the active Windows input language. Both degrade to empty
+// values on failure or non-Windows so the route never 500s (Requirement 8.9, 8.10).
+function runPowerShell(script) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      "powershell.exe",
+      ["-NoProfile", "-NonInteractive", "-Command", script],
+      { windowsHide: true, maxBuffer: 4 * 1024 * 1024 },
+      (error, stdout) => (error ? reject(error) : resolve(stdout))
+    );
+  });
+}
+
+async function detectDevicesWin32() {
+  if (process.platform !== "win32") return [];
+  try {
+    const out = await runPowerShell(
+      "Get-PnpDevice -Class HIDClass -Status OK | Select-Object FriendlyName,DeviceID | ConvertTo-Json"
+    );
+    const parsed = JSON.parse(out || "[]");
+    const list = Array.isArray(parsed) ? parsed : [parsed];
+    const devices = [];
+    for (const entry of list) {
+      const match = String(entry.DeviceID || "").match(/VID_([0-9A-F]{4})&PID_([0-9A-F]{4})/i);
+      if (!match) continue;
+      const name = entry.FriendlyName || "";
+      // FriendlyNames are localized (de-DE Windows reports "Tastatur"/"Maus"),
+      // and many HID nodes are generic ("HID-konformer Systemcontroller"), so
+      // this type is only a hint — the client matches by VID:PID first.
+      const type = /keyboard|tastatur/i.test(name) ? "keyboard"
+        : /mouse|maus/i.test(name) ? "mouse"
+        : "gamepad";
+      devices.push({ vid: match[1].toUpperCase(), pid: match[2].toUpperCase(), name, type });
+    }
+    return devices;
+  } catch {
+    return [];
+  }
+}
+
+async function detectLayoutLanguageWin32() {
+  if (process.platform !== "win32") return null;
+  try {
+    const out = await runPowerShell("(Get-WinUserLanguageList)[0].LanguageTag");
+    const tag = String(out || "").trim();
+    return tag || null;
+  } catch {
+    return null;
+  }
+}
+
+async function handleDevices(res) {
+  const [devices, inputLanguage] = await Promise.all([detectDevicesWin32(), detectLayoutLanguageWin32()]);
+  sendJson(res, 200, { devices, inputLanguage });
+}
+
 function sendJson(res, status, payload) {
   const body = JSON.stringify(payload, null, 2);
   res.writeHead(status, {
@@ -366,6 +500,46 @@ const server = http.createServer((req, res) => {
           sendJson(res, 200, remap(JSON.parse(raw || "{}")));
         } catch (error) {
           sendJson(res, 400, { error: error.message });
+        }
+      });
+      return;
+    }
+    if (req.method === "GET" && url.pathname === "/api/devices") {
+      // Detection never rejects, but guard anyway so a surprise still yields an
+      // empty, non-500 result per Requirement 8.9.
+      handleDevices(res).catch(() => sendJson(res, 200, { devices: [], inputLanguage: null }));
+      return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/load") {
+      const chunks = [];
+      req.on("data", (chunk) => { chunks.push(chunk); });
+      req.on("end", () => {
+        try {
+          const ct = req.headers["content-type"] || "";
+          const boundary = ct.match(/boundary=(.+)$/);
+          if (!boundary) throw new Error("Missing multipart boundary.");
+          const fileBuf = extractMultipartFile(Buffer.concat(chunks), boundary[1].replace(/^"|"$/g, ""));
+          if (!fileBuf) throw new Error("No file field in upload.");
+          const parsed = parseInputSettingsText(decodeBuffer(fileBuf, "upload"));
+          if (!parsed.entries.length) {
+            throw new Error("Not a valid input.settings: no IK_* bindings found.");
+          }
+          // Scan the upload in memory; defaults.inputSettings stays untouched (Req 7.10).
+          sendJson(res, 200, buildScan(parsed));
+        } catch (error) {
+          sendJson(res, 400, { error: error.message });
+        }
+      });
+      return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/save") {
+      let raw = "";
+      req.on("data", (chunk) => { raw += chunk; });
+      req.on("end", () => {
+        try {
+          sendJson(res, 200, handleSave(JSON.parse(raw || "{}")));
+        } catch (error) {
+          sendJson(res, error.statusCode || 500, { error: error.message });
         }
       });
       return;
