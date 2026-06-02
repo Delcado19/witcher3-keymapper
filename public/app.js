@@ -26,6 +26,7 @@ const els = (typeof document !== "undefined") ? {
   legend: document.querySelector("#legend"),
   layoutSelect: document.querySelector("#layoutSelect"),
   layoutSelectWrap: document.querySelector("#layoutSelectWrap"),
+  layoutMode: document.querySelector("#layoutMode"),
   loadingBar: document.querySelector("#loadingBar")
 } : {};
 
@@ -42,7 +43,10 @@ const state = {
   topMods: [],
   hasVanilla: false,
   hasOther: false,
-  currentSvg: null
+  currentSvg: null,
+  currentProfile: null,
+  layoutMode: false,
+  layoutDrag: null
 };
 
 async function load() {
@@ -154,22 +158,22 @@ function renderConflicts() {
   // data-conflict-key lets the SVG popover scroll to & highlight the entry
   // (Requirement 5.5); sources[] shows vanilla vs. mod per command (Req 5.3).
   els.conflicts.innerHTML = groups.slice(0, 120).map((grp) => {
-    const chips = grp.commands.map((name, i) => {
+    const commandList = grp.commands.map((name, i) => {
       const src = grp.sources[i] || "unknown";
-      return `<span class="chip" title="${escapeHtml(src)}">${escapeHtml(name)} <span class="chip-src">${escapeHtml(shortSource(src))}</span></span>`;
+      return `<span class="compact-token" title="${escapeHtml(src)}">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
     const shown = grp.sections.slice(0, 3).map(escapeHtml).join(", ");
     const extra = grp.sections.length > 3 ? ` +${grp.sections.length - 3} weitere` : "";
     const count = grp.sections.length > 1 ? ` · ${grp.sections.length} Sektionen` : "";
+    const severity = grp.severity === "high" ? "Kritisch" : "Kontext";
     return `
     <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
-      <div>
-        <div class="commandTitle">${escapeHtml(grp.keyLabel)}</div>
-        <span class="source">${shown}${extra}${count}</span>
+      <div class="compact-key">
+        <strong>${escapeHtml(grp.keyLabel)}</strong>
+        <span>${escapeHtml(severity)}</span>
       </div>
-      <div class="chips">${chips}</div>
-      <div class="muted">${grp.severity === "high" ? "Kritisch prüfen" : "Kontext-Doppelbelegung"}</div>
-      <div></div>
+      <div class="compact-main">${commandList}</div>
+      <div class="compact-meta">${shown}${extra}${count}</div>
     </article>`;
   }).join("");
 }
@@ -201,15 +205,18 @@ function renderCommands() {
   els.resultCount.textContent = `${filtered.length} Treffer`;
   els.commands.innerHTML = filtered.map((command) => {
     const keys = command.keys.length ? command.keys : [{ label: "Ungebunden", device: "unbound", key: "IK_None" }];
+    const actions = command.actions.length > 2
+      ? `${command.actions.slice(0, 2).join(", ")} +${command.actions.length - 2}`
+      : command.actions.join(", ");
     return `
       <article class="command">
-        <div>
+        <div class="compact-main">
           <div class="commandTitle">${escapeHtml(command.id)}</div>
-          <span class="source">${escapeHtml(command.displayName)} | ${escapeHtml(command.source)}</span>
+          <span class="source">${escapeHtml(command.displayName)} · ${escapeHtml(shortSource(command.source))}</span>
         </div>
-        <div class="chips">${keys.map((key) => keyChip(key)).join("")}</div>
-        <div class="muted">${escapeHtml(command.actions.join(", "))}</div>
-        <button data-remap="${escapeHtml(command.id)}">Ändern</button>
+        <div class="compact-keys">${keys.map((key) => keyChip(key)).join("")}</div>
+        <div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>
+        <button class="compact-action" data-remap="${escapeHtml(command.id)}">Ändern</button>
       </article>
     `;
   }).join("");
@@ -221,7 +228,7 @@ function renderCommands() {
 
 function keyChip(key) {
   const hold = key.state === "Duration" ? ` halten ${key.idleTime || ""}s` : "";
-  return `<span class="chip ${key.device}">${escapeHtml(key.label)}${escapeHtml(hold)}</span>`;
+  return `<span class="chip ${key.device}" title="${escapeHtml(key.key || "")}">${escapeHtml(key.label)}${escapeHtml(hold)}</span>`;
 }
 
 function openRemap(commandId) {
@@ -276,6 +283,13 @@ if (typeof document !== "undefined") {
     state.activeDevice = "keyboard";
     renderDeviceView();
   });
+
+  els.layoutMode?.addEventListener("click", () => {
+    if (state.activeDevice === "keyboard") return;
+    state.layoutMode = !state.layoutMode;
+    closePopover();
+    renderDeviceView();
+  });
 }
 
 function escapeHtml(value) {
@@ -295,10 +309,13 @@ function escapeHtml(value) {
  * ===================================================================== */
 
 function deviceLabel(device) {
-  return device === "keyboard" ? "Tastatur" : device === "mouse" ? "Maus" : "Gamepad";
+  if (device === "keyboard") return "Tastatur";
+  if (device === "controllers") return "Maus/Gamepad";
+  return device === "mouse" ? "Maus" : "Gamepad";
 }
 
 function deviceHasBindings(device) {
+  if (device === "controllers") return deviceHasBindings("mouse") || deviceHasBindings("gamepad");
   return scan.commands.some((c) => c.keys.some((k) => k.device === device && k.key !== "IK_None"));
 }
 
@@ -308,12 +325,17 @@ function activeProfileId() {
   return state.keyboardProfileId;
 }
 
+function activeProfileIds() {
+  if (state.activeDevice === "controllers") return ["mouse-5btn", "xbox-ctrl"];
+  return [activeProfileId()].filter(Boolean);
+}
+
 async function getProfile(id) {
   if (!id) return null;
-  if (state.profileCache.has(id)) return state.profileCache.get(id);
+  if (state.profileCache.has(id)) return applyLayoutOverrides(state.profileCache.get(id));
   const profile = await loadProfile(id);
   if (profile) state.profileCache.set(id, profile);
-  return profile;
+  return profile ? applyLayoutOverrides(profile) : null;
 }
 
 // Colour map + legend flags are derived once per scan and reused across tab
@@ -333,6 +355,10 @@ async function renderDeviceView() {
 
   const isKeyboard = state.activeDevice === "keyboard";
   els.layoutSelectWrap?.classList.toggle("hidden", !(isKeyboard && state.showLayoutDropdown));
+  els.layoutMode?.classList.toggle("hidden", isKeyboard);
+  els.layoutMode?.classList.toggle("is-active", state.layoutMode && !isKeyboard);
+  els.layoutMode?.setAttribute("aria-pressed", String(state.layoutMode && !isKeyboard));
+  if (isKeyboard && state.layoutMode) state.layoutMode = false;
   if (isKeyboard && state.showLayoutDropdown && !state.keyboardProfileId) {
     showDeviceEmpty("Kein Tastaturlayout erkannt — bitte Layout wählen.");
     return;
@@ -342,19 +368,33 @@ async function renderDeviceView() {
     return;
   }
 
-  const profile = await getProfile(activeProfileId());
-  if (!profile) { showDeviceEmpty("Geräteprofil konnte nicht geladen werden."); return; }
-  const svg = renderDeviceSvg(profile);
-  if (!svg) return; // SVG failed -> toast already shown, keep previous view
+  const profiles = (await Promise.all(activeProfileIds().map((id) => getProfile(id)))).filter(Boolean);
+  if (!profiles.length) { showDeviceEmpty("Geräteprofil konnte nicht geladen werden."); return; }
 
-  applyColoring(svg, state.colorMap, scan);
-  applyConflicts(svg, scan.conflicts);
-  attachKeyInteractions(svg);
+  const rendered = profiles.map((profile) => ({ profile, svg: renderDeviceSvg(profile) })).filter((item) => item.svg);
+  if (!rendered.length) return; // SVG failed -> toast already shown, keep previous view
+
+  const host = state.activeDevice === "controllers" ? document.createElement("div") : null;
+  if (host) host.className = "controller-layouts";
+
+  for (const { profile, svg } of rendered) {
+    applyColoring(svg, state.colorMap, scan);
+    applyConflicts(svg, scan.conflicts);
+    attachKeyInteractions(svg);
+    attachLayoutEditor(svg, profile);
+    if (host) {
+      const frame = document.createElement("div");
+      frame.className = `controller-layout controller-${profile.type}`;
+      frame.appendChild(svg);
+      host.appendChild(frame);
+    }
+  }
 
   els.deviceEmpty.classList.add("hidden");
   els.deviceSvg.innerHTML = "";
-  els.deviceSvg.appendChild(svg);
-  state.currentSvg = svg;
+  els.deviceSvg.appendChild(host || rendered[0].svg);
+  state.currentProfile = profiles.length === 1 ? profiles[0] : null;
+  state.currentSvg = rendered.length === 1 ? rendered[0].svg : host;
   renderLegend();
 }
 
@@ -394,11 +434,136 @@ function attachKeyInteractions(svg) {
       g.appendChild(title);
     }
     title.textContent = g.getAttribute("aria-label") || ik;
-    g.addEventListener("click", () => openPopover(ik, g));
+    g.addEventListener("click", (event) => {
+      if (state.layoutMode) { event.preventDefault(); event.stopPropagation(); return; }
+      openPopover(ik, g);
+    });
     g.addEventListener("keydown", (event) => {
+      if (state.layoutMode) return;
       if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openPopover(ik, g); }
     });
   });
+}
+
+function layoutStorageKey(profileId) {
+  return `witcher3-keymapper:layout:${profileId}`;
+}
+
+function applyLayoutOverrides(profile) {
+  if (typeof localStorage === "undefined") return profile;
+  try {
+    const raw = localStorage.getItem(layoutStorageKey(profile.id));
+    if (!raw) return profile;
+    const overrides = JSON.parse(raw);
+    const copy = { ...profile, keys: profile.keys.map((key) => ({ ...key })) };
+    for (const key of copy.keys) {
+      if (overrides[key.ik]) Object.assign(key, overrides[key.ik]);
+    }
+    return copy;
+  } catch (error) {
+    console.warn("Layout-Overrides konnten nicht geladen werden", error);
+    return profile;
+  }
+}
+
+function saveLayoutOverride(profile, key) {
+  if (typeof localStorage === "undefined") return;
+  try {
+    const storageKey = layoutStorageKey(profile.id);
+    const overrides = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    overrides[key.ik] = { x: key.x, y: key.y, w: key.w, h: key.h, coord: key.coord };
+    localStorage.setItem(storageKey, JSON.stringify(overrides));
+  } catch (error) {
+    console.warn("Layout-Override konnte nicht gespeichert werden", error);
+  }
+}
+
+function attachLayoutEditor(svg, profile) {
+  if (!state.layoutMode || state.activeDevice === "keyboard") return;
+  svg.classList.add("layout-editing");
+  svg.querySelectorAll("[data-key]").forEach((g) => {
+    const ik = g.getAttribute("data-key");
+    const key = profile.keys.find((item) => item.ik === ik);
+    const shape = g.querySelector(".key-shape");
+    if (!key || !shape) return;
+    const handle = svgNode("rect", { class: "layout-resize", width: 14, height: 14, rx: 2 });
+    g.appendChild(handle);
+    positionResizeHandle(key, handle);
+    g.addEventListener("pointerdown", (event) => startLayoutDrag(event, svg, profile, key, g, shape, handle, "move"));
+    handle.addEventListener("pointerdown", (event) => startLayoutDrag(event, svg, profile, key, g, shape, handle, "resize"));
+  });
+}
+
+function positionResizeHandle(key, handle) {
+  const scale = key.coord === "px" ? 0.01 : 1;
+  handle.setAttribute("x", (key.x + key.w) * scale * UNIT - 7);
+  handle.setAttribute("y", (key.y + key.h) * scale * UNIT - 7);
+}
+
+function svgPoint(svg, event) {
+  const point = svg.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  const ctm = svg.getScreenCTM();
+  return ctm ? point.matrixTransform(ctm.inverse()) : { x: 0, y: 0 };
+}
+
+function startLayoutDrag(event, svg, profile, key, g, shape, handle, mode) {
+  event.preventDefault();
+  event.stopPropagation();
+  const start = svgPoint(svg, event);
+  state.layoutDrag = { svg, profile, key, g, shape, handle, mode, start, base: { x: key.x, y: key.y, w: key.w, h: key.h } };
+  svg.addEventListener("pointermove", onLayoutDrag);
+  svg.addEventListener("pointerup", endLayoutDrag, { once: true });
+  svg.addEventListener("pointerleave", endLayoutDrag, { once: true });
+}
+
+function onLayoutDrag(event) {
+  const drag = state.layoutDrag;
+  if (!drag) return;
+  const current = svgPoint(drag.svg, event);
+  const coordScale = drag.key.coord === "px" ? 100 : 1;
+  const dx = ((current.x - drag.start.x) / UNIT) * coordScale;
+  const dy = ((current.y - drag.start.y) / UNIT) * coordScale;
+  if (drag.mode === "resize") {
+    const minSize = drag.key.coord === "px" ? 12 : 0.2;
+    drag.key.w = Math.max(minSize, drag.base.w + dx);
+    drag.key.h = Math.max(minSize, drag.base.h + dy);
+  } else {
+    drag.key.x = drag.base.x + dx;
+    drag.key.y = drag.base.y + dy;
+  }
+  updateKeyGeometry(drag.key, drag.g, drag.shape, drag.handle);
+}
+
+function endLayoutDrag() {
+  const drag = state.layoutDrag;
+  if (!drag) return;
+  drag.svg.removeEventListener("pointermove", onLayoutDrag);
+  saveLayoutOverride(drag.profile, drag.key);
+  state.layoutDrag = null;
+}
+
+function updateKeyGeometry(key, g, shape, handle) {
+  const scale = key.coord === "px" ? 0.01 : 1;
+  const x = key.x * scale * UNIT;
+  const y = key.y * scale * UNIT;
+  const w = key.w * scale * UNIT;
+  const h = key.h * scale * UNIT;
+  if (shape.tagName === "circle" || shape.tag === "circle") {
+    shape.setAttribute("cx", x + w / 2);
+    shape.setAttribute("cy", y + h / 2);
+    shape.setAttribute("r", Math.max(Math.min(w, h) / 2 - GAP, 1));
+  } else {
+    shape.setAttribute("x", x);
+    shape.setAttribute("y", y);
+    shape.setAttribute("width", Math.max(w, 1));
+    shape.setAttribute("height", Math.max(h, 1));
+  }
+  const text = g.querySelector(".key-label");
+  text?.setAttribute("x", x + w / 2);
+  text?.setAttribute("y", y + h / 2);
+  positionResizeHandle(key, handle);
 }
 
 /* ---------------- Task 9: Popover_Controller ---------------- */
@@ -656,20 +821,51 @@ function svgNode(tag, attrs = {}) {
   return node;
 }
 
-// Every key (including ISO-Enter and wide keys) renders as a rounded rect inset
-// by GAP, so spacing and corner rounding are uniform across the whole device.
-function buildKeyEl(key) {
-  const g = svgNode("g", { class: "key", "data-key": key.ik, tabindex: "0", role: "button" });
-  g.setAttribute("aria-label", `${key.label || key.ik}: unbelegt`);
-  const shape = svgNode("rect", {
-    x: key.x * UNIT + GAP, y: key.y * UNIT + GAP,
-    width: Math.max(key.w * UNIT - 2 * GAP, 1), height: Math.max(key.h * UNIT - 2 * GAP, 1),
-    rx: RADIUS, class: "key-shape"
+// Device profiles can use rect/pill/circle/dpad-* shapes. Keyboard keys stay
+// rectangular, while mouse/gamepad controls need device-like geometry.
+function buildKeyEl(key, profileType = "keyboard") {
+  const coordScale = key.coord === "px" ? 0.01 : 1;
+  const g = svgNode("g", {
+    class: `key shape-${key.shape || "rect"}`,
+    "data-key": key.ik,
+    tabindex: "0",
+    role: "button"
   });
+  g.setAttribute("aria-label", `${key.label || key.ik}: unbelegt`);
+  const x = key.x * coordScale * UNIT;
+  const y = key.y * coordScale * UNIT;
+  const w = key.w * coordScale * UNIT;
+  const h = key.h * coordScale * UNIT;
+  let shape;
+  if (profileType === "keyboard") {
+    shape = svgNode("rect", {
+      x: x + GAP, y: y + GAP,
+      width: Math.max(w - 2 * GAP, 1), height: Math.max(h - 2 * GAP, 1),
+      rx: RADIUS,
+      class: "key-shape"
+    });
+  } else if (key.shape === "circle") {
+    const r = Math.max(Math.min(w, h) / 2 - GAP, 1);
+    shape = svgNode("circle", {
+      cx: x + w / 2, cy: y + h / 2, r,
+      class: "key-shape"
+    });
+  } else {
+    const isDpad = String(key.shape || "").startsWith("dpad-");
+    const isArtworkOverlay = key.shape === "main" || key.shape === "side";
+    const isPill = key.shape === "pill" || key.shape === "wide";
+    const inset = isDpad || isArtworkOverlay ? 0 : GAP;
+    shape = svgNode("rect", {
+      x: x + inset, y: y + inset,
+      width: Math.max(w - 2 * inset, 1), height: Math.max(h - 2 * inset, 1),
+      rx: isPill ? Math.max(h / 2 - GAP, 1) : isDpad ? 7 : isArtworkOverlay ? 6 : RADIUS,
+      class: "key-shape"
+    });
+  }
   g.appendChild(shape);
   const text = svgNode("text", {
-    x: key.x * UNIT + (key.w * UNIT) / 2,
-    y: key.y * UNIT + (key.h * UNIT) / 2,
+    x: x + w / 2,
+    y: y + h / 2,
     class: "key-label", "text-anchor": "middle", "dominant-baseline": "central"
   });
   text.textContent = key.label || "";
@@ -697,8 +893,39 @@ function buildDeviceSvg(profile, extraClass, pad = PAD) {
   svg.setAttribute("aria-label", profile.name);
   const root = svgNode("g", { transform: `translate(${pad} ${pad})` });
   svg.appendChild(root);
-  for (const key of profile.keys) root.appendChild(buildKeyEl(key));
+  if (profile.artwork) {
+    root.appendChild(svgNode("image", {
+      class: "device-artwork",
+      href: profile.artwork,
+      x: 0,
+      y: 0,
+      width: w * UNIT,
+      height: h * UNIT,
+      preserveAspectRatio: "xMidYMid meet"
+    }));
+  }
+  if (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("debugOverlay")) {
+    root.appendChild(buildDebugGrid(w, h, Boolean(profile.artwork)));
+  }
+  for (const key of profile.keys) root.appendChild(buildKeyEl(key, profile.type));
   return { svg, root };
+}
+
+function buildDebugGrid(w, h, pixelLabels = false) {
+  const grid = svgNode("g", { class: "debug-grid" });
+  for (let x = 0; x <= w; x += 1) {
+    grid.appendChild(svgNode("line", { x1: x * UNIT, y1: 0, x2: x * UNIT, y2: h * UNIT }));
+    const t = svgNode("text", { x: x * UNIT + 3, y: 14 });
+    t.textContent = pixelLabels ? String(x * 100) : String(x);
+    grid.appendChild(t);
+  }
+  for (let y = 0; y <= h; y += 1) {
+    grid.appendChild(svgNode("line", { x1: 0, y1: y * UNIT, x2: w * UNIT, y2: y * UNIT }));
+    const t = svgNode("text", { x: 3, y: y * UNIT + 14 });
+    t.textContent = pixelLabels ? String(y * 100) : String(y);
+    grid.appendChild(t);
+  }
+  return grid;
 }
 
 function renderKeyboardSvg(profile) {
@@ -706,6 +933,7 @@ function renderKeyboardSvg(profile) {
 }
 
 function renderMouseSvg(profile) {
+  if (profile.artwork) return buildDeviceSvg(profile, "mouse-svg artwork-svg", 0).svg;
   const pad = 20;
   const { svg, root } = buildDeviceSvg(profile, "mouse-svg", pad);
   const { w, h } = deviceExtent(profile);
@@ -719,15 +947,25 @@ function renderMouseSvg(profile) {
 }
 
 function renderGamepadSvg(profile) {
+  if (profile.artwork) return buildDeviceSvg(profile, "gamepad-svg artwork-svg", 0).svg;
   const pad = 46;
   const { svg, root } = buildDeviceSvg(profile, "gamepad-svg", pad);
   const { w, h } = deviceExtent(profile);
   const W = w * UNIT, H = h * UNIT, m = pad - 10;
-  // Generous rounded body (taller ry gives a controller-like oval) with a 36px
-  // margin so all buttons sit well inside the housing.
-  const body = svgNode("rect", {
-    class: "device-body", x: -m, y: -m, width: W + 2 * m, height: H + 2 * m,
-    rx: 44, ry: 80
+  // Controller silhouette keeps the shoulder/trigger row outside the main grips
+  // while the sticks and face buttons sit inside a broader center body.
+  const body = svgNode("path", {
+    class: "device-body",
+    d: [
+      `M ${m} ${H * 0.22}`,
+      `C ${W * 0.08} ${H * 0.15}, ${W * 0.18} ${-m}, ${W * 0.34} ${m}`,
+      `L ${W * 0.66} ${m}`,
+      `C ${W * 0.82} ${-m}, ${W * 0.92} ${H * 0.15}, ${W - m} ${H * 0.22}`,
+      `C ${W + m * 1.5} ${H * 0.33}, ${W + m * 1.2} ${H + m * 0.9}, ${W * 0.76} ${H + m}`,
+      `C ${W * 0.62} ${H + m * 0.65}, ${W * 0.38} ${H + m * 0.65}, ${W * 0.24} ${H + m}`,
+      `C ${-m * 1.2} ${H + m * 0.9}, ${-m * 1.5} ${H * 0.33}, ${m} ${H * 0.22}`,
+      "Z"
+    ].join(" ")
   });
   root.insertBefore(body, root.firstChild);
   return svg;

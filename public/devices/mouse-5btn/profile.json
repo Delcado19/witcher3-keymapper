@@ -4,13 +4,14 @@
   "type": "mouse",
   "layout": "mouse-5btn",
   "fallback": true,
-  "size": { "w": 4, "h": 6 },
+  "artwork": "/devices/mouse-5btn/device.svg",
+  "size": { "w": 16.72, "h": 16.72 },
   "keys": [
-    { "ik": "IK_LeftMouse",   "label": "Left",       "x": 0,   "y": 0,   "w": 1.5, "h": 2,   "shape": "rect" },
-    { "ik": "IK_RightMouse",  "label": "Right",      "x": 2.5, "y": 0,   "w": 1.5, "h": 2,   "shape": "rect" },
-    { "ik": "IK_MiddleMouse", "label": "Middle",     "x": 1.5, "y": 0,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_MouseZ",      "label": "Wheel",      "x": 1.5, "y": 1,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Mouse4",      "label": "Mouse 4",    "x": 0,   "y": 2.5, "w": 1.5, "h": 1,   "shape": "rect" },
-    { "ik": "IK_Mouse5",      "label": "Mouse 5",    "x": 0,   "y": 3.5, "w": 1.5, "h": 1,   "shape": "rect" }
+    { "ik": "IK_LeftMouse",   "label": "Left",    "coord": "px", "x": 548, "y": 280, "w": 165, "h": 82,  "shape": "main" },
+    { "ik": "IK_RightMouse",  "label": "Right",   "coord": "px", "x": 975, "y": 280, "w": 165, "h": 82,  "shape": "main" },
+    { "ik": "IK_MouseZ",      "label": "Wheel",   "coord": "px", "x": 755, "y": 359, "w": 165, "h": 82,  "shape": "side" },
+    { "ik": "IK_MiddleMouse", "label": "M3",      "coord": "px", "x": 755, "y": 524, "w": 165, "h": 82,  "shape": "side" },
+    { "ik": "IK_Mouse4",      "label": "M4",      "coord": "px", "x": 271, "y": 750, "w": 165, "h": 82,  "shape": "side" },
+    { "ik": "IK_Mouse5",      "label": "M5",      "coord": "px", "x": 271, "y": 840, "w": 165, "h": 82,  "shape": "side" }
   ]
 }

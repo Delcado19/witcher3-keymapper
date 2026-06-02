@@ -24,8 +24,7 @@
       <div class="panelHead device-head">
         <div class="device-tabs" id="deviceTabs" role="tablist" aria-label="Eingabegerät wählen">
           <button class="device-tab is-active" data-device="keyboard" role="tab" aria-selected="true">Tastatur</button>
-          <button class="device-tab" data-device="mouse" role="tab" aria-selected="false">Maus</button>
-          <button class="device-tab" data-device="gamepad" role="tab" aria-selected="false">Gamepad</button>
+          <button class="device-tab" data-device="controllers" role="tab" aria-selected="false">Maus/Gamepad</button>
         </div>
         <label class="layout-select hidden" id="layoutSelectWrap">
           <span>Layout</span>
@@ -35,6 +34,7 @@
             <option value="ansi-us-104">ANSI-US 104</option>
           </select>
         </label>
+        <button id="layoutMode" class="layout-mode" type="button" aria-pressed="false">Layout</button>
       </div>
       <div class="device-stage">
         <div id="deviceSvg" class="device-svg-host" aria-live="polite"></div>
@@ -57,21 +57,23 @@
       </select>
     </section>
 
-    <section class="panel">
-      <div class="panelHead">
-        <h2>Konflikte</h2>
-        <span id="conflictCount"></span>
-      </div>
-      <div id="conflicts" class="conflicts"></div>
-    </section>
+    <div class="workbench-grid">
+      <section class="panel compact-panel">
+        <div class="panelHead">
+          <h2>Konflikte</h2>
+          <span id="conflictCount"></span>
+        </div>
+        <div id="conflicts" class="conflicts"></div>
+      </section>
 
-    <section class="panel">
-      <div class="panelHead">
-        <h2>Mappings</h2>
-        <span id="resultCount"></span>
-      </div>
-      <div id="commands" class="commands"></div>
-    </section>
+      <section class="panel compact-panel">
+        <div class="panelHead">
+          <h2>Mappings</h2>
+          <span id="resultCount"></span>
+        </div>
+        <div id="commands" class="commands"></div>
+      </section>
+    </div>
   </main>
 
   <dialog id="remapDialog">

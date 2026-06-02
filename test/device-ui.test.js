@@ -8,6 +8,7 @@ const path = require("node:path");
 const {
   validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS
 } = require("../public/app.js");
+const { findConflicts } = require("../server.js");
 
 const registry = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../public/devices/index.json"), "utf8")
@@ -45,6 +46,22 @@ ok("buildColorMap: conflict key -> high colour", () => {
 ok("buildColorMap: IK_None is ignored", () => {
   const cmds = [{ source: "modX", keys: [{ key: "IK_None" }] }];
   assert.strictEqual(buildColorMap(cmds, []).has("IK_None"), false);
+});
+ok("findConflicts: vanilla-only conflicts are ignored", () => {
+  const entries = [
+    { section: "Combat", key: "IK_E", action: "VanillaA", lineNumber: 1 },
+    { section: "Combat", key: "IK_E", action: "VanillaB", lineNumber: 2 },
+    { section: "Combat", key: "IK_F", action: "VanillaA", lineNumber: 3 },
+    { section: "Combat", key: "IK_F", action: "ModA", lineNumber: 4 }
+  ];
+  const sourceByCommandId = new Map([
+    ["VanillaA", "game/input.xml"],
+    ["VanillaB", "game/input.xml"],
+    ["ModA", "modFriendlyHUD"]
+  ]);
+  const conflicts = findConflicts(entries, new Map(), sourceByCommandId);
+  assert.strictEqual(conflicts.some((conflict) => conflict.key === "IK_E"), false);
+  assert.strictEqual(conflicts.some((conflict) => conflict.key === "IK_F"), true);
 });
 
 // ---- Property 1: profile round-trip (Validates Requirement 3.7) ----

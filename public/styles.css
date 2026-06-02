@@ -146,11 +146,16 @@ button:hover {
 .command,
 .conflict {
   display: grid;
-  grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1fr) minmax(260px, 1.3fr) auto;
-  gap: 12px;
+  grid-template-columns: minmax(220px, 1.35fr) minmax(180px, 0.9fr) minmax(140px, 0.7fr) auto;
+  gap: 8px;
   align-items: center;
-  padding: 12px 14px;
+  min-height: 34px;
+  padding: 5px 8px;
   border-bottom: 1px solid var(--line);
+}
+
+.conflict {
+  grid-template-columns: 120px minmax(260px, 1fr) minmax(220px, 0.9fr);
 }
 
 .command:last-child,
@@ -160,30 +165,34 @@ button:hover {
 
 .commandTitle {
   font-weight: 650;
+  line-height: 1.15;
 }
 
 .source {
   display: inline-block;
-  margin-top: 4px;
+  margin-top: 1px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.15;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .chip {
   display: inline-flex;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
-  padding: 4px 7px;
+  padding: 2px 5px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 4px;
   background: var(--panel-2);
   white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.2;
 }
 
 .keyboard::before,
@@ -333,19 +342,55 @@ select:focus-visible,
   font-size: 12px;
 }
 .layout-select select { min-height: 32px; padding: 4px 8px; }
+.layout-mode {
+  margin: 8px 12px 8px auto;
+  min-height: 32px;
+  padding: 4px 14px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+}
+.layout-mode.is-active {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(210, 166, 87, 0.35);
+}
 
 /* ---- Device stage / SVG ---- */
 .device-stage {
   display: flex;
   justify-content: center;
-  padding: 20px 16px;
+  padding: 10px 10px;
   overflow-x: auto;
 }
 .device-svg-host { width: 100%; display: flex; justify-content: center; }
 .device-svg {
   width: 100%;
   height: auto;
-  max-height: 60vh;
+  max-height: 56vh;
+}
+.keyboard-svg {
+  max-height: 46vh;
+}
+.artwork-svg {
+  max-height: 68vh;
+}
+.device-artwork {
+  pointer-events: none;
+}
+.debug-grid {
+  pointer-events: none;
+}
+.debug-grid line {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1;
+}
+.debug-grid text {
+  fill: #ffef9a;
+  font: 700 12px/1 "Segoe UI", system-ui, sans-serif;
+  paint-order: stroke;
+  stroke: #000;
+  stroke-width: 2px;
 }
 .device-empty {
   padding: 40px;
@@ -359,12 +404,24 @@ select:focus-visible,
 }
 
 /* Keys: fill driven by --key-fill set per key by applyColoring (Req 9.5 glow) */
-.key { cursor: pointer; }
+.key {
+  cursor: pointer;
+  outline: none;
+}
 .key-shape {
   fill: var(--key-fill, #2a2f3a);
-  stroke: rgba(0, 0, 0, 0.35);
-  stroke-width: 1;
+  stroke: rgba(255, 255, 255, 0.34);
+  stroke-width: 2;
+  opacity: 0.42;
   transition: filter 0.12s ease, transform 0.12s ease;
+}
+.artwork-svg .key.bound .key-shape {
+  opacity: 0.62;
+}
+.artwork-svg .key.shape-label .key-shape {
+  fill: transparent;
+  stroke: transparent;
+  opacity: 0;
 }
 .key.bound .key-shape {
   filter: drop-shadow(0 0 var(--glow-size) var(--key-fill));
@@ -373,13 +430,50 @@ select:focus-visible,
 .key:focus-visible .key-shape {
   filter: drop-shadow(0 0 calc(var(--glow-size) + 4px) var(--key-fill, var(--gold)));
 }
+.layout-editing .key {
+  cursor: move;
+}
+.layout-editing .key-shape {
+  stroke-dasharray: 8 5;
+}
+.layout-editing .layout-resize {
+  fill: var(--gold);
+  stroke: #111;
+  stroke-width: 2;
+  cursor: nwse-resize;
+}
 .key-label {
   fill: #f4f6f7;
-  font: 600 11px/1 "Segoe UI", system-ui, sans-serif;
+  font: 700 10px/1 "Segoe UI", system-ui, sans-serif;
   pointer-events: none;
   paint-order: stroke;
-  stroke: rgba(0, 0, 0, 0.6);
+  stroke: rgba(0, 0, 0, 0.9);
   stroke-width: 2px;
+}
+.artwork-svg .key-label {
+  font-size: 24px;
+  stroke-width: 5px;
+}
+.artwork-svg .key.shape-label .key-label {
+  font-size: 28px;
+}
+.artwork-svg .key.shape-side .key-label {
+  font-size: 34px;
+  stroke-width: 7px;
+}
+.artwork-svg .key.shape-side .key-shape {
+  stroke-width: 4px;
+  opacity: 0.78;
+}
+.artwork-svg .key.shape-main .key-label {
+  font-size: 34px;
+  stroke-width: 7px;
+}
+.artwork-svg .key.shape-main .key-shape {
+  fill: var(--key-fill, #2a2f3a);
+  stroke: var(--key-fill, #2a2f3a);
+  stroke-width: 4px;
+  opacity: 0.78;
 }
 
 /* Conflict markers on keys (Req 5.1/5.2, pulsing) */
@@ -415,6 +509,66 @@ select:focus-visible,
   box-shadow: inset 3px 0 0 var(--gold);
 }
 .empty { padding: 16px; }
+
+.compact-key {
+  display: grid;
+  gap: 1px;
+}
+
+.compact-key strong {
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.compact-key span,
+.compact-meta {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.compact-main {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+}
+
+.command .compact-main {
+  display: block;
+}
+
+.compact-keys {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.compact-token {
+  min-width: 0;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 1px 5px;
+  border-left: 2px solid var(--gold);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.compact-token span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.compact-action {
+  min-height: 24px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
 
 /* ---- Popover (Req 6.1) ---- */
 .popover {
@@ -479,4 +633,187 @@ select:focus-visible,
 @keyframes loadingSlide {
   0% { background-position: -40% 0; }
   100% { background-position: 140% 0; }
+}
+
+/* Compact density pass: preserve device geometry, reduce surrounding chrome. */
+main {
+  padding: 12px 16px 24px;
+}
+
+.topbar {
+  padding: 10px 16px;
+}
+
+.topbar h1 {
+  margin: 0 0 2px;
+  font-size: 20px;
+}
+
+.topbar p {
+  margin: 0;
+}
+
+.stats {
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.stat,
+.panel {
+  padding: 8px;
+}
+
+.panel {
+  margin-bottom: 10px;
+}
+
+.panelHead {
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.panelHead h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.toolbar {
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.toolbar input,
+.toolbar select {
+  min-height: 32px;
+  padding: 5px 8px;
+}
+
+.device-tabs {
+  padding: 4px 6px 0;
+}
+
+.device-tab {
+  padding: 6px 16px;
+}
+
+.layout-select {
+  gap: 6px;
+  padding: 4px 10px;
+}
+
+.layout-select select,
+.layout-mode {
+  min-height: 28px;
+  padding: 3px 10px;
+}
+
+.layout-mode {
+  margin: 4px 8px 4px auto;
+}
+
+.device-stage {
+  padding: 4px 6px;
+}
+
+.device-svg {
+  max-height: 48vh;
+}
+
+.keyboard-svg {
+  max-height: 34vh;
+}
+
+.artwork-svg {
+  max-height: 58vh;
+}
+
+.mouse-svg.artwork-svg,
+.gamepad-svg.artwork-svg {
+  width: min(100%, 720px);
+  max-height: 46vh;
+}
+
+.controller-layouts {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.86fr) minmax(260px, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.controller-layout {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.controller-layout .mouse-svg.artwork-svg,
+.controller-layout .gamepad-svg.artwork-svg {
+  width: 100%;
+  max-height: 40vh;
+}
+
+.legend {
+  gap: 8px;
+  padding: 6px 10px;
+}
+
+.legend-item {
+  font-size: 11px;
+}
+
+.legend-swatch {
+  width: 11px;
+  height: 11px;
+}
+
+.commands,
+.conflicts {
+  font-size: 12px;
+}
+
+.workbench-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.82fr) minmax(520px, 1.45fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.compact-panel {
+  margin-bottom: 0;
+}
+
+.compact-panel .panelHead {
+  min-height: 30px;
+}
+
+.command,
+.conflict {
+  padding: 4px 7px;
+  gap: 6px;
+  min-height: 30px;
+}
+
+.command {
+  grid-template-columns: minmax(190px, 1.25fr) minmax(145px, 0.85fr) minmax(120px, 0.55fr) 58px;
+}
+
+.conflict {
+  grid-template-columns: 96px minmax(220px, 1fr) minmax(160px, 0.75fr);
+}
+
+@media (max-width: 900px) {
+  .workbench-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .controller-layouts {
+    grid-template-columns: 1fr;
+  }
+
+  .command,
+  .conflict {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
 }

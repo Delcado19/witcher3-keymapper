@@ -18,6 +18,7 @@ Kein Build-Step, keine npm-Dependencies (nur Node ≥ 20).
 ## Funktionen
 
 - **Geräteansicht** — Tabs für Tastatur/Maus/Gamepad; pro Gerät ein code-generiertes SVG-Schema. Belegte Tasten werden eingefärbt: Vanilla (Gold), je Top-5-Mod eine eigene Farbe, „Sonstige Mods", Konflikte (rot/amber, pulsierend). Legende darunter.
+- **Layout-Modus** — Maus/Gamepad-Overlays per Button „Layout" im Browser kalibrieren: ziehen zum Verschieben, Griff rechts unten zum Skalieren. Währenddessen sind Popover/Remap-Klicks deaktiviert; Änderungen werden pro Profil im Browser-`localStorage` gespeichert.
 - **Tasten-Popover** — Klick (oder Enter/Space) auf eine Taste zeigt Actions, Quelle und Konflikte; „Ändern" öffnet den Remap-Dialog, „Löschen" setzt die Bindung auf `IK_None` (mit Backup).
 - **Hardware-Erkennung (Windows)** — erkennt angeschlossene USB-HID-Geräte (VID:PID) und die Windows-Eingabesprache und wählt automatisch das passende Tastaturprofil vor; sonst Sprach-Fallback (`de-*` → ISO-DE 105, sonst ANSI-US 104) bzw. manuelles Layout-Dropdown.
 - **Mappings-Liste & Konflikt-Sidebar** — Suche, Quellen-/Geräte-Filter; Klick auf eine Konflikt-Taste im Schema hebt den Sidebar-Eintrag hervor.
@@ -39,7 +40,7 @@ Alle Schreibpfade erzeugen vorher ein byte-identisches Backup `…<timestamp>.ba
 Profile liegen unter `public/devices/`:
 
 - `index.json` — `{ "profiles": [ { id, vid, pid, type, fallback, fallbackLocales } ] }`
-- `<id>/profile.json` — Pflichtfelder `id, name, type, layout, keys`; jede Taste mit `ik` (Witcher-`IK_*`-Name), `label`, `x/y/w/h`, `shape` (`rect` | `wide` | `iso-enter`).
+- `<id>/profile.json` — Pflichtfelder `id, name, type, layout, keys`; jede Taste mit `ik` (Witcher-`IK_*`-Name), `label`, `x/y/w/h`, `shape` (`rect` | `wide` | `pill` | `circle` | `dpad-*` | `label` | `iso-enter`); optional `artwork` für ein SVG-Gerätebild unter den klickbaren Overlays. Artwork-Profile können pro Taste `coord: "px"` nutzen, dann beziehen sich `x/y/w/h` direkt auf das 1672x1672-SVG-Pixelkoordinatensystem.
 
 Neue Geräte lassen sich allein durch Hinzufügen eines Profils + `index.json`-Eintrags ergänzen (kein Code-Change). Vorhandene Layouts: ISO-DE 105/87, ANSI-US 104/87, 5-Tasten-Maus, Xbox-Controller.
 

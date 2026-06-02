@@ -4,27 +4,28 @@
   "type": "gamepad",
   "layout": "xbox-ctrl",
   "fallback": true,
-  "size": { "w": 10, "h": 6 },
+  "artwork": "/devices/xbox-ctrl/device.svg",
+  "size": { "w": 16.72, "h": 16.72 },
   "keys": [
-    { "ik": "IK_Pad_LeftShoulder",   "label": "LB",     "x": 0.5, "y": 0,   "w": 2,   "h": 1,   "shape": "wide" },
-    { "ik": "IK_Pad_RightShoulder",  "label": "RB",     "x": 7.5, "y": 0,   "w": 2,   "h": 1,   "shape": "wide" },
-    { "ik": "IK_Pad_LeftTrigger",    "label": "LT",     "x": 0.5, "y": 1,   "w": 2,   "h": 1,   "shape": "wide" },
-    { "ik": "IK_Pad_RightTrigger",   "label": "RT",     "x": 7.5, "y": 1,   "w": 2,   "h": 1,   "shape": "wide" },
+    { "ik": "IK_Pad_LeftTrigger",    "label": "LT",     "x": 2.94, "y": 2.34, "w": 1.72, "h": 0.58, "shape": "pill" },
+    { "ik": "IK_Pad_RightTrigger",   "label": "RT",     "x": 12.05, "y": 2.34, "w": 1.72, "h": 0.58, "shape": "pill" },
+    { "ik": "IK_Pad_LeftShoulder",   "label": "LB",     "x": 3.24, "y": 3.04, "w": 1.30, "h": 0.58, "shape": "pill" },
+    { "ik": "IK_Pad_RightShoulder",  "label": "RB",     "x": 12.20, "y": 3.04, "w": 1.30, "h": 0.58, "shape": "pill" },
 
-    { "ik": "IK_Pad_DigitUp",        "label": "D↑",     "x": 1,   "y": 2,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_DigitLeft",      "label": "D←",     "x": 0,   "y": 3,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_DigitRight",     "label": "D→",     "x": 2,   "y": 3,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_DigitDown",      "label": "D↓",     "x": 1,   "y": 4,   "w": 1,   "h": 1,   "shape": "rect" },
+    { "ik": "IK_Pad_LeftThumb",      "label": "L3",     "x": 3.54, "y": 4.82, "w": 1.28, "h": 1.28, "shape": "circle" },
+    { "ik": "IK_Pad_DigitUp",        "label": "▲",      "x": 5.77, "y": 7.12, "w": 0.54, "h": 0.80, "shape": "dpad-up" },
+    { "ik": "IK_Pad_DigitLeft",      "label": "◀",      "x": 5.20, "y": 7.70, "w": 0.80, "h": 0.54, "shape": "dpad-left" },
+    { "ik": "IK_Pad_DigitRight",     "label": "▶",      "x": 6.08, "y": 7.70, "w": 0.80, "h": 0.54, "shape": "dpad-right" },
+    { "ik": "IK_Pad_DigitDown",      "label": "▼",      "x": 5.77, "y": 8.08, "w": 0.54, "h": 0.80, "shape": "dpad-down" },
 
-    { "ik": "IK_Pad_Back_Select",    "label": "Back",   "x": 3.5, "y": 2.5, "w": 1.5, "h": 1,   "shape": "wide" },
-    { "ik": "IK_Pad_Start",          "label": "Start",  "x": 5,   "y": 2.5, "w": 1.5, "h": 1,   "shape": "wide" },
+    { "ik": "IK_Pad_Back_Select",    "label": "Back",   "x": 6.75, "y": 4.52, "w": 0.44, "h": 0.44, "shape": "circle" },
+    { "ik": "IK_Pad_Start",          "label": "Start",  "x": 9.36, "y": 4.52, "w": 0.44, "h": 0.44, "shape": "circle" },
 
-    { "ik": "IK_Pad_Y_TRIANGLE",     "label": "Y",      "x": 7.5, "y": 2,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_X_SQUARE",       "label": "X",      "x": 6.5, "y": 3,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_B_CIRCLE",       "label": "B",      "x": 8.5, "y": 3,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_A_CROSS",        "label": "A",      "x": 7.5, "y": 4,   "w": 1,   "h": 1,   "shape": "rect" },
+    { "ik": "IK_Pad_Y_TRIANGLE",     "label": "Y",      "x": 12.38, "y": 4.08, "w": 0.62, "h": 0.62, "shape": "circle" },
+    { "ik": "IK_Pad_X_SQUARE",       "label": "X",      "x": 11.54, "y": 5.32, "w": 0.62, "h": 0.62, "shape": "circle" },
+    { "ik": "IK_Pad_B_CIRCLE",       "label": "B",      "x": 13.30, "y": 5.32, "w": 0.62, "h": 0.62, "shape": "circle" },
+    { "ik": "IK_Pad_A_CROSS",        "label": "A",      "x": 12.38, "y": 6.58, "w": 0.62, "h": 0.62, "shape": "circle" },
 
-    { "ik": "IK_Pad_LeftThumb",      "label": "L3",     "x": 3,   "y": 4,   "w": 1,   "h": 1,   "shape": "rect" },
-    { "ik": "IK_Pad_RightThumb",     "label": "R3",     "x": 6,   "y": 4,   "w": 1,   "h": 1,   "shape": "rect" }
+    { "ik": "IK_Pad_RightThumb",     "label": "R3",     "x": 9.70, "y": 7.33, "w": 1.28, "h": 1.28, "shape": "circle" }
   ]
 }

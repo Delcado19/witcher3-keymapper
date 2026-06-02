@@ -288,6 +288,8 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
   for (const [id, items] of groups) {
     const commands = [...new Set(items.map((item) => item.command))];
     if (commands.length < 2) continue;
+    const sources = commands.map((command) => sourceByCommandId?.get(command) || "unknown");
+    if (isVanillaOnlyConflict(sources)) continue;
     const [section, key] = id.split("|");
     conflicts.push({
       section,
@@ -295,7 +297,7 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
       keyLabel: labelKey(key),
       severity: riskyKey(key, commands) ? "high" : "medium",
       commands,
-      sources: commands.map((command) => sourceByCommandId?.get(command) || "unknown"),
+      sources,
       lines: items.map((item) => item.lineNumber)
     });
   }
@@ -303,6 +305,12 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
     const rank = { high: 0, medium: 1 };
     return rank[a.severity] - rank[b.severity] || a.section.localeCompare(b.section);
   });
+}
+
+function isVanillaOnlyConflict(sources) {
+  // Vanilla-only duplicates are intentional Witcher context aliases, not user
+  // remap conflicts. Keep mod/unknown mixes visible for review.
+  return sources.length > 0 && sources.every((source) => source === "game/input.xml");
 }
 
 function riskyKey(key, commands) {
@@ -483,7 +491,7 @@ function serveStatic(res, pathname) {
     return;
   }
   const ext = path.extname(resolved).toLowerCase();
-  const types = { ".html": "text/html", ".css": "text/css", ".js": "application/javascript" };
+  const types = { ".html": "text/html", ".css": "text/css", ".js": "application/javascript", ".svg": "image/svg+xml" };
   res.writeHead(200, { "content-type": `${types[ext] || "text/plain"}; charset=utf-8` });
   fs.createReadStream(resolved).pipe(res);
 }
@@ -552,7 +560,14 @@ const server = http.createServer((req, res) => {
   }
 });
 
-const port = Number(process.env.PORT || 5177);
-server.listen(port, "127.0.0.1", () => {
-  console.log(`Witcher 3 Keymapper running at http://127.0.0.1:${port}`);
-});
+if (require.main === module) {
+  const port = Number(process.env.PORT || 5177);
+  server.listen(port, "127.0.0.1", () => {
+    console.log(`Witcher 3 Keymapper running at http://127.0.0.1:${port}`);
+  });
+}
+
+module.exports = {
+  findConflicts,
+  isVanillaOnlyConflict
+};

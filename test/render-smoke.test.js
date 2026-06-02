@@ -90,6 +90,16 @@ ok("ISO-Enter renders as a rounded rect", () => {
   assert.ok(rect && Number(rect.getAttribute("rx")) > 0, "expected rounded rect");
 });
 
+ok("keyboard SVG renders every key as rounded rect", () => {
+  const svg = ui.renderKeyboardSvg(profile);
+  const shapes = svg.querySelectorAll(".key-shape");
+  assert.strictEqual(shapes.length, profile.keys.length);
+  for (const shape of shapes) {
+    assert.strictEqual(shape.tag, "rect");
+    assert.strictEqual(Number(shape.getAttribute("rx")), 8);
+  }
+});
+
 ok("applyColoring sets --key-fill per source (vanilla gold, mod colour)", () => {
   const svg = ui.renderKeyboardSvg(profile);
   const scan = {
@@ -117,16 +127,19 @@ ok("applyConflicts marks high/medium keys", () => {
   assert.ok(byKey("IK_R").classList.contains("conflict-medium"));
 });
 
-ok("mouse SVG: 6 keys + device-body backdrop", () => {
+ok("mouse SVG: 6 keys + artwork backdrop", () => {
   const svg = ui.renderMouseSvg(mouse);
   assert.strictEqual(svg.querySelectorAll("[data-key]").length, 6);
-  assert.ok(svg.querySelectorAll(".device-body").length === 1);
+  assert.ok(svg.querySelectorAll(".device-artwork").length === 1);
+  assert.strictEqual(svg.querySelectorAll(".key-shape").filter((n) => n.tag === "rect").length, 6);
 });
 
-ok("gamepad SVG: 16 keys + device-body backdrop", () => {
+ok("gamepad SVG: 16 keys + artwork backdrop", () => {
   const svg = ui.renderGamepadSvg(gamepad);
   assert.strictEqual(svg.querySelectorAll("[data-key]").length, 16);
-  assert.ok(svg.querySelectorAll(".device-body").length === 1);
+  assert.ok(svg.querySelectorAll(".device-artwork").length === 1);
+  assert.strictEqual(gamepad.keys.filter((k) => k.shape.startsWith("dpad-")).length, 4);
+  assert.ok(svg.querySelectorAll(".key-shape").filter((n) => n.tag === "circle").length >= 6);
 });
 
 ok("renderDeviceSvg dispatches by type", () => {
