@@ -1,6 +1,6 @@
 // Dependency-free unit + property tests for the device-centric-ui pure helpers.
 // Run: node test/device-ui.test.js   (no framework; plain assertions + loops)
-// Covers Properties 1–3 from .kiro/specs/device-centric-ui/design.md.
+// Covers Properties 1–3 from docs/specs/device-centric-ui/design.md.
 const assert = require("node:assert");
 const fs = require("node:fs");
 const os = require("node:os");

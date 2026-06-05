@@ -68,4 +68,4 @@ Neue Geräte lassen sich allein durch Hinzufügen eines Profils + `index.json`-E
 
 ## Projektdoku & KI-Workflow
 
-`AGENTS.md` (Repo-Doku, Befehle, Doku-Protokoll) ist der Einstieg für KI-Tools. Die Feature-Spezifikation liegt unter `.kiro/specs/device-centric-ui/` (requirements/design/tasks). `AI_JOURNAL.md`, `CLAUDE.md` und `.claude/` sind lokal & gitignored.
+`AGENTS.md` (Repo-Doku, Befehle, Doku-Protokoll) ist der Einstieg für KI-Tools. Die Feature-Spezifikation liegt unter `docs/specs/device-centric-ui/` (requirements/design/tasks). `AI_JOURNAL.md`, `CLAUDE.md` und `.claude/` sind lokal & gitignored.
