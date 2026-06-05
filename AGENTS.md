@@ -19,10 +19,13 @@ Kleines, lokales Web-Tool zum Inspizieren und Bearbeiten von Witcher 3 `input.se
 - `public/app.js` — Client-seitiges Scan-Rendering, Filter, Konflikt-Anzeige, Remap-Dialog.
 - `public/styles.css` — UI-Styling.
 - `input.settings` — **lokale** Arbeitskopie der Witcher-3-Keybinding-Datei. **Nutzerdaten, kein Quellcode** → gitignored, ebenso die Backups (`input.settings.<timestamp>.bak`).
+- `.github/workflows/ci.yml` — GitHub Actions: Node-20/22-Syntaxchecks und Tests.
+- `tools/w3strings-ng/` — optionaler `.w3strings`-Decoder als externes CLI-Tool, inkl. GPL-Lizenzhinweis.
 
 ## 2. Befehle
 
 - `npm start` — startet die App unter `http://127.0.0.1:5177`.
+- `npm test` — dependency-freie Unit-/Property-/Render-Tests.
 - `node --check server.js` — prüft Server-seitige JS-Syntax.
 - `node --check public/app.js` — prüft Client-seitige JS-Syntax.
 
@@ -33,10 +36,10 @@ Plain CommonJS in `server.js`, plain Browser-JS in `public/app.js`. Dependency-f
 
 ## 3. Git-Kontext
 
-- **Eigenständiges, lokales Repo** — kein Fork, kein konfigurierter Upstream/Remote. Keine Push-Restriktionen.
+- **Privates GitHub-Repo:** `origin` → `https://github.com/Delcado19/witcher3-keymapper.git`, Branch `master` trackt `origin/master`.
+- GitHub Actions CI läuft auf Push/PR gegen `master`: `node --check server.js`, `node --check public/app.js`, `npm test` unter Node 20 und 22.
 - Kurze, imperative Commit-Messages, z.B. `Add conflict scanner filters`, `Fix UTF-16 input XML parsing`, `Backup input.settings before remap`.
 - Branch-Konvention (falls Branches genutzt werden): `fix/<kurz>` bzw. `feat/<kurz>`.
-- Falls später ein Remote ergänzt wird: diesen Abschnitt aktualisieren.
 
 ## 4. Doku-Protokoll — bei JEDER Code-Änderung einhalten
 

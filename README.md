@@ -19,6 +19,14 @@ Kein Build-Step, keine npm-Dependencies (nur Node ≥ 20).
 
 - `tools/w3strings-ng/w3strings-ng.exe` bzw. `tools/w3strings-ng/w3strings-ng` — bevorzugter Open-Source-Decoder für `.w3strings` (Autor: Odashikonbu; Quelle: `Odashikonbu/w3strings-rust`; Lizenz: GPL-3.0). Falls die Binary fehlt, kann sie über `W3STRINGS_NG_EXE` gesetzt oder über `PATH` gefunden werden. Build aus `https://github.com/Odashikonbu/w3strings-rust`: `cli-tools`, `cargo build --release`. Der alte Nexus-`w3strings.exe` bleibt nur Fallback.
 
+## CI
+
+GitHub Actions läuft auf Pushes und Pull Requests gegen `master` mit Node 20 und 22:
+
+- `node --check server.js`
+- `node --check public/app.js`
+- `npm test`
+
 ## Funktionen
 
 - **Geräteansicht** — Tabs für Tastatur/Maus/Gamepad; pro Gerät ein code-generiertes SVG-Schema. Belegte Tasten werden in einer gedeckten Witcher-artigen Palette eingefärbt: Vanilla-Bewegung (Salbei/Steel), Vanilla-Kampf/Aktionen (gealtertes Gold), Vanilla-Menüs (staubiges Violett), je Top-5-Mod eine eigene gedämpfte Farbe, „Sonstige Mods", Konflikte (gedämpft rot/amber, pulsierend). Tasten mit Vanilla-Anteil behalten ihre Vanilla-Kategorie, auch wenn zusätzlich eine Mod-Aktion auf derselben Taste liegt. Legende darunter.

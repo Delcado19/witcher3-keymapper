@@ -7,6 +7,11 @@
 /input.settings
 /input.settings.*.bak
 
+# local AI/tool handoff state
+/AI_JOURNAL.md
+/CLAUDE.md
+/.claude/
+
 # misc
 .cache/
 .DS_Store
