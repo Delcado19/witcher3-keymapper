@@ -19,6 +19,10 @@ Kein Build-Step, keine npm-Dependencies (nur Node ≥ 20).
 
 - `tools/w3strings-ng/w3strings-ng.exe` bzw. `tools/w3strings-ng/w3strings-ng` — bevorzugter Open-Source-Decoder für `.w3strings` (Autor: Odashikonbu; Quelle: `Odashikonbu/w3strings-rust`; Lizenz: GPL-3.0). Falls die Binary fehlt, kann sie über `W3STRINGS_NG_EXE` gesetzt oder über `PATH` gefunden werden. Build aus `https://github.com/Odashikonbu/w3strings-rust`: `cli-tools`, `cargo build --release`. Der alte Nexus-`w3strings.exe` bleibt nur Fallback.
 
+## Artwork
+
+Social-/Preview-Banner sollten unter `docs/assets/witcher3-keymapper-social-preview.png` abgelegt werden. Der UI-Stil in `public/styles.css` ist auf dieses Banner abgestimmt: geschwärztes Metall, feine Goldlinien, gedämpfte rote Akzente und reduzierte Pergamenttöne.
+
 ## CI
 
 GitHub Actions läuft auf Pushes und Pull Requests gegen `master` mit Node 20 und 22:
