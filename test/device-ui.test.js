@@ -13,7 +13,8 @@ const {
   findConflicts, isVanillaAction, vanillaDefaultFileForLanguage,
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
-  findW3StringsExe, w3StringsToolKind, resolveDisplayName, humanizeDisplayName, handleSave
+  findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
+  resolveDisplayName, humanizeDisplayName, handleSave
 } = require("../server.js");
 
 const registry = JSON.parse(
@@ -172,6 +173,16 @@ ok("findW3StringsExe: detects optional local decoder when available", () => {
   if (exe) assert.ok(/w3strings(?:-ng)?\.exe$/i.test(exe));
   assert.strictEqual(w3StringsToolKind("C:\\tools\\w3strings-ng.exe"), "ng");
   assert.strictEqual(w3StringsToolKind("C:\\tools\\w3strings.exe"), "legacy");
+});
+ok("decodeW3StringsToCachedCsv: passes dictionary keys to w3strings-ng", () => {
+  const exe = findW3StringsExe();
+  const source = "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\content\\content0\\de.w3strings";
+  if (!exe || !fs.existsSync(source)) return;
+
+  const csv = decodeW3StringsToCachedCsv(source, exe, new Set(["move_forward", "toggle_walk_run"]));
+  assert.ok(csv && fs.existsSync(csv));
+  const decoded = fs.readFileSync(csv, "utf8");
+  assert.ok(decoded.includes("|move_forward|") || decoded.includes("|toggle_walk_run|"));
 });
 ok("resolveDisplayName: prefers localization and humanizes raw display keys", () => {
   const localized = new Map([["PauseGameToggle", "Pause game"]]);

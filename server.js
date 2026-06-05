@@ -415,6 +415,7 @@ function collectRelevantFiles(dir, files, modName, depth = 0) {
 
 function loadLocalizationMap(modsDir, languageTag) {
   const preferred = preferredLocalizationCodes(languageTag);
+  const dictionaryKeys = collectLocalizationDictionaryKeys(defaults.gameRoot, modsDir);
   const files = findLocalizationCsvFiles(modsDir)
     .map((file) => ({ ...file, score: localizationLanguageScore(file.language, preferred) }))
     .sort((a, b) => a.score - b.score || a.path.localeCompare(b.path));
@@ -431,7 +432,7 @@ function loadLocalizationMap(modsDir, languageTag) {
       if (key && value) map.set(key, value);
     }
   }
-  for (const [key, value] of loadW3StringsLocalizationMap(defaults.gameRoot, modsDir, languageTag)) {
+  for (const [key, value] of loadW3StringsLocalizationMap(defaults.gameRoot, modsDir, languageTag, dictionaryKeys)) {
     if (key && value) map.set(key, value);
   }
   return map;
@@ -502,7 +503,54 @@ function parseLocalizationCsvText(text) {
   return entries;
 }
 
-function loadW3StringsLocalizationMap(gameRoot, modsDir, languageTag) {
+function collectLocalizationDictionaryKeys(gameRoot, modsDir) {
+  const keys = new Set();
+  const xmlFiles = [{ path: defaults.gameInputXml }, ...findModInputXmlFiles(modsDir)];
+  for (const item of parseInputXmlFiles(xmlFiles)) {
+    if (item.id) keys.add(item.id);
+    if (item.displayName) keys.add(item.displayName);
+    for (const action of item.actions || []) if (action) keys.add(action);
+  }
+
+  for (const file of findLocalizationCsvFiles(modsDir)) {
+    try {
+      for (const key of parseLocalizationCsvText(readText(file.path)).keys()) keys.add(key);
+    } catch {
+      // Dictionary quality is best-effort; unreadable mod files are skipped.
+    }
+  }
+
+  const scriptFiles = findWitcherScriptFiles(gameRoot, modsDir);
+  for (const file of scriptFiles) {
+    try {
+      for (const key of parseWitcherScriptLocalizationKeys(readText(file.path))) keys.add(key);
+    } catch {
+      // Some mod scripts may be encoded oddly or partially generated.
+    }
+  }
+  return keys;
+}
+
+function findWitcherScriptFiles(gameRoot, modsDir) {
+  const files = [];
+  collectWitcherScriptFiles(path.join(gameRoot, "content"), files);
+  collectWitcherScriptFiles(modsDir, files);
+  return files;
+}
+
+function collectWitcherScriptFiles(dir, files, depth = 0) {
+  if (depth > 8 || !fs.existsSync(dir)) return;
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      collectWitcherScriptFiles(full, files, depth + 1);
+      continue;
+    }
+    if (/\.ws$/i.test(item.name)) files.push({ path: full });
+  }
+}
+
+function loadW3StringsLocalizationMap(gameRoot, modsDir, languageTag, dictionaryKeys = new Set()) {
   const exe = findW3StringsExe();
   if (!exe) return new Map();
 
@@ -514,7 +562,7 @@ function loadW3StringsLocalizationMap(gameRoot, modsDir, languageTag) {
 
   const map = new Map();
   for (const file of files) {
-    const csv = decodeW3StringsToCachedCsv(file.path, exe);
+    const csv = decodeW3StringsToCachedCsv(file.path, exe, dictionaryKeys);
     if (!csv) continue;
     let text = "";
     try {
@@ -591,21 +639,25 @@ function collectW3StringsFiles(dir, files, source, depth = 0) {
   }
 }
 
-function decodeW3StringsToCachedCsv(file, exe) {
+function decodeW3StringsToCachedCsv(file, exe, dictionaryKeys = new Set()) {
+  let workDir = null;
   try {
     const stat = fs.statSync(file);
+    const dictionaryHash = hashW3StringsDictionaryKeys(dictionaryKeys);
     const key = crypto.createHash("sha1")
-      .update(`${file}\0${stat.size}\0${stat.mtimeMs}`)
+      .update(`${file}\0${stat.size}\0${stat.mtimeMs}\0${dictionaryHash}`)
       .digest("hex");
     const cacheDir = defaults.w3stringsCacheDir;
-    const workDir = path.join(cacheDir, "work");
+    workDir = path.join(cacheDir, "work", key);
     const csv = path.join(cacheDir, `${key}.${path.basename(file)}.csv`);
     if (fs.existsSync(csv)) return csv;
 
     fs.mkdirSync(workDir, { recursive: true });
     const workFile = path.join(workDir, `${key}.w3strings`);
     const outFile = path.join(workDir, `${key}.csv`);
+    const dictionaryFile = path.join(workDir, "w3strings.txt");
     fs.copyFileSync(file, workFile);
+    writeW3StringsDictionary(dictionaryFile, dictionaryKeys);
     // Decode a cache copy so the game/mod install directories stay read-only.
     // Prefer the GPL Rust CLI (`w3strings-ng decode input output`); keep the
     // old Nexus encoder syntax as a compatibility fallback for local installs.
@@ -619,11 +671,24 @@ function decodeW3StringsToCachedCsv(file, exe) {
     if (!fs.existsSync(outFile)) return null;
     fs.mkdirSync(cacheDir, { recursive: true });
     fs.renameSync(outFile, csv);
-    fs.rmSync(workFile, { force: true });
     return csv;
   } catch {
     return null;
+  } finally {
+    if (workDir) fs.rmSync(workDir, { recursive: true, force: true });
   }
+}
+
+function hashW3StringsDictionaryKeys(keys) {
+  return crypto.createHash("sha1").update(sortedW3StringsDictionaryKeys(keys).join("\n")).digest("hex");
+}
+
+function writeW3StringsDictionary(file, keys) {
+  fs.writeFileSync(file, sortedW3StringsDictionaryKeys(keys).join("\n"), "utf8");
+}
+
+function sortedW3StringsDictionaryKeys(keys) {
+  return [...keys].map((key) => String(key || "").trim()).filter(Boolean).sort();
 }
 
 function parseWitcherScriptLocalizationKeys(text) {
@@ -1245,6 +1310,7 @@ module.exports = {
   parseInputXmlText,
   parseLocalizationCsvText,
   parseWitcherScriptLocalizationKeys,
+  collectLocalizationDictionaryKeys,
   findW3StringsExe,
   w3StringsToolKind,
   decodeW3StringsToCachedCsv,
