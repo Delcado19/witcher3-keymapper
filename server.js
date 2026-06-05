@@ -1,16 +1,20 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const http = require("node:http");
+const crypto = require("node:crypto");
 const { URL } = require("node:url");
-const { execFile } = require("node:child_process");
+const { execFile, execFileSync } = require("node:child_process");
 
 const root = __dirname;
 const publicDir = path.join(root, "public");
 
 const defaults = {
   inputSettings: path.join(root, "input.settings"),
+  gameRoot: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY",
   gameInputXml: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\bin\\config\\r4game\\user_config_matrix\\pc\\input.xml",
-  modsDir: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\Mods"
+  vanillaDefaultDir: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\bin\\config\\r4game\\legacy\\base",
+  modsDir: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\Mods",
+  w3stringsCacheDir: path.join(root, ".cache", "w3strings")
 };
 
 const keyLabels = new Map(Object.entries({
@@ -75,6 +79,7 @@ function parseInputSettings(file) {
 
 function parseInputSettingsText(text) {
   const lines = text.split(/\r?\n/);
+  const syntax = validateInputSettingsSyntax(lines);
   let section = "";
   const entries = [];
 
@@ -90,9 +95,12 @@ function parseInputSettingsText(text) {
     if (!bindingMatch) return;
 
     const params = {};
-    for (const part of bindingMatch[2].split(",")) {
-      const [name, value] = part.split("=");
-      if (name && value) params[name.trim()] = value.trim();
+    for (const part of splitBindingParams(bindingMatch[2])) {
+      const eq = part.indexOf("=");
+      if (eq === -1) continue;
+      const name = part.slice(0, eq).trim();
+      const value = part.slice(eq + 1).trim();
+      if (name && value) params[name] = value;
     }
 
     entries.push({
@@ -108,7 +116,179 @@ function parseInputSettingsText(text) {
     });
   });
 
-  return { text, lines, entries };
+  return { text, lines, entries, syntax };
+}
+
+// input.settings is INI-like but not generic INI: binding rows must be
+// `IK_*=(Action=...)`, `[InputSettings]` can carry metadata such as `Version=55`,
+// and Witcher also allows valueless flags such as `Reprocess`. Validate that
+// shape before scanning so malformed loaded files are not silently reduced to
+// "missing bindings".
+function validateInputSettingsSyntax(lines) {
+  const diagnostics = [];
+  let section = "";
+  let bindingCount = 0;
+
+  lines.forEach((raw, index) => {
+    const lineNumber = index + 1;
+    const trimmed = raw.trim();
+    if (!trimmed || trimmed.startsWith(";") || trimmed.startsWith("#")) return;
+
+    const sectionMatch = trimmed.match(/^\[([^\[\]]+)]$/);
+    if (sectionMatch) {
+      section = sectionMatch[1].trim();
+      if (!section) addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Section name is empty.");
+      return;
+    }
+
+    const bindingMatch = trimmed.match(/^(IK_[A-Za-z0-9_]+)=\((.*)\)$/);
+    if (!bindingMatch) {
+      if (/^[A-Za-z][A-Za-z0-9_]*=.+$/.test(trimmed)) {
+        if (!section) addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Metadata assignment appears before any section header.");
+        return;
+      }
+      addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Expected [Section] or IK_*=(Action=...) binding.");
+      return;
+    }
+    bindingCount += 1;
+    if (!section) addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Binding appears before any section header.");
+
+    const params = splitBindingParams(bindingMatch[2]);
+    if (!params.length) {
+      addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Binding parameter list is empty.");
+      return;
+    }
+
+    let hasAction = false;
+    for (const part of params) {
+      const eq = part.indexOf("=");
+      if (eq === -1) continue; // Witcher valueless flag, e.g. Reprocess.
+      const name = part.slice(0, eq).trim();
+      const value = part.slice(eq + 1).trim();
+      if (!name || !value) {
+        addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Binding parameter name or value is empty.");
+        continue;
+      }
+      if (name === "Action") hasAction = true;
+    }
+    if (!hasAction) addSyntaxDiagnostic(diagnostics, "error", lineNumber, "Binding is missing required Action parameter.");
+  });
+
+  if (!bindingCount) addSyntaxDiagnostic(diagnostics, "error", 0, "No IK_* bindings found.");
+  const errors = diagnostics.filter((item) => item.severity === "error");
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings: diagnostics.filter((item) => item.severity === "warning")
+  };
+}
+
+function addSyntaxDiagnostic(diagnostics, severity, lineNumber, message) {
+  diagnostics.push({ severity, lineNumber, message });
+}
+
+function splitBindingParams(text) {
+  return String(text || "")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+const KEY_SORT_GROUPS = [
+  { pattern: /^IK_([A-Z])$/, rank: (match) => match[1].charCodeAt(0) - 65 },
+  { pattern: /^IK_(\d)$/, rank: (match) => Number(match[1]) },
+  { pattern: /^IK_NumPad(\d)$/, rank: (match) => Number(match[1]) },
+  { pattern: /^IK_Num(Slash|Star|Minus|Plus|Period|Enter)$/, order: ["Slash", "Star", "Minus", "Plus", "Period", "Enter"] },
+  { pattern: /^IK_F(\d{1,2})$/, rank: (match) => Number(match[1]) - 1 },
+  { keys: ["IK_LeftMouse", "IK_RightMouse", "IK_MiddleMouse", "IK_Mouse4", "IK_Mouse5", "IK_MouseZ", "IK_MouseX", "IK_MouseY"] },
+  { keys: ["IK_LShift", "IK_RShift", "IK_LControl", "IK_RControl", "IK_Alt", "IK_Tab", "IK_CapsLock", "IK_Space", "IK_Backspace", "IK_Enter", "IK_Escape"] },
+  { keys: ["IK_Insert", "IK_Delete", "IK_Home", "IK_End", "IK_PageUp", "IK_PageDown", "IK_Up", "IK_Down", "IK_Left", "IK_Right"] },
+  { keys: ["IK_Tilde", "IK_Minus", "IK_Equals", "IK_LeftBracket", "IK_RightBracket", "IK_Backslash", "IK_Semicolon", "IK_Apostrophe", "IK_Comma", "IK_Period", "IK_Slash", "IK_OEM_102"] },
+  { keys: [
+    "IK_Pad_A_CROSS", "IK_Pad_B_CIRCLE", "IK_Pad_X_SQUARE", "IK_Pad_Y_TRIANGLE",
+    "IK_Pad_LeftShoulder", "IK_Pad_RightShoulder", "IK_Pad_LeftTrigger", "IK_Pad_RightTrigger",
+    "IK_Pad_LeftThumb", "IK_Pad_RightThumb", "IK_Pad_LeftAxisX", "IK_Pad_LeftAxisY",
+    "IK_Pad_RightAxisX", "IK_Pad_RightAxisY", "IK_Pad_DigitUp", "IK_Pad_DigitDown",
+    "IK_Pad_DigitLeft", "IK_Pad_DigitRight", "IK_Pad_Start", "IK_Pad_Back_Select"
+  ] },
+  { pattern: /^IK_PS4_/, rank: (_, key) => key },
+  { keys: ["IK_None"] }
+];
+
+function keySortTuple(key) {
+  for (let groupIndex = 0; groupIndex < KEY_SORT_GROUPS.length; groupIndex += 1) {
+    const group = KEY_SORT_GROUPS[groupIndex];
+    if (group.keys) {
+      const index = group.keys.indexOf(key);
+      if (index !== -1) return [groupIndex, index, key];
+      continue;
+    }
+    const match = key.match(group.pattern);
+    if (!match) continue;
+    if (group.order) return [groupIndex, group.order.indexOf(match[1]), key];
+    return [groupIndex, group.rank(match, key), key];
+  }
+  return [KEY_SORT_GROUPS.length, key, key];
+}
+
+function compareInputKeys(a, b) {
+  const left = keySortTuple(a);
+  const right = keySortTuple(b);
+  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
+    const av = left[index];
+    const bv = right[index];
+    if (av === bv) continue;
+    if (typeof av === "number" && typeof bv === "number") return av - bv;
+    return String(av).localeCompare(String(bv));
+  }
+  return 0;
+}
+
+function sortInputSettingsText(text) {
+  const lines = String(text || "").split(/\r?\n/);
+  assertValidInputSettings(validateInputSettingsSyntax(lines));
+
+  const blocks = [];
+  let preamble = [];
+  let current = null;
+  for (const line of lines) {
+    if (/^\s*\[[^\[\]]+]\s*$/.test(line)) {
+      current = { header: line, body: [] };
+      blocks.push(current);
+      continue;
+    }
+    if (current) current.body.push(line);
+    else preamble.push(line);
+  }
+
+  const out = [...preamble.filter((line) => line.trim())];
+  for (const block of blocks) {
+    if (out.length) out.push("");
+    out.push(block.header);
+    out.push(...sortSectionBody(block.body));
+  }
+  return out.join("\n") + (text.endsWith("\n") ? "\n" : "");
+}
+
+function sortSectionBody(lines) {
+  const metadata = [];
+  const bindings = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const bindingMatch = line.trim().match(/^(IK_[A-Za-z0-9_]+)=\(/);
+    if (!bindingMatch) {
+      metadata.push(line);
+      continue;
+    }
+    bindings.push({ line, key: bindingMatch[1], index: bindings.length });
+  }
+  bindings.sort((a, b) => compareInputKeys(a.key, b.key) || a.index - b.index);
+  return metadata.concat(bindings.map((item) => item.line));
+}
+
+function parseOptionalInputSettings(file) {
+  if (!fs.existsSync(file)) return { text: "", lines: [], entries: [] };
+  return { ...parseInputSettings(file), file };
 }
 
 function labelKey(key) {
@@ -129,9 +309,13 @@ function deviceForKey(key) {
 function parseInputXml(file) {
   if (!fs.existsSync(file)) return [];
   const text = readText(file);
+  return parseInputXmlText(text);
+}
+
+function parseInputXmlText(text) {
   const vars = [];
   const rx = /<Var\b[^>]*builder="Input"[^>]*>/g;
-  for (const match of text.matchAll(rx)) {
+  for (const match of String(text || "").matchAll(rx)) {
     const tag = match[0];
     const attr = (name) => {
       const found = tag.match(new RegExp(`${name}="([^"]*)"`));
@@ -145,6 +329,43 @@ function parseInputXml(file) {
       tags: attr("tags"),
       actions
     });
+  }
+  return vars;
+}
+
+function findModInputXmlFiles(modsDir) {
+  const files = [];
+  if (!fs.existsSync(modsDir)) return files;
+  for (const modName of fs.readdirSync(modsDir)) {
+    const modPath = path.join(modsDir, modName);
+    if (!fs.statSync(modPath).isDirectory()) continue;
+    collectModInputXmlFiles(modPath, files, modName);
+  }
+  return files;
+}
+
+function collectModInputXmlFiles(dir, files, modName, depth = 0) {
+  if (depth > 8) return;
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      collectModInputXmlFiles(full, files, modName, depth + 1);
+      continue;
+    }
+    if (/^(input\.xml|input_xml\.txt)$/i.test(item.name)) files.push({ path: full, modName });
+  }
+}
+
+function parseInputXmlFiles(files) {
+  const vars = [];
+  for (const file of files) {
+    try {
+      for (const item of parseInputXml(file.path || file)) {
+        vars.push({ ...item, source: file.modName || "game/input.xml" });
+      }
+    } catch {
+      // A malformed mod metadata file should not prevent scanning keybindings.
+    }
   }
   return vars;
 }
@@ -192,30 +413,284 @@ function collectRelevantFiles(dir, files, modName, depth = 0) {
   }
 }
 
+function loadLocalizationMap(modsDir, languageTag) {
+  const preferred = preferredLocalizationCodes(languageTag);
+  const files = findLocalizationCsvFiles(modsDir)
+    .map((file) => ({ ...file, score: localizationLanguageScore(file.language, preferred) }))
+    .sort((a, b) => a.score - b.score || a.path.localeCompare(b.path));
+
+  const map = new Map();
+  for (const file of files) {
+    let text = "";
+    try {
+      text = readText(file.path);
+    } catch {
+      continue;
+    }
+    for (const [key, value] of parseLocalizationCsvText(text)) {
+      if (key && value) map.set(key, value);
+    }
+  }
+  for (const [key, value] of loadW3StringsLocalizationMap(defaults.gameRoot, modsDir, languageTag)) {
+    if (key && value) map.set(key, value);
+  }
+  return map;
+}
+
+function findLocalizationCsvFiles(modsDir) {
+  const files = [];
+  if (!fs.existsSync(modsDir)) return files;
+  for (const modName of fs.readdirSync(modsDir)) {
+    const modPath = path.join(modsDir, modName);
+    if (!fs.statSync(modPath).isDirectory()) continue;
+    collectLocalizationCsvFiles(modPath, files, modName);
+  }
+  return files;
+}
+
+function collectLocalizationCsvFiles(dir, files, modName, depth = 0) {
+  if (depth > 8) return;
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      collectLocalizationCsvFiles(full, files, modName, depth + 1);
+      continue;
+    }
+    if (!/\.csv$/i.test(item.name)) continue;
+    files.push({ path: full, modName, language: detectLocalizationLanguage(item.name, safeReadLanguageMeta(full)) });
+  }
+}
+
+function safeReadLanguageMeta(file) {
+  try {
+    return readText(file).split(/\r?\n/, 8).join("\n");
+  } catch {
+    return "";
+  }
+}
+
+function detectLocalizationLanguage(fileName, head = "") {
+  const meta = String(head || "").match(/;meta\[language=([^\]]+)]/i);
+  if (meta) return meta[1].toLowerCase();
+  const parts = String(fileName || "").toLowerCase().split(/[._-]/).filter(Boolean);
+  const known = ["ar", "br", "cn", "cz", "de", "en", "es", "fr", "it", "jp", "kr", "mx", "pl", "pt", "ru", "tr", "zh"];
+  return parts.find((part) => known.includes(part)) || "";
+}
+
+function preferredLocalizationCodes(languageTag) {
+  const primary = String(languageTag || "").toLowerCase().split(/[-_]/)[0];
+  return [primary, "en"].filter(Boolean);
+}
+
+function localizationLanguageScore(language, preferred) {
+  const index = preferred.indexOf(String(language || "").toLowerCase());
+  return index === -1 ? 0 : 100 - index;
+}
+
+function parseLocalizationCsvText(text) {
+  const entries = new Map();
+  for (const raw of String(text || "").split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith(";")) continue;
+    const columns = line.split("|").map((part) => part.trim());
+    if (columns.length >= 4) {
+      entries.set(columns[2], columns.slice(3).join("|").trim());
+    } else if (columns.length >= 2) {
+      entries.set(columns[0], columns.slice(1).join("|").trim());
+    }
+  }
+  return entries;
+}
+
+function loadW3StringsLocalizationMap(gameRoot, modsDir, languageTag) {
+  const exe = findW3StringsExe();
+  if (!exe) return new Map();
+
+  const preferred = preferredLocalizationCodes(languageTag);
+  const files = findW3StringsFiles(gameRoot, modsDir)
+    .map((file) => ({ ...file, score: localizationLanguageScore(file.language, preferred) }))
+    .filter((file) => file.score > 0)
+    .sort((a, b) => a.score - b.score || a.path.localeCompare(b.path));
+
+  const map = new Map();
+  for (const file of files) {
+    const csv = decodeW3StringsToCachedCsv(file.path, exe);
+    if (!csv) continue;
+    let text = "";
+    try {
+      text = readText(csv);
+    } catch {
+      continue;
+    }
+    for (const [key, value] of parseLocalizationCsvText(text)) {
+      if (key && value) map.set(key, value);
+    }
+  }
+  return map;
+}
+
+function findW3StringsExe() {
+  const candidates = [
+    process.env.W3STRINGS_NG_EXE,
+    path.join(root, "tools", "w3strings-ng", "w3strings-ng.exe"),
+    path.join(root, "tools", "w3strings-ng", "w3strings-ng"),
+    path.join(root, "tools", "w3strings", "w3strings-ng.exe"),
+    path.join(root, "tools", "w3strings", "w3strings-ng"),
+    findExecutableOnPath("w3strings-ng"),
+    process.env.W3STRINGS_EXE,
+    path.join(root, "tools", "w3strings", "w3strings.exe"),
+    path.join(root, "tools", "w3strings", "w3strings"),
+    findExecutableOnPath("w3strings"),
+    "C:\\tmp\\w3strings-encoder-0.4.1\\w3strings.exe"
+  ].filter(Boolean);
+  return candidates.find((file) => {
+    try {
+      return fs.existsSync(file) && fs.statSync(file).isFile();
+    } catch {
+      return false;
+    }
+  }) || null;
+}
+
+function w3StringsToolKind(exe) {
+  return /w3strings-ng(?:\.exe)?$/i.test(path.basename(String(exe || ""))) ? "ng" : "legacy";
+}
+
+function findExecutableOnPath(command) {
+  const paths = String(process.env.PATH || "").split(path.delimiter).filter(Boolean);
+  const extensions = process.platform === "win32"
+    ? String(process.env.PATHEXT || ".EXE;.CMD;.BAT").split(";").filter(Boolean)
+    : [""];
+  for (const dir of paths) {
+    for (const ext of extensions) {
+      const candidate = path.join(dir, `${command}${ext}`);
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  }
+  return null;
+}
+
+function findW3StringsFiles(gameRoot, modsDir) {
+  const files = [];
+  const contentDir = path.join(gameRoot, "content");
+  collectW3StringsFiles(contentDir, files, "game/content");
+  collectW3StringsFiles(modsDir, files, "mods");
+  return files;
+}
+
+function collectW3StringsFiles(dir, files, source, depth = 0) {
+  if (depth > 8 || !fs.existsSync(dir)) return;
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      collectW3StringsFiles(full, files, source, depth + 1);
+      continue;
+    }
+    if (!/\.w3strings$/i.test(item.name)) continue;
+    files.push({ path: full, source, language: detectLocalizationLanguage(item.name) });
+  }
+}
+
+function decodeW3StringsToCachedCsv(file, exe) {
+  try {
+    const stat = fs.statSync(file);
+    const key = crypto.createHash("sha1")
+      .update(`${file}\0${stat.size}\0${stat.mtimeMs}`)
+      .digest("hex");
+    const cacheDir = defaults.w3stringsCacheDir;
+    const workDir = path.join(cacheDir, "work");
+    const csv = path.join(cacheDir, `${key}.${path.basename(file)}.csv`);
+    if (fs.existsSync(csv)) return csv;
+
+    fs.mkdirSync(workDir, { recursive: true });
+    const workFile = path.join(workDir, `${key}.w3strings`);
+    const outFile = path.join(workDir, `${key}.csv`);
+    fs.copyFileSync(file, workFile);
+    // Decode a cache copy so the game/mod install directories stay read-only.
+    // Prefer the GPL Rust CLI (`w3strings-ng decode input output`); keep the
+    // old Nexus encoder syntax as a compatibility fallback for local installs.
+    if (w3StringsToolKind(exe) === "ng") {
+      execFileSync(exe, ["decode", workFile, outFile], { windowsHide: true, encoding: "utf8", timeout: 120000 });
+    } else {
+      execFileSync(exe, ["--decode", workFile], { windowsHide: true, encoding: "utf8", timeout: 120000 });
+      const legacyOut = `${workFile}.csv`;
+      if (fs.existsSync(legacyOut)) fs.renameSync(legacyOut, outFile);
+    }
+    if (!fs.existsSync(outFile)) return null;
+    fs.mkdirSync(cacheDir, { recursive: true });
+    fs.renameSync(outFile, csv);
+    fs.rmSync(workFile, { force: true });
+    return csv;
+  } catch {
+    return null;
+  }
+}
+
+function parseWitcherScriptLocalizationKeys(text) {
+  const keys = new Set();
+  const rx = /\bGetLocString(?:ByKeyExt)?\(\s*["']([^"']+)["']\s*\)/g;
+  for (const match of String(text || "").matchAll(rx)) keys.add(match[1]);
+  return [...keys].sort();
+}
+
+function resolveDisplayName(rawDisplayName, localizationMap) {
+  const raw = String(rawDisplayName || "").trim();
+  if (!raw) return "";
+  return localizationMap.get(raw) || humanizeDisplayName(raw);
+}
+
+function humanizeDisplayName(value) {
+  const cleaned = String(value || "")
+    .replace(/^(ControlLayout|panel_input_action|panel_groupname|panel_button_common|panel_common|input)_/i, "")
+    .replace(/^panel_/i, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return value;
+  return cleaned.split(" ").map((word) => {
+    if (/^(ui|hud|dpad|dlc|npc|pc)$/i.test(word)) return word.toUpperCase();
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }).join(" ");
+}
+
 // input defaults to the server-side input.settings, but /api/load passes a
 // pre-parsed in-memory upload so a loaded file is scanned without changing the
 // default path (Requirement 7.1, 7.10).
 function buildScan(input = parseInputSettings(defaults.inputSettings)) {
-  const vars = parseInputXml(defaults.gameInputXml);
-  const knownActions = new Set(vars.flatMap((item) => item.actions));
-  const allActions = [...new Set(input.entries.map((entry) => entry.action).filter(Boolean))];
+  assertValidInputSettings(input.syntax);
+  const inputLanguage = detectLayoutLanguageWin32Sync();
+  const vars = parseInputXmlFiles([
+    { path: defaults.gameInputXml, modName: "game/input.xml" },
+    ...findModInputXmlFiles(defaults.modsDir)
+  ]);
+  const localizationMap = loadLocalizationMap(defaults.modsDir, inputLanguage);
+  const vanillaDefaults = parseOptionalInputSettings(vanillaDefaultFileForLanguage(inputLanguage));
+  const vanillaDefaultActions = new Set(vanillaDefaults.entries.map((entry) => entry.action).filter(Boolean));
+  const entries = mergeVanillaDefaultEntries(input.entries, vanillaDefaults.entries);
+  const knownActions = new Set([...vars.flatMap((item) => item.actions), ...vanillaDefaultActions]);
+  const allActions = [...new Set(entries.map((entry) => entry.action).filter(Boolean))];
   const modSources = findActionSources(defaults.modsDir, allActions);
 
   const commandByAction = new Map();
   for (const item of vars) {
-    for (const action of item.actions) commandByAction.set(action, item);
+    for (const action of item.actions) {
+      const current = commandByAction.get(action);
+      if (!current || current.source !== "game/input.xml") commandByAction.set(action, item);
+    }
   }
 
   const commandMap = new Map();
-  for (const entry of input.entries) {
+  for (const entry of entries) {
     const known = commandByAction.get(entry.action);
     const id = known ? known.id : entry.action;
     if (!commandMap.has(id)) {
       commandMap.set(id, {
         id,
-        displayName: known?.displayName || entry.action,
+        displayName: resolveDisplayName(known?.displayName || entry.action, localizationMap),
+        displayNameKey: known?.displayName || entry.action,
         tags: known?.tags || "",
-        source: modSources.get(entry.action) || (knownActions.has(entry.action) ? "game/input.xml" : "unknown"),
+        source: modSources.get(entry.action) || (isVanillaAction(entry.action, knownActions) ? "game/input.xml" : "unknown"),
         actions: known?.actions || [entry.action],
         bindings: [],
         keys: []
@@ -257,18 +732,49 @@ function buildScan(input = parseInputSettings(defaults.inputSettings)) {
 
   return {
     paths: defaults,
+    // The save UI posts the current text to /api/save. Including it in scans
+    // keeps default-file saves and uploaded session-file saves on the same
+    // contract without adding server session state.
+    content: input.text,
+    syntax: input.syntax,
     stats: {
       sections: new Set(input.entries.map((entry) => entry.section)).size,
-      bindings: input.entries.length,
+      bindings: entries.length,
       actions: allActions.length,
-      keys: new Set(input.entries.map((entry) => entry.key)).size,
+      keys: new Set(entries.map((entry) => entry.key)).size,
       commands: commandMap.size,
       modActions: [...modSources.keys()].length
     },
+    inputLanguage,
+    vanillaDefaultFile: vanillaDefaults.file || null,
     commands: [...commandMap.values()].sort((a, b) => a.id.localeCompare(b.id)),
-    conflicts: findConflicts(input.entries, commandByAction, sourceByCommandId),
-    unlistedActions: allActions.filter((action) => !knownActions.has(action)).sort()
+    conflicts: findConflicts(entries, commandByAction, sourceByCommandId),
+    unlistedActions: allActions.filter((action) => !isVanillaAction(action, knownActions)).sort()
   };
+}
+
+function vanillaDefaultFileForLanguage(inputLanguage) {
+  const lang = String(inputLanguage || "").toLowerCase();
+  const fileName = lang.startsWith("de") ? "input_qwertz.ini"
+    : lang.startsWith("fr") ? "input_azerty.ini"
+    : "input_qwerty.ini";
+  return path.join(defaults.vanillaDefaultDir, fileName);
+}
+
+function isVanillaAction(action, knownActions) {
+  return knownActions.has(action) || OFFICIAL_VANILLA_ACTIONS.has(action);
+}
+
+function mergeVanillaDefaultEntries(primaryEntries, defaultEntries) {
+  const primaryActions = new Set(primaryEntries.map((entry) => entry.action).filter(Boolean));
+  const supplemental = defaultEntries
+    .filter((entry) => entry.action && !primaryActions.has(entry.action))
+    .map((entry) => ({
+      ...entry,
+      section: `VanillaDefaults:${entry.section}`,
+      lineNumber: 0
+    }));
+  return primaryEntries.concat(supplemental);
 }
 
 // sourceByCommandId (optional) maps a command id to its binding source so each
@@ -286,7 +792,8 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
 
   const conflicts = [];
   for (const [id, items] of groups) {
-    const commands = [...new Set(items.map((item) => item.command))];
+    const candidateItems = conflictRelevantItems(items);
+    const commands = [...new Set(candidateItems.map((item) => item.command))];
     if (commands.length < 2) continue;
     const sources = commands.map((command) => sourceByCommandId?.get(command) || "unknown");
     if (isVanillaOnlyConflict(sources)) continue;
@@ -298,7 +805,7 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
       severity: riskyKey(key, commands) ? "high" : "medium",
       commands,
       sources,
-      lines: items.map((item) => item.lineNumber)
+      lines: candidateItems.map((item) => item.lineNumber)
     });
   }
   return conflicts.sort((a, b) => {
@@ -306,6 +813,133 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
     return rank[a.severity] - rank[b.severity] || a.section.localeCompare(b.section);
   });
 }
+
+function conflictRelevantItems(items) {
+  const gameplayItems = items.filter((item) => !isIgnoredConflictCommand(item.command));
+  if (isBenignCommandSet(gameplayItems.map((item) => item.command))) return [];
+
+  const byActivation = new Map();
+  for (const item of gameplayItems) {
+    const bucket = activationBucket(item);
+    if (!byActivation.has(bucket)) byActivation.set(bucket, []);
+    byActivation.get(bucket).push(item);
+  }
+
+  const relevant = [];
+  for (const bucketItems of byActivation.values()) {
+    const commands = [...new Set(bucketItems.map((item) => item.command))];
+    // Tap/hold/axis bindings on the same key intentionally coexist in Witcher 3.
+    // Only same-activation command sets can physically compete for one input.
+    if (commands.length < 2) continue;
+    if (isBenignCommandSet(commands)) continue;
+    relevant.push(...bucketItems);
+  }
+  return relevant;
+}
+
+function activationBucket(item) {
+  const state = item.state || "Press";
+  return `${state}|${item.value || ""}|${item.idleTime || ""}`;
+}
+
+function isBenignCommandSet(commands) {
+  const unique = [...new Set(commands)];
+  if (unique.length < 2) return true;
+  return BENIGN_COMMAND_GROUPS.some((group) => unique.every((command) => group.has(command)));
+}
+
+function isIgnoredConflictCommand(command) {
+  return /^Debug(Input)?$/.test(command) ||
+    /^Debug_/.test(command) ||
+    /^SCN_DBG_/.test(command);
+}
+
+// Witcher 3 uses duplicate key rows for contextual aliases: keyboard movement
+// also feeds GI axis actions, menu shortcuts share one key, interaction keys
+// fan out to context-specific actions, and D-pad helpers multiplex combat item
+// actions. These are not remap conflicts unless another non-aliased command
+// shares the same activation.
+const BENIGN_COMMAND_GROUPS = [
+  new Set(["MoveFwd", "MoveBck", "MoveLft", "MoveRght", "GI_AxisLeftX", "GI_AxisLeftY"]),
+  new Set(["Interaction", "AttackLight", "Finish", "Finisher", "PlaceTrophy", "BuryBody", "ItemsPadUse", "Sprint", "CbtRoll"]),
+  new Set(["HoldToSeeMap", "PanelMap", "PanelMapPC", "FastMenu", "ShowEntryInPanel"]),
+  new Set(["HoldToSeeQuests", "PanelJour"]),
+  new Set(["HoldToSeeCharStats", "PanelChar"]),
+  new Set(["HoldToSeeEssentials", "HubMenu"]),
+  new Set(["PanelGlossary", "GotoGlossary"]),
+  new Set(["IngameMenu", "ShowEntryInPanel", "GotoGlossary", "PanelInv"]),
+  new Set(["FastMenu", "HoldFastMenu", "ShowEntryInPanel", "PanelMap"]),
+  new Set(["DrinkPotion1", "DrinkPotion1Hold", "DrinkPotionUpperHold", "ItemsPadUp"]),
+  new Set(["DrinkPotion2", "DrinkPotion2Hold", "DrinkPotionLowerHold", "ItemsPadDown"]),
+  new Set(["DrinkPotion3", "DrinkPotion3Hold"]),
+  new Set(["DrinkPotion4", "DrinkPotion4Hold"]),
+  new Set(["AttackLight", "SpecialAttackLight"]),
+  new Set(["AttackHeavy", "SpecialAttackHeavy"]),
+  new Set(["OilSteel", "SteelSword", "SwordSheathe", "ComboDigitLeft", "ItemsPadLeft", "CiriHolsterWeapon"]),
+  new Set(["OilSilver", "SilverSword", "SwordSheathe", "ComboDigitRight", "ItemsPadRight", "CiriHolsterWeapon"]),
+  new Set(["Follow", "GallopCanter"]),
+  new Set(["VehicleItemActionAbort", "JumpRoll"]),
+  new Set(["ThrowCastAbort", "VehicleItemActionAbort"]),
+  new Set(["HorseDismount", "VehicleItemActionAbort"]),
+  new Set(["PanelCraft", "PanelFakeHud"]),
+  new Set(["Alternate", "LockAndGuard", "Focus"])
+];
+
+// The official Witcher 3 controls chart shows keyboard, mouse and gamepad as
+// parallel first-class inputs. Some stock actions from that scheme are absent
+// from input.xml on this install, so keep them source-classified as vanilla
+// instead of treating their duplicate bindings as mod/unknown conflicts.
+const OFFICIAL_VANILLA_ACTIONS = new Set([
+  "Alternate",
+  "AltQuenCasting",
+  "AttackHeavy",
+  "AttackLight",
+  "BuryBody",
+  "CiriHolsterWeapon",
+  "DebugInput",
+  "DiveDown",
+  "DrinkPotionLowerHold",
+  "DrinkPotionUpperHold",
+  "FastMenu",
+  "Follow",
+  "GI_Accelerate",
+  "GI_AxisLeftX",
+  "GI_AxisLeftY",
+  "GI_AxisRightX",
+  "GI_AxisRightY",
+  "GI_MouseDampX",
+  "GI_MouseDampY",
+  "GotoGlossary",
+  "HoldFastMenu",
+  "HorseDismount",
+  "HorseKick",
+  "IngameMenu",
+  "ItemsPadDown",
+  "ItemsPadLeft",
+  "ItemsPadRight",
+  "ItemsPadUp",
+  "ItemsPadUse",
+  "MeditationAbort",
+  "OilSilver",
+  "OilSteel",
+  "OnShowControlsHelp",
+  "OpenMeditation",
+  "PanelFakeHud",
+  "PanelMap",
+  "PlaceTrophy",
+  "ShowActiveBuffs",
+  "ShowBombsHelper",
+  "ShowEntryInPanel",
+  "ShowOilsHelper",
+  "ShowPotionsHelper",
+  "SpecialAttackHeavy",
+  "SpecialAttackLight",
+  "SwordSheathe",
+  "ThrowCastAbort",
+  "UseItem1",
+  "UseItem2",
+  "VehicleItemActionAbort"
+]);
 
 function isVanillaOnlyConflict(sources) {
   // Vanilla-only duplicates are intentional Witcher context aliases, not user
@@ -331,6 +965,7 @@ function remap(body) {
   }
 
   const parsed = parseInputSettings(defaults.inputSettings);
+  assertValidInputSettings(parsed.syntax);
   const actionSet = new Set(actions);
   let changed = 0;
   const nextLines = parsed.lines.map((line) => {
@@ -351,8 +986,19 @@ function remap(body) {
 
   const backup = `${defaults.inputSettings}.${timestamp()}.bak`;
   fs.copyFileSync(defaults.inputSettings, backup);
-  fs.writeFileSync(defaults.inputSettings, nextLines.join("\n"), "utf8");
+  fs.writeFileSync(defaults.inputSettings, sortInputSettingsText(nextLines.join("\n")), "utf8");
   return { changed, backup };
+}
+
+function assertValidInputSettings(syntax) {
+  if (syntax?.valid) return;
+  const errors = syntax?.errors || [];
+  const first = errors.slice(0, 3).map((item) =>
+    item.lineNumber ? `line ${item.lineNumber}: ${item.message}` : item.message
+  ).join("; ");
+  const error = new Error(`Invalid input.settings syntax${first ? `: ${first}` : "."}`);
+  error.statusCode = 400;
+  throw error;
 }
 
 function timestamp() {
@@ -395,12 +1041,16 @@ function extractMultipartFile(buffer, boundary) {
 // 7.2, 7.3, 12.1–12.3). statusCode distinguishes bad input (400) from IO (500).
 function handleSave(body) {
   const targetPath = String(body.targetPath || "").trim();
-  const content = typeof body.content === "string" ? body.content : null;
-  if (!targetPath || content === null) {
+  const rawContent = typeof body.content === "string" ? body.content : null;
+  if (!targetPath || rawContent === null) {
     const error = new Error("Need targetPath and content.");
     error.statusCode = 400;
     throw error;
   }
+  // Save is the canonical normalization point for user-chosen files. Remap also
+  // normalizes server-side writes, so every persisted input.settings leaves the
+  // app in the same deterministic per-section order.
+  const content = body.sort === false ? rawContent : sortInputSettingsText(rawContent);
   let backup = null;
   if (fs.existsSync(targetPath)) {
     backup = `${targetPath}.${timestamp()}.bak`;
@@ -461,6 +1111,22 @@ async function detectLayoutLanguageWin32() {
   if (process.platform !== "win32") return null;
   try {
     const out = await runPowerShell("(Get-WinUserLanguageList)[0].LanguageTag");
+    const tag = String(out || "").trim();
+    return tag || null;
+  } catch {
+    return null;
+  }
+}
+
+function detectLayoutLanguageWin32Sync() {
+  if (process.platform !== "win32") return null;
+  try {
+    const out = execFileSync("powershell.exe", [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      "(Get-WinUserLanguageList)[0].LanguageTag"
+    ], { windowsHide: true, encoding: "utf8" });
     const tag = String(out || "").trim();
     return tag || null;
   } catch {
@@ -529,13 +1195,11 @@ const server = http.createServer((req, res) => {
           const fileBuf = extractMultipartFile(Buffer.concat(chunks), boundary[1].replace(/^"|"$/g, ""));
           if (!fileBuf) throw new Error("No file field in upload.");
           const parsed = parseInputSettingsText(decodeBuffer(fileBuf, "upload"));
-          if (!parsed.entries.length) {
-            throw new Error("Not a valid input.settings: no IK_* bindings found.");
-          }
+          assertValidInputSettings(parsed.syntax);
           // Scan the upload in memory; defaults.inputSettings stays untouched (Req 7.10).
           sendJson(res, 200, buildScan(parsed));
         } catch (error) {
-          sendJson(res, 400, { error: error.message });
+          sendJson(res, error.statusCode || 400, { error: error.message });
         }
       });
       return;
@@ -569,5 +1233,22 @@ if (require.main === module) {
 
 module.exports = {
   findConflicts,
-  isVanillaOnlyConflict
+  isVanillaOnlyConflict,
+  conflictRelevantItems,
+  isBenignCommandSet,
+  isVanillaAction,
+  vanillaDefaultFileForLanguage,
+  validateInputSettingsSyntax,
+  parseInputSettingsText,
+  sortInputSettingsText,
+  compareInputKeys,
+  parseInputXmlText,
+  parseLocalizationCsvText,
+  parseWitcherScriptLocalizationKeys,
+  findW3StringsExe,
+  w3StringsToolKind,
+  decodeW3StringsToCachedCsv,
+  resolveDisplayName,
+  humanizeDisplayName,
+  handleSave
 };

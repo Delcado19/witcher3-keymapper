@@ -151,7 +151,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - Falls `/api/devices` Fehler zurückgibt: `showToast('Hardware-Erkennung nicht verfügbar', 'info')`, Fallback-Profil laden
   - _Requirements: 8.3, 8.4, 8.5, 8.6, 8.8_
 
-- [ ] 13. Client: Load/Save-UI implementieren
+- [x] 13. Client: Load/Save-UI implementieren
   - „Laden"-Button in `index.html` hinzufügen; öffnet `<input type="file" accept=".settings">` per `.click()`
   - Datei-Auswahl → `FormData` mit `file`-Feld → POST `/api/load` → Scan-Daten in `state.scan` speichern → UI neu rendern
   - „Speichern"-Button: öffnet `<input type="file" accept=".settings" nwsaveas>` (oder Fallback: Prompt für Pfad-Eingabe) → POST `/api/save` mit `{ targetPath, content }`
@@ -168,12 +168,12 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - Klick auf konfliktbehaftete SVG-Taste → zugehörigen Sidebar-Eintrag hervorheben und in Sicht scrollen
   - _Requirements: 5.3, 5.5, 5.6, 5.7, 10.2_
 
-- [ ] 15. Checkpoint — Kernfunktionalität integriert prüfen
+- [x] 15. Checkpoint — Kernfunktionalität integriert prüfen
   - `node --check public/app.js` ausführen und alle Fehler beheben
   - Sicherstellen, dass Seitenstart, Tab-Wechsel, SVG-Rendering, Colorizer, Popover und Toast fehlerfrei durchlaufen
   - Sicherstellen, dass bestehende Mappings-Liste, Suche, Filter und Remap-Dialog weiterhin funktionieren
 
-- [ ] 16. Integration bestehender Funktionalität sicherstellen
+- [x] 16. Integration bestehender Funktionalität sicherstellen
   - Mappings-Liste (`#commands`) mit Suche, Quellen-Filter und Geräte-Filter im neuen Layout beibehalten
   - Remap-Dialog aus Mappings-Liste und aus Tasten-Popover aufrufbar halten
   - Nach erfolgreichem Remap: SVG-Ansicht und Mappings-Liste automatisch aktualisieren (`load()` erneut aufrufen)
@@ -193,7 +193,7 @@ Sprache: Plain Browser-JS (CommonJS auf dem Server), kein Build-Step, keine neue
   - Toast-Styling: feste Position unten rechts, Slide-in-Animation, Typ-Farben (success/error/info)
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.8, 9.9, 9.10, 9.11_
 
-- [ ] 18. Abschluss-Checkpoint — Alle Tests und Syntax-Prüfungen
+- [x] 18. Abschluss-Checkpoint — Alle Tests und Syntax-Prüfungen
   - `node --check server.js` und `node --check public/app.js` ausführen
   - Sicherstellen, dass alle sechs Geräteprofile und `index.json` vorhanden und valide JSON sind
   - Sicherstellen, dass kein `alert()` oder `confirm()` mehr in `app.js` vorhanden ist

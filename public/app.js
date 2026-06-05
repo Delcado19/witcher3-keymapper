@@ -1,5 +1,6 @@
 let scan = null;
 let activeCommand = null;
+let currentContent = "";
 
 // DOM lookups are guarded so this module can be required under Node for unit/
 // property tests of the pure helpers (matchDevice, colorizer); in the browser
@@ -15,6 +16,13 @@ const els = (typeof document !== "undefined") ? {
   conflictCount: document.querySelector("#conflictCount"),
   resultCount: document.querySelector("#resultCount"),
   refresh: document.querySelector("#refresh"),
+  loadFile: document.querySelector("#loadFile"),
+  saveFile: document.querySelector("#saveFile"),
+  loadInput: document.querySelector("#loadInput"),
+  saveDialog: document.querySelector("#saveDialog"),
+  saveForm: document.querySelector("#saveForm"),
+  savePath: document.querySelector("#savePath"),
+  saveText: document.querySelector("#saveText"),
   dialog: document.querySelector("#remapDialog"),
   remapTitle: document.querySelector("#remapTitle"),
   remapText: document.querySelector("#remapText"),
@@ -46,7 +54,8 @@ const state = {
   currentSvg: null,
   currentProfile: null,
   layoutMode: false,
-  layoutDrag: null
+  layoutDrag: null,
+  sessionFile: null
 };
 
 async function load() {
@@ -60,18 +69,21 @@ async function load() {
       state.registry.length ? Promise.resolve(state.registry) : loadRegistry().catch(() => [])
     ]);
     scan = await scanRes.json();
-    if (!scanRes.ok) throw new Error(scan.error || "Scan fehlgeschlagen");
+    if (!scanRes.ok) throw new Error(scan.error || "Scan failed");
+    currentContent = scan.content || "";
+    state.sessionFile = null;
     state.registry = Array.isArray(registry) ? registry : [];
     if (devRes && devRes.ok) {
       const dev = await devRes.json();
       state.devices = dev.devices || [];
       state.inputLanguage = dev.inputLanguage || null;
     } else if (devRes === null) {
-      showToast("Hardware-Erkennung nicht verfügbar", "info");
+      showToast("Hardware detection unavailable", "info");
     }
     resolveKeyboardProfile();
     render();
     await renderDeviceView();
+    showSyntaxStatus(scan, "Project input.settings");
   } finally {
     showLoading(false);
   }
@@ -102,19 +114,23 @@ function showLoading(on) {
 }
 
 function render() {
-  els.paths.textContent = `${scan.paths.inputSettings} | Mods: ${scan.paths.modsDir}`;
+  const fileLabel = state.sessionFile
+    ? `Session-Datei: ${state.sessionFile.name}`
+    : scan.paths.inputSettings;
+  els.paths.textContent = `${fileLabel} | Mods: ${scan.paths.modsDir}`;
   els.stats.innerHTML = [
     ["Bindings", scan.stats.bindings],
-    ["Aktionen", scan.stats.actions],
-    ["Befehle", scan.stats.commands],
-    ["Sektionen", scan.stats.sections],
-    ["Tasten", scan.stats.keys],
-    ["Mod-Actions", scan.stats.modActions]
+    ["Actions", scan.stats.actions],
+    ["Commands", scan.stats.commands],
+    ["Sections", scan.stats.sections],
+    ["Keys", scan.stats.keys],
+    ["Mod-Actions", scan.stats.modActions],
+    ["Syntax", scan.syntax?.valid ? "OK" : "Error"]
   ].map(([label, value]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join("");
 
   const currentSource = els.sourceFilter.value;
   const sources = [...new Set(scan.commands.map((item) => item.source))].sort();
-  els.sourceFilter.innerHTML = `<option value="">Alle Quellen</option>${sources.map((source) => {
+  els.sourceFilter.innerHTML = `<option value="">All sources</option>${sources.map((source) => {
     return `<option value="${escapeHtml(source)}">${escapeHtml(source)}</option>`;
   }).join("")}`;
   els.sourceFilter.value = currentSource;
@@ -150,9 +166,9 @@ function groupConflicts(conflicts) {
 
 function renderConflicts() {
   const groups = groupConflicts(scan.conflicts);
-  els.conflictCount.textContent = `${groups.length} Konflikte`;
+  els.conflictCount.textContent = `Conflicts (${groups.length})`;
   if (!groups.length) {
-    els.conflicts.innerHTML = `<div class="empty muted">Keine Konflikte gefunden.</div>`;
+    els.conflicts.innerHTML = `<div class="empty muted">No conflicts found.</div>`;
     return;
   }
   // data-conflict-key lets the SVG popover scroll to & highlight the entry
@@ -164,8 +180,8 @@ function renderConflicts() {
     }).join("");
     const shown = grp.sections.slice(0, 3).map(escapeHtml).join(", ");
     const extra = grp.sections.length > 3 ? ` +${grp.sections.length - 3} weitere` : "";
-    const count = grp.sections.length > 1 ? ` · ${grp.sections.length} Sektionen` : "";
-    const severity = grp.severity === "high" ? "Kritisch" : "Kontext";
+    const count = grp.sections.length > 1 ? ` · ${grp.sections.length} sections` : "";
+    const severity = grp.severity === "high" ? "Critical" : "Context";
     return `
     <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
       <div class="compact-key">
@@ -202,9 +218,9 @@ function renderCommands() {
     return haystack.includes(q);
   });
 
-  els.resultCount.textContent = `${filtered.length} Treffer`;
+  els.resultCount.textContent = `${filtered.length} results`;
   els.commands.innerHTML = filtered.map((command) => {
-    const keys = command.keys.length ? command.keys : [{ label: "Ungebunden", device: "unbound", key: "IK_None" }];
+    const keys = command.keys.length ? command.keys : [{ label: "Unbound", device: "unbound", key: "IK_None" }];
     const actions = command.actions.length > 2
       ? `${command.actions.slice(0, 2).join(", ")} +${command.actions.length - 2}`
       : command.actions.join(", ");
@@ -213,10 +229,10 @@ function renderCommands() {
         <div class="compact-main">
           <div class="commandTitle">${escapeHtml(command.id)}</div>
           <span class="source">${escapeHtml(command.displayName)} · ${escapeHtml(shortSource(command.source))}</span>
+          <div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>
         </div>
         <div class="compact-keys">${keys.map((key) => keyChip(key)).join("")}</div>
-        <div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>
-        <button class="compact-action" data-remap="${escapeHtml(command.id)}">Ändern</button>
+        <button class="compact-action" data-remap="${escapeHtml(command.id)}">Change</button>
       </article>
     `;
   }).join("");
@@ -227,15 +243,15 @@ function renderCommands() {
 }
 
 function keyChip(key) {
-  const hold = key.state === "Duration" ? ` halten ${key.idleTime || ""}s` : "";
+  const hold = key.state === "Duration" ? ` hold ${key.idleTime || ""}s` : "";
   return `<span class="chip ${key.device}" title="${escapeHtml(key.key || "")}">${escapeHtml(key.label)}${escapeHtml(hold)}</span>`;
 }
 
 function openRemap(commandId) {
   activeCommand = scan.commands.find((command) => command.id === commandId);
   if (!activeCommand) return;
-  els.remapTitle.textContent = `${activeCommand.id} ändern`;
-  els.remapText.textContent = `Ändert alle Bindings der Actions: ${activeCommand.actions.join(", ")}`;
+  els.remapTitle.textContent = `Change ${activeCommand.id}`;
+  els.remapText.textContent = `Changes all bindings for actions: ${activeCommand.actions.join(", ")}`;
   els.newKey.value = "";
   els.dialog.showModal();
 }
@@ -244,6 +260,11 @@ if (typeof document !== "undefined") {
   els.remapForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!activeCommand) return;
+    if (state.sessionFile) {
+      await remapSessionContent(activeCommand.actions, els.newKey.value);
+      els.dialog.close();
+      return;
+    }
     const response = await fetch("/api/remap", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -252,11 +273,11 @@ if (typeof document !== "undefined") {
     const result = await response.json();
     if (!response.ok) {
       // Toast instead of alert() (Task 8 / Requirement 9.6).
-      showToast(result.error || "Remap fehlgeschlagen", "error");
+      showToast(result.error || "Remap failed", "error");
       return;
     }
     els.dialog.close();
-    showToast(`Geändert: ${result.changed} Zeilen · Backup: ${result.backup}`, "success");
+    showToast(`Changed ${result.changed} lines · Backup: ${result.backup}`, "success");
     await load();
   });
 
@@ -264,6 +285,10 @@ if (typeof document !== "undefined") {
   els.sourceFilter.addEventListener("change", renderCommands);
   els.deviceFilter.addEventListener("change", renderCommands);
   els.refresh.addEventListener("click", load);
+  els.loadFile?.addEventListener("click", () => els.loadInput?.click());
+  els.loadInput?.addEventListener("change", handleLoadFile);
+  els.saveFile?.addEventListener("click", openSaveDialog);
+  els.saveForm?.addEventListener("submit", handleSaveFile);
 
   // Device tabs: switch active device, keep choice for the session (no storage).
   els.deviceTabs?.addEventListener("click", (event) => {
@@ -292,6 +317,158 @@ if (typeof document !== "undefined") {
   });
 }
 
+async function handleLoadFile() {
+  const file = els.loadInput?.files?.[0];
+  if (!file) return;
+  showLoading(true);
+  try {
+    const buffer = await file.arrayBuffer();
+    const content = decodeInputSettingsBuffer(buffer);
+    const form = new FormData();
+    form.append("file", file);
+    const response = await fetch("/api/load", { method: "POST", body: form });
+    const result = await response.json();
+    if (!response.ok) {
+      showToast(result.error || "File could not be loaded", "error");
+      return;
+    }
+    scan = result;
+    currentContent = content;
+    state.sessionFile = { name: file.name };
+    resolveKeyboardProfile();
+    render();
+    await renderDeviceView();
+    showSyntaxStatus(scan, file.name);
+    showToast(`Loaded: ${file.name}`, "success");
+  } catch (error) {
+    showToast(error.message || "File could not be loaded", "error");
+  } finally {
+    showLoading(false);
+    if (els.loadInput) els.loadInput.value = "";
+  }
+}
+
+function showSyntaxStatus(scanData, label) {
+  const syntax = scanData?.syntax;
+  if (!syntax) return;
+  if (syntax.valid) {
+    showToast(`${label}: syntax OK`, "success");
+    return;
+  }
+  const first = syntax.errors?.[0];
+  const where = first?.lineNumber ? `line ${first.lineNumber}` : "file";
+  showToast(`${label}: syntax error at ${where} (${first?.message || "invalid input.settings"})`, "error");
+}
+
+function decodeInputSettingsBuffer(buffer) {
+  const bytes = new Uint8Array(buffer);
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) {
+    return new TextDecoder("utf-16le").decode(bytes.subarray(2));
+  }
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) {
+    throw new Error("UTF-16BE input.settings is not supported.");
+  }
+  return new TextDecoder("utf-8").decode(bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf
+    ? bytes.subarray(3)
+    : bytes);
+}
+
+function openSaveDialog() {
+  if (!currentContent) {
+    showToast("No file content loaded to save.", "error");
+    return;
+  }
+  if (els.saveText) {
+    els.saveText.textContent = state.sessionFile
+      ? `Saves the loaded session file "${state.sessionFile.name}".`
+      : "Saves the current project input.settings content.";
+  }
+  els.savePath.value = state.sessionFile?.name || scan?.paths?.inputSettings || "input.settings";
+  els.saveDialog.showModal();
+}
+
+async function handleSaveFile(event) {
+  event.preventDefault();
+  const targetPath = els.savePath.value.trim();
+  if (!targetPath) return;
+  showLoading(true);
+  try {
+    const response = await fetch("/api/save", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ targetPath, content: currentContent, sort: true })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      showToast(result.error || "Save failed", "error");
+      return;
+    }
+    els.saveDialog.close();
+    showToast(`Saved: ${result.saved}${result.backup ? ` · Backup: ${result.backup}` : ""}`, "success");
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function remapSessionContent(actions, newKey, oldKey = "", sections = null) {
+  showLoading(true);
+  try {
+    const result = remapInputSettingsText(currentContent, actions, newKey, oldKey, sections);
+    const form = new FormData();
+    form.append("file", new Blob([result.content], { type: "text/plain" }), state.sessionFile?.name || "input.settings");
+    const response = await fetch("/api/load", { method: "POST", body: form });
+    const nextScan = await response.json();
+    if (!response.ok) {
+      showToast(nextScan.error || "Could not rescan session remap", "error");
+      return;
+    }
+    currentContent = result.content;
+    scan = nextScan;
+    render();
+    await renderDeviceView();
+    showToast(`Session changed: ${result.changed} lines`, "success");
+  } catch (error) {
+    showToast(error.message || "Session remap failed", "error");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Client-side remap mirrors the server's line-oriented contract for uploaded
+// session files. /api/remap intentionally stays bound to the local project file,
+// so uploads need this guard to avoid writing the wrong input.settings.
+function remapInputSettingsText(text, actions, newKey, oldKey = "", sections = null) {
+  const actionSet = new Set(Array.isArray(actions) ? actions.filter(Boolean) : []);
+  const targetKey = String(newKey || "").trim();
+  const old = String(oldKey || "").trim();
+  const sectionSet = Array.isArray(sections) ? new Set(sections) : null;
+  if (!actionSet.size || !/^IK_[A-Za-z0-9_]+$/.test(targetKey)) {
+    throw new Error("Need at least one action and a valid IK_* target key.");
+  }
+
+  let currentSection = "";
+  let changed = 0;
+  const lines = String(text || "").split(/\r?\n/);
+  const next = lines.map((line) => {
+    const trimmed = line.trim();
+    const sectionMatch = trimmed.match(/^\[(.+)]$/);
+    if (sectionMatch) {
+      currentSection = sectionMatch[1];
+      return line;
+    }
+    const bindingMatch = trimmed.match(/^(IK_[^=]+)=\((.+)\)$/);
+    if (!bindingMatch) return line;
+    const actionMatch = bindingMatch[2].match(/Action=([^,\)]+)/);
+    if (!actionMatch || !actionSet.has(actionMatch[1])) return line;
+    if (old && bindingMatch[1] !== old) return line;
+    if (sectionSet && !sectionSet.has(currentSection)) return line;
+    changed += 1;
+    return line.replace(/^(\s*)IK_[^=]+=/, `$1${targetKey}=`);
+  });
+  if (!changed) throw new Error("No matching bindings were changed.");
+  return { content: next.join("\n"), changed };
+}
+
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
@@ -309,9 +486,9 @@ function escapeHtml(value) {
  * ===================================================================== */
 
 function deviceLabel(device) {
-  if (device === "keyboard") return "Tastatur";
-  if (device === "controllers") return "Maus/Gamepad";
-  return device === "mouse" ? "Maus" : "Gamepad";
+  if (device === "keyboard") return "Keyboard";
+  if (device === "controllers") return "Mouse/Gamepad";
+  return device === "mouse" ? "Mouse" : "Gamepad";
 }
 
 function deviceHasBindings(device) {
@@ -360,16 +537,16 @@ async function renderDeviceView() {
   els.layoutMode?.setAttribute("aria-pressed", String(state.layoutMode && !isKeyboard));
   if (isKeyboard && state.layoutMode) state.layoutMode = false;
   if (isKeyboard && state.showLayoutDropdown && !state.keyboardProfileId) {
-    showDeviceEmpty("Kein Tastaturlayout erkannt — bitte Layout wählen.");
+    showDeviceEmpty("No keyboard layout detected. Choose a layout.");
     return;
   }
   if (!deviceHasBindings(state.activeDevice)) {
-    showDeviceEmpty(`Keine Belegung für „${deviceLabel(state.activeDevice)}" gefunden.`);
+    showDeviceEmpty(`No bindings found for ${deviceLabel(state.activeDevice)}.`);
     return;
   }
 
   const profiles = (await Promise.all(activeProfileIds().map((id) => getProfile(id)))).filter(Boolean);
-  if (!profiles.length) { showDeviceEmpty("Geräteprofil konnte nicht geladen werden."); return; }
+  if (!profiles.length) { showDeviceEmpty("Device profile could not be loaded."); return; }
 
   const rendered = profiles.map((profile) => ({ profile, svg: renderDeviceSvg(profile) })).filter((item) => item.svg);
   if (!rendered.length) return; // SVG failed -> toast already shown, keep previous view
@@ -461,7 +638,7 @@ function applyLayoutOverrides(profile) {
     }
     return copy;
   } catch (error) {
-    console.warn("Layout-Overrides konnten nicht geladen werden", error);
+    console.warn("Layout overrides could not be loaded", error);
     return profile;
   }
 }
@@ -474,7 +651,7 @@ function saveLayoutOverride(profile, key) {
     overrides[key.ik] = { x: key.x, y: key.y, w: key.w, h: key.h, coord: key.coord };
     localStorage.setItem(storageKey, JSON.stringify(overrides));
   } catch (error) {
-    console.warn("Layout-Override konnte nicht gespeichert werden", error);
+    console.warn("Layout override could not be saved", error);
   }
 }
 
@@ -592,15 +769,15 @@ function openPopover(ik, anchorEl) {
   const body = cmds.length
     ? cmds.map((c) => `
         <div class="pop-row">
-          <div><div class="commandTitle">${escapeHtml(c.id)}</div><span class="source">${escapeHtml(shortSource(c.source))}</span></div>
+          <div><div class="commandTitle">${escapeHtml(c.displayName || c.id)}</div><span class="source">${escapeHtml(c.id)} · ${escapeHtml(shortSource(c.source))}</span></div>
           <div class="pop-actions">
-            <button data-act="remap" data-cmd="${escapeHtml(c.id)}">Ändern</button>
-            <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">Löschen</button>
+            <button data-act="remap" data-cmd="${escapeHtml(c.id)}">Change</button>
+            <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">Clear</button>
           </div>
         </div>`).join("")
-    : `<p class="muted">Unbelegt</p>`;
+    : `<p class="muted">Unbound</p>`;
   const conflictNote = conflicts.length
-    ? `<div class="pop-conflict">⚠ Konflikt in: ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
+    ? `<div class="pop-conflict">Conflict in: ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
     : "";
   pop.innerHTML = `<div class="pop-head"><strong>${escapeHtml(label)}</strong><span class="muted">${escapeHtml(ik)}</span></div>${body}${conflictNote}`;
   document.body.appendChild(pop);
@@ -635,7 +812,7 @@ function positionPopover(pop, anchorEl) {
 function confirmClear(button, ik, commandId) {
   if (button.dataset.confirm !== "1") {
     button.dataset.confirm = "1";
-    button.textContent = "Wirklich? (Backup + löschen)";
+    button.textContent = "Confirm clear";
     return;
   }
   clearBinding(ik, commandId);
@@ -644,6 +821,11 @@ function confirmClear(button, ik, commandId) {
 async function clearBinding(ik, commandId) {
   const command = scan.commands.find((c) => c.id === commandId);
   if (!command) return;
+  if (state.sessionFile) {
+    closePopover();
+    await remapSessionContent(command.actions, "IK_None", ik);
+    return;
+  }
   showLoading(true);
   try {
     // oldKey restricts the null-out to THIS key, not every binding of the action.
@@ -652,9 +834,9 @@ async function clearBinding(ik, commandId) {
       body: JSON.stringify({ actions: command.actions, newKey: "IK_None", oldKey: ik })
     });
     const result = await res.json();
-    if (!res.ok) { showToast(result.error || "Löschen fehlgeschlagen", "error"); return; }
+    if (!res.ok) { showToast(result.error || "Clear failed", "error"); return; }
     closePopover();
-    showToast(`Gelöscht: ${result.changed} Binding(s) · Backup: ${result.backup}`, "success");
+    showToast(`Cleared ${result.changed} binding(s) · Backup: ${result.backup}`, "success");
     await load();
   } finally {
     showLoading(false);
@@ -680,13 +862,57 @@ function highlightConflicts(ik) {
 
 // --- Shared colour palette (Task 7 / Requirement 4) ---
 const COLORS = {
-  vanilla: "#d2a657",   // game/input.xml
-  other: "#6b7280",     // mods outside the top 5
-  high: "#ef4444",      // high-severity conflict
-  medium: "#f59e0b",    // medium-severity conflict / multi-source key
-  unbound: "#2a2f3a"    // neutral / no binding
+  vanilla: "#b68a3a",        // fallback for uncategorised game/input.xml rows
+  vanillaMovement: "#597f70", // movement, camera, horse/boat steering
+  vanillaAction: "#c09749",   // combat, interaction, signs, quick actions
+  vanillaMenu: "#6f6f8f",     // menus, panels, quest/map/HUD shortcuts
+  other: "#586068",          // mods outside the top 5
+  high: "#b94a3c",           // high-severity conflict
+  medium: "#b87932",         // medium-severity conflict / multi-source key
+  unbound: "#262522"         // neutral / no binding
 };
-const MOD_PALETTE = ["#4e9af1", "#a78bfa", "#34d399", "#fb923c", "#f472b6"];
+const MOD_PALETTE = ["#4f6f86", "#7b678e", "#6f7f56", "#a0603d", "#8f5964"];
+const VANILLA_CATEGORY_META = {
+  movement: { label: "Vanilla: Movement", color: COLORS.vanillaMovement },
+  action: { label: "Vanilla: Combat/Actions", color: COLORS.vanillaAction },
+  menu: { label: "Vanilla: Menus", color: COLORS.vanillaMenu }
+};
+const VANILLA_CATEGORY_PRIORITY = ["menu", "movement", "action"];
+const VANILLA_MENU_ACTIONS = new Set([
+  "FastMenu", "HoldFastMenu", "HubMenu", "IngameMenu", "ShowEntryInPanel",
+  "PanelMap", "PanelMapPC", "PanelJour", "PanelChar", "PanelInv", "PanelAlch",
+  "PanelMeditation", "PanelCraft", "PanelCrafting", "PanelBestiary",
+  "PanelGlossary", "PanelGwintDeckEditor", "PanelFakeHud", "GotoGlossary",
+  "HoldToSeeMap", "HoldToSeeQuests", "HoldToSeeCharStats", "HoldToSeeEssentials",
+  "TrackQuest", "HighlightObjective", "ToggleHud", "OpenMeditation",
+  "MeditationAbort", "OnShowControlsHelp"
+]);
+const VANILLA_MOVEMENT_ACTIONS = new Set([
+  "MoveFwd", "MoveBck", "MoveLft", "MoveRght",
+  "GI_AxisLeftX", "GI_AxisLeftY", "GI_AxisRightX", "GI_AxisRightY",
+  "GI_MouseDampX", "GI_MouseDampY", "Sprint", "SprintToggle",
+  "Jump", "JumpRoll", "ExplorationInteraction", "DiveDown",
+  "BoatDismount", "HorseDismount", "HorseJump", "Follow",
+  "GallopCanter", "GI_Accelerate", "VehicleItemActionAbort"
+]);
+const VANILLA_ACTION_ACTIONS = new Set([
+  "Alternate", "AltQuenCasting", "AttackHeavy", "AttackLight",
+  "AttackWithAlternateHeavy", "AttackWithAlternateLight", "SpecialAttackHeavy",
+  "SpecialAttackLight", "SpecialAttackWithAlternateHeavy", "SpecialAttackWithAlternateLight",
+  "CastSign", "CastSignHold", "Focus", "LockAndGuard", "RadialMenu",
+  "ThrowItem", "ThrowItemHold", "VehicleItemAction", "VehicleItemActionHold",
+  "SteelSword", "SilverSword", "SwordSheathe", "SwordSheatheSteel",
+  "SwordSheatheSilver", "OilSteel", "OilSilver", "OilSteelKB", "OilSilverKB",
+  "DrinkPotion1", "DrinkPotion1Hold", "DrinkPotion2", "DrinkPotion2Hold",
+  "DrinkPotion3", "DrinkPotion3Hold", "DrinkPotion4", "DrinkPotion4Hold",
+  "DrinkPotionUpperHold", "DrinkPotionLowerHold", "SelectAard", "SelectYrden",
+  "SelectIgni", "SelectQuen", "SelectAxii", "Interaction", "Interact",
+  "InteractHold", "ExplorationInteraction", "ItemsPadUse", "ItemsPadUp",
+  "ItemsPadDown", "ItemsPadLeft", "ItemsPadRight", "Use", "UseDevice",
+  "UseItem", "UseItem1", "UseItem2", "Open", "Close", "Take", "Container",
+  "GatherHerbs", "Talk", "MountHorse", "EnterBoat", "EnterBoatFromSwimming",
+  "Finish", "Finisher", "PlaceTrophy", "BuryBody", "CbtRoll"
+]);
 
 /* ---------------- Task 4: Device_Registry ---------------- */
 const REQUIRED_PROFILE_FIELDS = ["id", "name", "type", "layout", "keys"];
@@ -703,17 +929,17 @@ function validateProfile(profile) {
 // a bare array, so older index.json files still work (Requirement 3.2).
 async function loadRegistry() {
   const res = await fetch("/devices/index.json");
-  if (!res.ok) throw new Error("Geräte-Registry konnte nicht geladen werden");
+  if (!res.ok) throw new Error("Device registry could not be loaded");
   const data = await res.json();
   return Array.isArray(data) ? data : (data.profiles || []);
 }
 
 async function loadProfile(profileId) {
   const res = await fetch(`/devices/${profileId}/profile.json`);
-  if (!res.ok) throw new Error(`Geräteprofil "${profileId}" nicht gefunden`);
+  if (!res.ok) throw new Error(`Device profile "${profileId}" not found`);
   const profile = await res.json();
   if (!validateProfile(profile)) {
-    console.error(`Geräteprofil "${profileId}" ungültig: Pflichtfeld fehlt`);
+    console.error(`Device profile "${profileId}" is invalid: required field missing`);
     return null;
   }
   return profile;
@@ -764,17 +990,59 @@ function computeTopMods(commands) {
     .map(([source, count], index) => ({ source, count, color: MOD_PALETTE[index] }));
 }
 
+function vanillaCategoryForAction(action, allowPatternFallback = false) {
+  if (VANILLA_MENU_ACTIONS.has(action) ||
+    (allowPatternFallback && (/^Panel/.test(action) || /Menu|Glossary|Meditation|Hud|Quest|EntryInPanel/.test(action)))) {
+    return "menu";
+  }
+  if (VANILLA_MOVEMENT_ACTIONS.has(action) ||
+    (allowPatternFallback && (/^GI_(Axis|Mouse)/.test(action) || /Move|Sprint|Jump|Dive|Horse|Boat|Dismount|Accelerate/.test(action)))) {
+    return "movement";
+  }
+  if (VANILLA_ACTION_ACTIONS.has(action) ||
+    (allowPatternFallback && /Attack|Sign|Sword|Potion|Oil|Item|Interact|Focus|Guard|Radial|Use|Cast|Select/.test(action))) {
+    return "action";
+  }
+  return null;
+}
+
+function vanillaCategoryForCommand(command) {
+  const allowPatternFallback = command.source === "game/input.xml";
+  const categories = new Set((command.actions || [command.id])
+    .map((action) => vanillaCategoryForAction(action, allowPatternFallback)));
+  categories.delete(null);
+  if (!categories.size && command.source !== "game/input.xml") return null;
+  if (!categories.size) return "action";
+  for (const category of VANILLA_CATEGORY_PRIORITY) {
+    if (categories.has(category)) return category;
+  }
+  return null;
+}
+
+function dominantVanillaCategory(categories) {
+  for (const category of VANILLA_CATEGORY_PRIORITY) {
+    if (categories.has(category)) return category;
+  }
+  return null;
+}
+
 // Build IK_* -> colour map from scan commands + conflicts (Requirement 4.1–4.5).
 function buildColorMap(commands, conflicts) {
   const topMods = computeTopMods(commands);
   const modColor = new Map(topMods.map((mod) => [mod.source, mod.color]));
 
   const ikSources = new Map(); // IK_* -> Set(source)
+  const ikVanillaCategories = new Map(); // IK_* -> Set("movement" | "action" | "menu")
   for (const command of commands) {
+    const vanillaCategory = vanillaCategoryForCommand(command);
     for (const key of command.keys || []) {
       if (!key.key || key.key === "IK_None") continue;
       if (!ikSources.has(key.key)) ikSources.set(key.key, new Set());
       ikSources.get(key.key).add(command.source);
+      if (vanillaCategory) {
+        if (!ikVanillaCategories.has(key.key)) ikVanillaCategories.set(key.key, new Set());
+        ikVanillaCategories.get(key.key).add(vanillaCategory);
+      }
     }
   }
 
@@ -790,7 +1058,16 @@ function buildColorMap(commands, conflicts) {
       map.set(ik, conflictSev.get(ik) === "high" ? COLORS.high : COLORS.medium);
       continue;
     }
-    if (sources.size > 1) { map.set(ik, COLORS.medium); continue; } // multi-source = conflict
+    // The referenced Witcher control chart groups stock bindings by movement,
+    // actions/combat and menus. Mixed vanilla/mod keys keep their vanilla
+    // category colour unless the server-side scanner marks a real conflict.
+    const vanillaCategories = ikVanillaCategories.get(ik);
+    if (vanillaCategories?.size) {
+      const category = dominantVanillaCategory(vanillaCategories);
+      map.set(ik, VANILLA_CATEGORY_META[category]?.color || COLORS.vanilla);
+      continue;
+    }
+    if (sources.size > 1) { map.set(ik, COLORS.other); continue; }
     const only = [...sources][0];
     if (only === "game/input.xml") map.set(ik, COLORS.vanilla);
     else if (modColor.has(only)) map.set(ik, modColor.get(only));
@@ -801,11 +1078,13 @@ function buildColorMap(commands, conflicts) {
 
 function buildLegend(topMods, hasOther, hasVanilla) {
   const items = [];
-  if (hasVanilla) items.push({ label: "Vanilla", color: COLORS.vanilla });
+  if (hasVanilla) {
+    items.push(...VANILLA_CATEGORY_PRIORITY.map((category) => VANILLA_CATEGORY_META[category]));
+  }
   for (const mod of topMods) items.push({ label: mod.source, color: mod.color });
-  if (hasOther) items.push({ label: "Sonstige Mods", color: COLORS.other });
-  items.push({ label: "Konflikt", color: COLORS.high });
-  items.push({ label: "Unbelegt", color: COLORS.unbound });
+  if (hasOther) items.push({ label: "Other mods", color: COLORS.other });
+  items.push({ label: "Conflict", color: COLORS.high });
+  items.push({ label: "Unbound", color: COLORS.unbound });
   return items;
 }
 
@@ -979,7 +1258,7 @@ function renderDeviceSvg(profile) {
     if (profile.type === "gamepad") return renderGamepadSvg(profile);
     return renderKeyboardSvg(profile);
   } catch (error) {
-    showToast(`SVG-Generierung fehlgeschlagen: ${error.message}`, "error");
+    showToast(`SVG generation failed: ${error.message}`, "error");
     return null;
   }
 }
@@ -987,7 +1266,7 @@ function renderDeviceSvg(profile) {
 function summarizeKey(ik, label, scanData) {
   if (!scanData) return `${label}: unbelegt`;
   const cmds = scanData.commands.filter((c) => c.keys.some((k) => k.key === ik));
-  if (!cmds.length) return `${label}: unbelegt`;
+  if (!cmds.length) return `${label}: unbound`;
   const sources = [...new Set(cmds.map((c) => c.source))];
   return `${label}: ${cmds.map((c) => c.id).join(", ")} (${sources.join(", ")})`;
 }
@@ -1046,7 +1325,7 @@ function showToast(message, type = "info") {
 
 if (typeof document !== "undefined") {
   load().catch((error) => {
-    document.body.innerHTML = `<main><h1>Fehler</h1><p>${escapeHtml(error.message)}</p></main>`;
+    document.body.innerHTML = `<main><h1>Error</h1><p>${escapeHtml(error.message)}</p></main>`;
   });
 }
 
@@ -1056,6 +1335,6 @@ if (typeof module !== "undefined" && module.exports) {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
     renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg,
-    applyColoring, applyConflicts
+    applyColoring, applyConflicts, remapInputSettingsText
   };
 }

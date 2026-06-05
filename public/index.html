@@ -10,10 +10,18 @@
   <header class="topbar">
     <div>
       <h1>Witcher 3 Keymapper</h1>
-      <p id="paths">Lade lokale Dateien...</p>
+      <p id="paths">Loading local files...</p>
     </div>
-    <button id="refresh">Aktualisieren</button>
+    <div class="top-actions">
+      <button id="loadFile" type="button">Load</button>
+      <button id="saveFile" type="button">Save</button>
+      <button id="refresh" class="stacked-action" type="button" title="Reload project input.settings from disk">
+        <span>Reload</span>
+        <span>Settings</span>
+      </button>
+    </div>
   </header>
+  <input id="loadInput" type="file" accept=".settings" hidden>
 
   <div id="loadingBar" class="loading-bar" hidden></div>
 
@@ -22,14 +30,14 @@
 
     <section class="panel device-view">
       <div class="panelHead device-head">
-        <div class="device-tabs" id="deviceTabs" role="tablist" aria-label="Eingabegerät wählen">
-          <button class="device-tab is-active" data-device="keyboard" role="tab" aria-selected="true">Tastatur</button>
-          <button class="device-tab" data-device="controllers" role="tab" aria-selected="false">Maus/Gamepad</button>
+        <div class="device-tabs" id="deviceTabs" role="tablist" aria-label="Choose input device">
+          <button class="device-tab is-active" data-device="keyboard" role="tab" aria-selected="true">Keyboard</button>
+          <button class="device-tab" data-device="controllers" role="tab" aria-selected="false">Mouse/Gamepad</button>
         </div>
         <label class="layout-select hidden" id="layoutSelectWrap">
           <span>Layout</span>
-          <select id="layoutSelect" aria-label="Tastaturlayout wählen">
-            <option value="">Layout wählen…</option>
+          <select id="layoutSelect" aria-label="Choose keyboard layout">
+            <option value="">Choose layout...</option>
             <option value="iso-de-105">ISO-DE 105</option>
             <option value="ansi-us-104">ANSI-US 104</option>
           </select>
@@ -44,24 +52,23 @@
     </section>
 
     <section class="toolbar">
-      <input id="search" type="search" placeholder="Aktion, Taste, Mod oder Kontext suchen">
+        <input id="search" type="search" placeholder="Search action, key, mod, or context">
       <select id="sourceFilter">
-        <option value="">Alle Quellen</option>
+        <option value="">All sources</option>
       </select>
       <select id="deviceFilter">
-        <option value="">Alle Eingaben</option>
-        <option value="keyboard">Tastatur</option>
-        <option value="mouse">Maus</option>
+        <option value="">All inputs</option>
+        <option value="keyboard">Keyboard</option>
+        <option value="mouse">Mouse</option>
         <option value="gamepad">Gamepad</option>
-        <option value="unbound">Ungebunden</option>
+        <option value="unbound">Unbound</option>
       </select>
     </section>
 
     <div class="workbench-grid">
       <section class="panel compact-panel">
         <div class="panelHead">
-          <h2>Konflikte</h2>
-          <span id="conflictCount"></span>
+          <h2 id="conflictCount">Conflicts</h2>
         </div>
         <div id="conflicts" class="conflicts"></div>
       </section>
@@ -78,15 +85,30 @@
 
   <dialog id="remapDialog">
     <form method="dialog" id="remapForm">
-      <h2 id="remapTitle">Mapping ändern</h2>
+      <h2 id="remapTitle">Change mapping</h2>
       <p id="remapText"></p>
       <label>
-        Neue Taste im Witcher-Format
+        New key in Witcher format
         <input id="newKey" required pattern="IK_[A-Za-z0-9_]+" placeholder="z.B. IK_NumPad3">
       </label>
       <div class="dialogActions">
-        <button value="cancel">Abbrechen</button>
-        <button id="applyRemap" value="default">Backup erstellen & ändern</button>
+        <button value="cancel">Cancel</button>
+        <button id="applyRemap" value="default">Create backup & apply</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="saveDialog">
+    <form method="dialog" id="saveForm">
+      <h2>Save input.settings</h2>
+      <p id="saveText" class="muted">Enter a target path. Existing files are backed up server-side.</p>
+      <label>
+        Target path
+        <input id="savePath" required placeholder="C:\Pfad\zu\input.settings">
+      </label>
+      <div class="dialogActions">
+        <button value="cancel">Cancel</button>
+        <button id="applySave" value="default">Create backup & save</button>
       </div>
     </form>
   </dialog>

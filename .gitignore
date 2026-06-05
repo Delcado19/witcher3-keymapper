@@ -8,5 +8,6 @@
 /input.settings.*.bak
 
 # misc
+.cache/
 .DS_Store
 npm-debug.log*

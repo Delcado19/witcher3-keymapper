@@ -100,7 +100,7 @@ ok("keyboard SVG renders every key as rounded rect", () => {
   }
 });
 
-ok("applyColoring sets --key-fill per source (vanilla gold, mod colour)", () => {
+ok("applyColoring sets --key-fill per category/source", () => {
   const svg = ui.renderKeyboardSvg(profile);
   const scan = {
     commands: [
@@ -112,7 +112,7 @@ ok("applyColoring sets --key-fill per source (vanilla gold, mod colour)", () => 
   const cm = ui.buildColorMap(scan.commands, scan.conflicts);
   ui.applyColoring(svg, cm, scan);
   const byKey = (ik) => svg.querySelectorAll("[data-key]").find((g) => g.getAttribute("data-key") === ik);
-  assert.strictEqual(byKey("IK_Space").style.getPropertyValue("--key-fill"), ui.COLORS.vanilla);
+  assert.strictEqual(byKey("IK_Space").style.getPropertyValue("--key-fill"), ui.COLORS.vanillaAction);
   assert.notStrictEqual(byKey("IK_W").style.getPropertyValue("--key-fill"), ui.COLORS.unbound);
   assert.ok(byKey("IK_W").classList.contains("bound"));
   // aria-label updated with binding summary
