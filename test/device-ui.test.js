@@ -282,9 +282,11 @@ ok("topbar HTML: no standalone Sort button and Reload is compact", () => {
 });
 ok("topbar CSS: header uses the PNG directly without tiling", () => {
   const css = fs.readFileSync(path.join(__dirname, "../public/styles.css"), "utf8");
-  assert.ok(css.includes('background: url("/assets/keymapper-header.png");'));
-  assert.ok(css.includes("background-size: cover;"));
-  assert.ok(css.includes("background-repeat: no-repeat;"));
+  // Header now layers the PNG twice via the `background` shorthand (replaces the old
+  // longhand background-size/background-repeat): a blurred edge-to-edge backdrop using
+  // `cover` plus a sharp, never-cropped logo using `contain` — both `no-repeat` (no tiling).
+  assert.ok(css.includes('background: url("/assets/keymapper-header.png") center / cover no-repeat;'));
+  assert.ok(css.includes('background: url("/assets/keymapper-header.png") center / contain no-repeat;'));
 });
 ok("dialog HTML: cancel buttons bypass required-field validation", () => {
   const html = fs.readFileSync(path.join(__dirname, "../public/index.html"), "utf8");
