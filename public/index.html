@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,17 +7,24 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <h1>Witcher 3 Keymapper</h1>
-      <p id="paths">Loading local files...</p>
-    </div>
+  <div class="bg-blur" aria-hidden="true"></div>
+  <div class="bg-medallion" aria-hidden="true"></div>
+  <header class="topbar" aria-label="Witcher 3 Keymap Editor">
+    <div class="topbar-logo" aria-hidden="true"></div>
+    <p id="paths" class="header-paths">Loading local files...</p>
     <div class="top-actions">
+      <label class="language-select">
+        <span id="languageLabel">Language</span>
+        <select id="languageSelect" aria-label="Language">
+          <option value="auto">Auto</option>
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </label>
       <button id="loadFile" type="button">Load</button>
       <button id="saveFile" type="button">Save</button>
       <button id="refresh" class="stacked-action" type="button" title="Reload project input.settings from disk">
         <span>Reload</span>
-        <span>Settings</span>
       </button>
     </div>
   </header>
@@ -48,7 +55,7 @@
         <div id="deviceSvg" class="device-svg-host" aria-live="polite"></div>
         <p id="deviceEmpty" class="device-empty hidden"></p>
       </div>
-      <div id="legend" class="legend" aria-label="Farb-Legende"></div>
+      <div id="legend" class="legend" aria-label="Color legend"></div>
     </section>
 
     <section class="toolbar">
@@ -89,10 +96,10 @@
       <p id="remapText"></p>
       <label>
         New key in Witcher format
-        <input id="newKey" required pattern="IK_[A-Za-z0-9_]+" placeholder="z.B. IK_NumPad3">
+        <input id="newKey" required pattern="IK_[A-Za-z0-9_]+" placeholder="e.g. IK_NumPad3">
       </label>
       <div class="dialogActions">
-        <button value="cancel">Cancel</button>
+        <button value="cancel" formnovalidate>Cancel</button>
         <button id="applyRemap" value="default">Create backup & apply</button>
       </div>
     </form>
@@ -104,10 +111,10 @@
       <p id="saveText" class="muted">Enter a target path. Existing files are backed up server-side.</p>
       <label>
         Target path
-        <input id="savePath" required placeholder="C:\Pfad\zu\input.settings">
+        <input id="savePath" required placeholder="C:\Path\to\input.settings">
       </label>
       <div class="dialogActions">
-        <button value="cancel">Cancel</button>
+        <button value="cancel" formnovalidate>Cancel</button>
         <button id="applySave" value="default">Create backup & save</button>
       </div>
     </form>

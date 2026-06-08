@@ -14,7 +14,7 @@ const {
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
-  resolveDisplayName, humanizeDisplayName, handleSave
+  resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave
 } = require("../server.js");
 
 const registry = JSON.parse(
@@ -191,6 +191,17 @@ ok("resolveDisplayName: prefers localization and humanizes raw display keys", ()
   assert.strictEqual(resolveDisplayName("panel_groupname_fast_attack", localized), "Fast Attack");
   assert.strictEqual(humanizeDisplayName("move_forward"), "Move Forward");
 });
+ok("cleanLocalizedDisplayName: strips Witcher XML font markup from localized names", () => {
+  assert.strictEqual(cleanLocalizedDisplayName('<font size="18">Aktuell (drücken) / Umschalten (halten)</font>'), "Aktuell (drücken) / Umschalten (halten)");
+});
+ok("preferredLocalizationCodes: German uses German with English fallback, others stay English", () => {
+  assert.deepStrictEqual(preferredLocalizationCodes("de-DE"), ["de", "en"]);
+  assert.deepStrictEqual(preferredLocalizationCodes("en-US"), ["en"]);
+  assert.deepStrictEqual(preferredLocalizationCodes("fr-FR"), ["en"]);
+  assert.deepStrictEqual(preferredLocalizationCodes(null), ["en"]);
+  assert.strictEqual(uiLanguageForTag("de-AT"), "de");
+  assert.strictEqual(uiLanguageForTag("pl-PL"), "en");
+});
 ok("compareInputKeys: section sort order follows keyboard groups", () => {
   const keys = [
     "IK_UnknownB", "IK_None", "IK_Pad_A_CROSS", "IK_Pad_LeftTrigger", "IK_LeftMouse",
@@ -259,12 +270,26 @@ ok("handleSave: writes sorted content and creates backup for existing targets", 
   const second = handleSave({ targetPath: target, content: unsorted });
   assert.ok(second.backup && fs.existsSync(second.backup));
 });
-ok("topbar HTML: no standalone Sort button and Reload Settings is two-line", () => {
+ok("topbar HTML: no standalone Sort button and Reload is compact", () => {
   const html = fs.readFileSync(path.join(__dirname, "../public/index.html"), "utf8");
   assert.strictEqual(html.includes("sortFile"), false);
   assert.ok(html.includes("<span>Reload</span>"));
-  assert.ok(html.includes("<span>Settings</span>"));
+  assert.strictEqual(html.includes("<span>Settings</span>"), false);
   assert.ok(html.includes("Reload project input.settings from disk"));
+  assert.ok(html.includes('<header class="topbar" aria-label="Witcher 3 Keymap Editor">'));
+  assert.strictEqual(html.includes("brand-line-main"), false);
+  assert.strictEqual(html.includes("brand-claws"), false);
+});
+ok("topbar CSS: header uses the PNG directly without tiling", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../public/styles.css"), "utf8");
+  assert.ok(css.includes('background: url("/assets/keymapper-header.png");'));
+  assert.ok(css.includes("background-size: cover;"));
+  assert.ok(css.includes("background-repeat: no-repeat;"));
+});
+ok("dialog HTML: cancel buttons bypass required-field validation", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../public/index.html"), "utf8");
+  const cancelButtons = html.match(/<button value="cancel" formnovalidate>/g) || [];
+  assert.strictEqual(cancelButtons.length, 2);
 });
 ok("findConflicts: tap/hold pairs on one key are ignored", () => {
   const entries = [

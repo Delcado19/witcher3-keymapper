@@ -1,63 +1,68 @@
-# AGENTS.md — Einstiegspunkt für KI-Tools (Claude, Codex, u.a.)
+# AGENTS.md - Entry Point For AI Coding Tools
 
-> Gemeinsamer Orientierungspunkt für alle KI-Tools in diesem Repo. **Erst lesen, dann arbeiten.**
-> Diese Datei ist committet (Projekt-Doku). Das private Handoff-Log (`AI_JOURNAL.md`),
-> `CLAUDE.md` und `.claude/` sind lokal & gitignored (via `.git/info/exclude`).
+> Shared orientation for Claude, Codex, and other AI tools working in this repository. Read this before changing files.
+> This file is committed project documentation. The private handoff log (`AI_JOURNAL.md`), `CLAUDE.md`, and `.claude/` are local and gitignored via `.git/info/exclude`.
 
-## 0. Sofort-Orientierung (nicht das ganze Repo scannen!)
+## 0. Quick Orientation
 
-1. **Aktueller Stand:** `AI_JOURNAL.md` (Root, lokal) — oben der auto-generierte Arbeitsstand (Stop-Hook), darunter das kuratierte Handoff-Log (neueste zuerst). Dort steht, woran zuletzt gearbeitet wurde und was als Nächstes ansteht.
-2. **Struktur & Befehle:** siehe unten (Abschnitte 1–2).
-3. **Setup/Workflow-Fakten:** Claude-Memory unter `~/.claude/projects/C--Users-Delcado-Documents-Software-Projects-witcher3-keymapper/memory/` (Index: `MEMORY.md`).
+1. **Current state:** read `AI_JOURNAL.md` in the repository root. The auto block shows branch and diff state; the curated log below it explains recent work and next steps.
+2. **Structure and commands:** see sections 1 and 2 below.
+3. **Setup and workflow facts:** Claude memory lives under `~/.claude/projects/C--Users-Delcado-Documents-Software-Projects-witcher3-keymapper/memory/` with `MEMORY.md` as the index.
 
-## 1. Projekt & Struktur
+## 1. Project And Structure
 
-Kleines, lokales Web-Tool zum Inspizieren und Bearbeiten von Witcher 3 `input.settings`-Dateien (Tastenbelegung + Konflikt-Scanner).
+Small local web tool for inspecting and editing Witcher 3 `input.settings` files.
 
-- `server.js` — Node-HTTP-Server: Datei-Parser, Konflikt-Scanner, Backup-Logik, Remap-API.
-- `public/index.html` — Browser-UI-Shell.
-- `public/app.js` — Client-seitiges Scan-Rendering, Filter, Konflikt-Anzeige, Remap-Dialog.
-- `public/styles.css` — UI-Styling.
-- `input.settings` — **lokale** Arbeitskopie der Witcher-3-Keybinding-Datei. **Nutzerdaten, kein Quellcode** → gitignored, ebenso die Backups (`input.settings.<timestamp>.bak`).
-- `.github/workflows/ci.yml` — GitHub Actions: Node-20/22-Syntaxchecks und Tests.
-- `tools/w3strings-ng/` — optionaler `.w3strings`-Decoder als externes CLI-Tool, inkl. GPL-Lizenzhinweis.
+- `server.js` - Node HTTP server: file parser, conflict scanner, backup logic, remap API, localization selection.
+- `public/index.html` - browser UI shell.
+- `public/app.js` - client scan rendering, filters, conflict display, remap dialog, two-language UI table.
+- `public/styles.css` - UI styling.
+- `input.settings` - local working copy of the Witcher 3 keybinding file. This is user data, not source code, and is gitignored along with backups (`input.settings.<timestamp>.bak`).
+- `.github/workflows/ci.yml` - GitHub Actions syntax checks and tests on Node 20/22.
+- `tools/w3strings-ng/` - optional `.w3strings` decoder invoked as an external CLI tool, with GPL license notice.
 
-## 2. Befehle
+## 2. Commands
 
-- `npm start` — startet die App unter `http://127.0.0.1:5177`.
-- `npm test` — dependency-freie Unit-/Property-/Render-Tests.
-- `node --check server.js` — prüft Server-seitige JS-Syntax.
-- `node --check public/app.js` — prüft Client-seitige JS-Syntax.
+- `npm start` - starts the app at `http://127.0.0.1:5177`.
+- `npm test` - dependency-free unit/property/render tests.
+- `node --check server.js` - server-side JavaScript syntax check.
+- `node --check public/app.js` - client-side JavaScript syntax check.
 
-Kein Build-Step, keine Dependency-Installation nötig. Bei Parser-/Remap-Änderungen zusätzlich App starten und `/api/scan` gegen die echten lokalen Dateien aufrufen. **Nie** destruktive Edits gegen die Live-Witcher-3-Datei ohne vorheriges Backup testen.
+There is no build step and no dependency installation. For parser/remap/localization changes, also start the app and call `/api/scan` against the real local files where practical. Never test destructive writes against the live Witcher 3 file without a backup.
 
-### Coding-Style
-Plain CommonJS in `server.js`, plain Browser-JS in `public/app.js`. Dependency-frei halten, außer eine Dependency entfernt echte Komplexität. 2-Space-Indent, `const` als Default (`let` nur bei Reassignment), beschreibende camelCase-Namen. Parser-/Schreib-Verhalten explizit halten; keine cleveren String-Rewrites rund um `input.settings`.
+### Coding Style
 
-## 3. Git-Kontext
+Use plain CommonJS in `server.js` and plain browser JavaScript in `public/app.js`. Keep the project dependency-free unless a dependency removes real complexity. Use 2-space indentation, `const` by default, and descriptive camelCase names. Keep parser and write behavior explicit; avoid clever string rewrites around `input.settings`.
 
-- **Privates GitHub-Repo:** `origin` → `https://github.com/Delcado19/witcher3-keymapper.git`, Branch `master` trackt `origin/master`.
-- GitHub Actions CI läuft auf Push/PR gegen `master`: `node --check server.js`, `node --check public/app.js`, `npm test` unter Node 20 und 22.
-- Kurze, imperative Commit-Messages, z.B. `Add conflict scanner filters`, `Fix UTF-16 input XML parsing`, `Backup input.settings before remap`.
-- Branch-Konvention (falls Branches genutzt werden): `fix/<kurz>` bzw. `feat/<kurz>`.
+### Language Policy
 
-## 4. Doku-Protokoll — bei JEDER Code-Änderung einhalten
+Public documentation, code comments, tests, identifiers, and handoff notes should be written in English. The application UI supports English and German through the translation table in `public/app.js`; German text should stay there, or in literal keyboard labels for German layouts. English is the default for GitHub users and for every non-German locale.
 
-Ziel: jede Änderung ist im Code *und* im Handoff-Log nachvollziehbar; jedes KI-Tool findet sich nach einer Unterbrechung sofort zurecht.
+## 3. Git Context
 
-1. **In-Code-Kommentar mit Kontext-Bezug:** Bei nicht-offensichtlichem Verhalten, Kompat-Guards (z.B. UTF-16/BOM-Encoding), Fallbacks, Migrationen, öffentlichen Verträgen und issue-/quellengetriebenen Fixes einen knappen Kommentar setzen — *warum* der Code existiert. Keine Noise-Kommentare. (Entspricht der globalen AI-Coding-Policy.)
-2. **Handoff-Log fortschreiben:** In `AI_JOURNAL.md` unter „Kuratiertes Log" einen Eintrag oben ergänzen: Datum · Tool · was geändert · Dateien · Begründung · **offene Threads / nächste Schritte**.
-3. **Externe Doku syncen:** README/CHANGELOG/Tests — wo relevant. Engine dafür: **`docs-sync`-Agent** (gleicht den `git diff` gegen Doku/Kommentare ab). Vor Commits/PRs aufrufen.
-4. **Memory:** Nicht-offensichtliche, dauerhafte Fakten in die Claude-Memory (siehe oben), nicht ins Journal duplizieren.
+- **Private GitHub repo:** `origin` -> `https://github.com/Delcado19/witcher3-keymapper.git`; branch `master` tracks `origin/master`.
+- GitHub Actions runs on push/PR against `master`: `node --check server.js`, `node --check public/app.js`, and `npm test` under Node 20 and 22.
+- Use short imperative commit messages, for example `Add conflict scanner filters`, `Fix UTF-16 input XML parsing`, `Backup input.settings before remap`.
+- Branch convention when using branches: `fix/<short-name>` or `feat/<short-name>`.
 
-### Automatik
-Ein **Stop-Hook** (`.claude/settings.local.json` → `.claude/journal-update.ps1`) aktualisiert nach jedem Turn **deterministisch** den AUTO-Block in `AI_JOURNAL.md` (Branch + Diff-Stat). Das ist nur ein Stand-Schnappschuss — die *inhaltliche* Doku (Punkte 1–4) bleibt Aufgabe des arbeitenden Tools.
+## 4. Documentation Protocol For Every Code Change
 
-## 5. Sicherheit & Konfiguration
+Goal: every change should be understandable in code and in the handoff log.
 
-Tool ist nur für lokalen Gebrauch. Server an `127.0.0.1` gebunden lassen. Automatische Backups vor jedem Schreiben in `input.settings` erhalten; klar zwischen Projekt-Kopie und Live-Spieldatei unterscheiden.
+1. **In-code comments with context:** add concise comments for non-obvious behavior, compatibility guards, fallbacks, migrations, public contracts, and issue-driven fixes. Do not add comments that restate obvious code.
+2. **Update the handoff log:** add a top entry under `AI_JOURNAL.md` -> "Curated Log" with date, tool, changed files, rationale, verification, and open threads.
+3. **Keep external docs in sync:** update README/specs/tests where relevant. Before commits or PRs, review `git diff` for documentation and comment drift.
+4. **Memory:** durable, non-obvious facts belong in Claude memory when appropriate; do not duplicate them into the journal.
 
-## 6. Roadmap / geplante Features
+### Automation
 
-- **Geräte-zentriertes UI (geplant, Details + offene Punkte in `AI_JOURNAL.md`):** Umbau zu Hersteller-Software-Stil — Tabs pro Eingabegerät mit Geräte-Schema und farblich markierten Belegungen (Unterscheidung Vanilla-Spiel vs. Mod). Backend liefert `source` (Spiel/Mod via `buildScan`) und Device-Klasse (`deviceForKey`) bereits; es fehlen HW-Erkennung (`/api/devices`), `IK_*`→Position-Layouts und das Tab-UI.
-- **Nicht bestätigt:** Cross-Platform-Geräteerkennung (Linux/macOS). Kern-Scope bleibt vorerst Windows.
+A stop hook (`.claude/settings.local.json` -> `.claude/journal-update.ps1`) updates only the deterministic auto block in `AI_JOURNAL.md`. The human-readable curated documentation remains the responsibility of the active tool.
+
+## 5. Safety And Configuration
+
+This tool is for local use only. Keep the server bound to `127.0.0.1`. Preserve automatic backups before writing `input.settings`, and keep a clear distinction between the project copy and the live game file.
+
+## 6. Roadmap
+
+- **Device-centric UI:** mostly implemented. The backend provides source classification and device classes; the UI renders device diagrams, colors bindings, and links conflicts.
+- **Cross-platform detection:** Linux/macOS support is not confirmed. The current core scope remains Windows.

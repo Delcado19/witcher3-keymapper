@@ -480,7 +480,8 @@ function detectLocalizationLanguage(fileName, head = "") {
 
 function preferredLocalizationCodes(languageTag) {
   const primary = String(languageTag || "").toLowerCase().split(/[-_]/)[0];
-  return [primary, "en"].filter(Boolean);
+  if (primary === "de") return ["de", "en"];
+  return ["en"];
 }
 
 function localizationLanguageScore(language, preferred) {
@@ -699,9 +700,36 @@ function parseWitcherScriptLocalizationKeys(text) {
 }
 
 function resolveDisplayName(rawDisplayName, localizationMap) {
+  return resolveDisplayNameInfo(rawDisplayName, localizationMap).displayName;
+}
+
+function resolveDisplayNameInfo(rawDisplayName, localizationMap) {
   const raw = String(rawDisplayName || "").trim();
-  if (!raw) return "";
-  return localizationMap.get(raw) || humanizeDisplayName(raw);
+  if (!raw) return { displayName: "", displayNameSource: "empty" };
+  const localized = cleanLocalizedDisplayName(localizationMap.get(raw));
+  if (localized) return { displayName: localized, displayNameSource: "localized" };
+  return { displayName: humanizeDisplayName(raw), displayNameSource: "humanized" };
+}
+
+function cleanLocalizedDisplayName(value) {
+  return String(value || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, "\"")
+    .replace(/&#039;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function uiLanguageForTag(languageTag) {
+  return String(languageTag || "").toLowerCase().startsWith("de") ? "de" : "en";
+}
+
+function localizationTagForUiLanguage(uiLanguage) {
+  return uiLanguage === "de" ? "de-DE" : "en-US";
 }
 
 function humanizeDisplayName(value) {
@@ -722,14 +750,16 @@ function humanizeDisplayName(value) {
 // input defaults to the server-side input.settings, but /api/load passes a
 // pre-parsed in-memory upload so a loaded file is scanned without changing the
 // default path (Requirement 7.1, 7.10).
-function buildScan(input = parseInputSettings(defaults.inputSettings)) {
+function buildScan(input = parseInputSettings(defaults.inputSettings), requestedLanguage = "") {
   assertValidInputSettings(input.syntax);
   const inputLanguage = detectLayoutLanguageWin32Sync();
+  const uiLanguage = uiLanguageForTag(requestedLanguage || inputLanguage);
+  const localizationLanguage = localizationTagForUiLanguage(uiLanguage);
   const vars = parseInputXmlFiles([
     { path: defaults.gameInputXml, modName: "game/input.xml" },
     ...findModInputXmlFiles(defaults.modsDir)
   ]);
-  const localizationMap = loadLocalizationMap(defaults.modsDir, inputLanguage);
+  const localizationMap = loadLocalizationMap(defaults.modsDir, localizationLanguage);
   const vanillaDefaults = parseOptionalInputSettings(vanillaDefaultFileForLanguage(inputLanguage));
   const vanillaDefaultActions = new Set(vanillaDefaults.entries.map((entry) => entry.action).filter(Boolean));
   const entries = mergeVanillaDefaultEntries(input.entries, vanillaDefaults.entries);
@@ -750,9 +780,11 @@ function buildScan(input = parseInputSettings(defaults.inputSettings)) {
     const known = commandByAction.get(entry.action);
     const id = known ? known.id : entry.action;
     if (!commandMap.has(id)) {
+      const display = resolveDisplayNameInfo(known?.displayName || entry.action, localizationMap);
       commandMap.set(id, {
         id,
-        displayName: resolveDisplayName(known?.displayName || entry.action, localizationMap),
+        displayName: display.displayName,
+        displayNameSource: display.displayNameSource,
         displayNameKey: known?.displayName || entry.action,
         tags: known?.tags || "",
         source: modSources.get(entry.action) || (isVanillaAction(entry.action, knownActions) ? "game/input.xml" : "unknown"),
@@ -811,6 +843,7 @@ function buildScan(input = parseInputSettings(defaults.inputSettings)) {
       modActions: [...modSources.keys()].length
     },
     inputLanguage,
+    uiLanguage,
     vanillaDefaultFile: vanillaDefaults.file || null,
     commands: [...commandMap.values()].sort((a, b) => a.id.localeCompare(b.id)),
     conflicts: findConflicts(entries, commandByAction, sourceByCommandId),
@@ -1101,7 +1134,7 @@ function extractMultipartFile(buffer, boundary) {
   return filePart ? filePart.body : null;
 }
 
-// POST /api/save — write Bindings to a client-chosen target file. Backs up an
+// POST /api/save — write bindings to a client-chosen target file. Backs up an
 // existing target first; if the backup fails the write is aborted (Requirement
 // 7.2, 7.3, 12.1–12.3). statusCode distinguishes bad input (400) from IO (500).
 function handleSave(body) {
@@ -1158,7 +1191,7 @@ async function detectDevicesWin32() {
       const match = String(entry.DeviceID || "").match(/VID_([0-9A-F]{4})&PID_([0-9A-F]{4})/i);
       if (!match) continue;
       const name = entry.FriendlyName || "";
-      // FriendlyNames are localized (de-DE Windows reports "Tastatur"/"Maus"),
+      // FriendlyNames are localized, so include German USB class names too.
       // and many HID nodes are generic ("HID-konformer Systemcontroller"), so
       // this type is only a hint — the client matches by VID:PID first.
       const type = /keyboard|tastatur/i.test(name) ? "keyboard"
@@ -1201,7 +1234,7 @@ function detectLayoutLanguageWin32Sync() {
 
 async function handleDevices(res) {
   const [devices, inputLanguage] = await Promise.all([detectDevicesWin32(), detectLayoutLanguageWin32()]);
-  sendJson(res, 200, { devices, inputLanguage });
+  sendJson(res, 200, { devices, inputLanguage, uiLanguage: uiLanguageForTag(inputLanguage) });
 }
 
 function sendJson(res, status, payload) {
@@ -1222,15 +1255,27 @@ function serveStatic(res, pathname) {
     return;
   }
   const ext = path.extname(resolved).toLowerCase();
-  const types = { ".html": "text/html", ".css": "text/css", ".js": "application/javascript", ".svg": "image/svg+xml" };
-  res.writeHead(200, { "content-type": `${types[ext] || "text/plain"}; charset=utf-8` });
+  const types = {
+    ".html": "text/html",
+    ".css": "text/css",
+    ".js": "application/javascript",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp"
+  };
+  const contentType = types[ext] || "text/plain";
+  const charset = /^(text\/|application\/javascript$)/.test(contentType) ? "; charset=utf-8" : "";
+  res.writeHead(200, { "content-type": `${contentType}${charset}` });
   fs.createReadStream(resolved).pipe(res);
 }
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
+  const requestedLanguage = url.searchParams.get("lang") || req.headers["x-keymapper-language"] || "";
   try {
-    if (req.method === "GET" && url.pathname === "/api/scan") return sendJson(res, 200, buildScan());
+    if (req.method === "GET" && url.pathname === "/api/scan") return sendJson(res, 200, buildScan(undefined, requestedLanguage));
     if (req.method === "POST" && url.pathname === "/api/remap") {
       let raw = "";
       req.on("data", (chunk) => { raw += chunk; });
@@ -1262,7 +1307,7 @@ const server = http.createServer((req, res) => {
           const parsed = parseInputSettingsText(decodeBuffer(fileBuf, "upload"));
           assertValidInputSettings(parsed.syntax);
           // Scan the upload in memory; defaults.inputSettings stays untouched (Req 7.10).
-          sendJson(res, 200, buildScan(parsed));
+          sendJson(res, 200, buildScan(parsed, requestedLanguage));
         } catch (error) {
           sendJson(res, error.statusCode || 400, { error: error.message });
         }
@@ -1315,6 +1360,10 @@ module.exports = {
   w3StringsToolKind,
   decodeW3StringsToCachedCsv,
   resolveDisplayName,
+  resolveDisplayNameInfo,
+  cleanLocalizedDisplayName,
+  uiLanguageForTag,
+  preferredLocalizationCodes,
   humanizeDisplayName,
   handleSave
 };

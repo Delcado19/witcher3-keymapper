@@ -16,6 +16,8 @@ const els = (typeof document !== "undefined") ? {
   conflictCount: document.querySelector("#conflictCount"),
   resultCount: document.querySelector("#resultCount"),
   refresh: document.querySelector("#refresh"),
+  languageSelect: document.querySelector("#languageSelect"),
+  languageLabel: document.querySelector("#languageLabel"),
   loadFile: document.querySelector("#loadFile"),
   saveFile: document.querySelector("#saveFile"),
   loadInput: document.querySelector("#loadInput"),
@@ -38,6 +40,277 @@ const els = (typeof document !== "undefined") ? {
   loadingBar: document.querySelector("#loadingBar")
 } : {};
 
+const I18N = {
+  en: {
+    language: "Language",
+    load: "Load",
+    save: "Save",
+    reloadTop: "Reload",
+    reloadBottom: "",
+    reloadTitle: "Reload project input.settings from disk",
+    chooseDevice: "Choose input device",
+    keyboard: "Keyboard",
+    controllers: "Mouse/Gamepad",
+    mouse: "Mouse",
+    gamepad: "Gamepad",
+    layout: "Layout",
+    chooseLayout: "Choose layout...",
+    colorLegend: "Color legend",
+    searchPlaceholder: "Search action, key, mod, or context",
+    allSources: "All sources",
+    allInputs: "All inputs",
+    unbound: "Unbound",
+    conflicts: "Conflicts",
+    mappings: "Mappings",
+    changeMapping: "Change mapping",
+    newKey: "New key in Witcher format",
+    newKeyPlaceholder: "e.g. IK_NumPad3",
+    cancel: "Cancel",
+    createBackupApply: "Create backup & apply",
+    saveInputSettings: "Save input.settings",
+    saveHelp: "Enter a target path. Existing files are backed up server-side.",
+    targetPath: "Target path",
+    targetPathPlaceholder: "C:\\Path\\to\\input.settings",
+    createBackupSave: "Create backup & save",
+    bindings: "Bindings",
+    actions: "Actions",
+    commands: "Commands",
+    sections: "Sections",
+    keys: "Keys",
+    modActions: "Mod actions",
+    syntax: "Syntax",
+    syntaxError: "Error",
+    results: "{count} results",
+    noConflicts: "No conflicts found.",
+    critical: "Critical",
+    context: "Context",
+    more: "more",
+    sessionFile: "Session file: {name}",
+    mods: "Mods",
+    vanilla: "Vanilla",
+    hardwareUnavailable: "Hardware detection unavailable",
+    projectLabel: "Project input.settings",
+    change: "Change",
+    clear: "Clear",
+    confirmClear: "Confirm clear",
+    conflictIn: "Conflict in:",
+    noKeyboardLayout: "No keyboard layout detected. Choose a layout.",
+    noBindingsFor: "No bindings found for {device}.",
+    profileLoadFailed: "Device profile could not be loaded.",
+    noContent: "No file content loaded to save.",
+    saveLoadedSession: "Saves the loaded session file \"{name}\".",
+    saveProject: "Saves the current project input.settings content.",
+    saveFailed: "Save failed",
+    saved: "Saved: {path}",
+    loaded: "Loaded: {name}",
+    fileLoadFailed: "File could not be loaded",
+    rescanFailed: "Could not rescan session remap",
+    sessionChanged: "Session changed: {count} lines",
+    sessionRemapFailed: "Session remap failed",
+    remapFailed: "Remap failed",
+    changedLines: "Changed {count} lines",
+    backup: "Backup: {path}",
+    syntaxOk: "{label}: syntax OK",
+    syntaxErrorAt: "{label}: syntax error at {where} ({message})",
+    line: "line {line}",
+    file: "file",
+    invalidSettings: "invalid input.settings",
+    changeTitle: "Change {id}",
+    changeText: "Changes all bindings for actions: {actions}",
+    hold: "hold",
+    clearFailed: "Clear failed",
+    clearedBindings: "Cleared {count} binding(s)",
+    svgFailed: "SVG generation failed: {message}",
+    keyUnbound: "{label}: unbound",
+    otherMods: "Other mods",
+    conflict: "Conflict",
+    vanillaMovement: "Vanilla: Movement",
+    vanillaAction: "Vanilla: Combat/Actions",
+    vanillaMenu: "Vanilla: Menus",
+    error: "Error",
+    needValidRemap: "Need at least one action and a valid IK_* target key.",
+    noMatchingBindings: "No matching bindings were changed.",
+    utf16beUnsupported: "UTF-16BE input.settings is not supported."
+  },
+  de: {
+    language: "Sprache",
+    load: "Laden",
+    save: "Speichern",
+    reloadTop: "Aktualisieren",
+    reloadBottom: "",
+    reloadTitle: "Projekt-input.settings neu von der Festplatte laden",
+    chooseDevice: "Eingabegerät wählen",
+    keyboard: "Tastatur",
+    controllers: "Maus/Gamepad",
+    mouse: "Maus",
+    gamepad: "Gamepad",
+    layout: "Layout",
+    chooseLayout: "Layout wählen...",
+    colorLegend: "Farblegende",
+    searchPlaceholder: "Aktion, Taste, Mod oder Kontext suchen",
+    allSources: "Alle Quellen",
+    allInputs: "Alle Eingaben",
+    unbound: "Unbelegt",
+    conflicts: "Konflikte",
+    mappings: "Belegungen",
+    changeMapping: "Belegung ändern",
+    newKey: "Neue Taste im Witcher-Format",
+    newKeyPlaceholder: "z. B. IK_NumPad3",
+    cancel: "Abbrechen",
+    createBackupApply: "Backup erstellen & anwenden",
+    saveInputSettings: "input.settings speichern",
+    saveHelp: "Zielpfad eingeben. Bestehende Dateien werden serverseitig gesichert.",
+    targetPath: "Zielpfad",
+    targetPathPlaceholder: "C:\\Pfad\\zu\\input.settings",
+    createBackupSave: "Backup erstellen & speichern",
+    bindings: "Bindungen",
+    actions: "Aktionen",
+    commands: "Befehle",
+    sections: "Sektionen",
+    keys: "Tasten",
+    modActions: "Mod-Aktionen",
+    syntax: "Syntax",
+    syntaxError: "Fehler",
+    results: "{count} Treffer",
+    noConflicts: "Keine Konflikte gefunden.",
+    critical: "Kritisch",
+    context: "Kontext",
+    more: "weitere",
+    sessionFile: "Session-Datei: {name}",
+    mods: "Mods",
+    vanilla: "Spiel",
+    hardwareUnavailable: "Hardware-Erkennung nicht verfügbar",
+    projectLabel: "Projekt-input.settings",
+    change: "Ändern",
+    clear: "Löschen",
+    confirmClear: "Löschen bestätigen",
+    conflictIn: "Konflikt in:",
+    noKeyboardLayout: "Kein Tastaturlayout erkannt. Layout wählen.",
+    noBindingsFor: "Keine Belegungen für {device} gefunden.",
+    profileLoadFailed: "Geräteprofil konnte nicht geladen werden.",
+    noContent: "Kein Dateiinhalt zum Speichern geladen.",
+    saveLoadedSession: "Speichert die geladene Session-Datei \"{name}\".",
+    saveProject: "Speichert den aktuellen Projekt-input.settings-Inhalt.",
+    saveFailed: "Speichern fehlgeschlagen",
+    saved: "Gespeichert: {path}",
+    loaded: "Geladen: {name}",
+    fileLoadFailed: "Datei konnte nicht geladen werden",
+    rescanFailed: "Session-Remap konnte nicht neu gescannt werden",
+    sessionChanged: "Session geändert: {count} Zeilen",
+    sessionRemapFailed: "Session-Remap fehlgeschlagen",
+    remapFailed: "Remap fehlgeschlagen",
+    changedLines: "{count} Zeilen geändert",
+    backup: "Backup: {path}",
+    syntaxOk: "{label}: Syntax OK",
+    syntaxErrorAt: "{label}: Syntaxfehler bei {where} ({message})",
+    line: "Zeile {line}",
+    file: "Datei",
+    invalidSettings: "ungültige input.settings",
+    changeTitle: "{id} ändern",
+    changeText: "Ändert alle Belegungen für Aktionen: {actions}",
+    hold: "halten",
+    clearFailed: "Löschen fehlgeschlagen",
+    clearedBindings: "{count} Bindung(en) gelöscht",
+    svgFailed: "SVG-Erzeugung fehlgeschlagen: {message}",
+    keyUnbound: "{label}: unbelegt",
+    otherMods: "Sonstige Mods",
+    conflict: "Konflikt",
+    vanillaMovement: "Spiel: Bewegung",
+    vanillaAction: "Spiel: Kampf/Aktionen",
+    vanillaMenu: "Spiel: Menüs",
+    error: "Fehler",
+    needValidRemap: "Mindestens eine Aktion und eine gültige IK_*-Zieltaste sind nötig.",
+    noMatchingBindings: "Keine passenden Bindungen wurden geändert.",
+    utf16beUnsupported: "UTF-16BE input.settings wird nicht unterstützt."
+  }
+};
+
+function detectBrowserLanguage() {
+  const lang = (typeof navigator !== "undefined" && (navigator.languages?.[0] || navigator.language)) || "";
+  return lang.toLowerCase().startsWith("de") ? "de" : "en";
+}
+
+function getLanguageChoice() {
+  if (typeof localStorage === "undefined") return "auto";
+  return localStorage.getItem("witcher3-keymapper:language") || "auto";
+}
+
+function currentLanguage() {
+  const choice = getLanguageChoice();
+  return choice === "de" || choice === "en" ? choice : detectBrowserLanguage();
+}
+
+function t(key, params = {}) {
+  const dict = I18N[currentLanguage()] || I18N.en;
+  const template = Object.prototype.hasOwnProperty.call(dict, key)
+    ? dict[key]
+    : Object.prototype.hasOwnProperty.call(I18N.en, key) ? I18N.en[key] : key;
+  return template.replace(/\{(\w+)}/g, (_, name) => String(params[name] ?? ""));
+}
+
+function languageQuery() {
+  return `?lang=${encodeURIComponent(currentLanguage())}`;
+}
+
+function applyStaticTexts() {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = currentLanguage();
+  if (els.languageLabel) els.languageLabel.textContent = t("language");
+  if (els.languageSelect) els.languageSelect.value = getLanguageChoice();
+  els.languageSelect?.setAttribute("aria-label", t("language"));
+  els.loadFile && (els.loadFile.textContent = t("load"));
+  els.saveFile && (els.saveFile.textContent = t("save"));
+  if (els.refresh) {
+    els.refresh.title = t("reloadTitle");
+    const bottom = t("reloadBottom");
+    els.refresh.innerHTML = bottom
+      ? `<span>${escapeHtml(t("reloadTop"))}</span><span>${escapeHtml(bottom)}</span>`
+      : `<span>${escapeHtml(t("reloadTop"))}</span>`;
+  }
+  els.deviceTabs?.setAttribute("aria-label", t("chooseDevice"));
+  els.deviceTabs?.querySelector('[data-device="keyboard"]') && (els.deviceTabs.querySelector('[data-device="keyboard"]').textContent = t("keyboard"));
+  els.deviceTabs?.querySelector('[data-device="controllers"]') && (els.deviceTabs.querySelector('[data-device="controllers"]').textContent = t("controllers"));
+  const layoutLabel = els.layoutSelectWrap?.querySelector("span");
+  if (layoutLabel) layoutLabel.textContent = t("layout");
+  els.layoutSelect?.setAttribute("aria-label", t("chooseLayout"));
+  const emptyLayout = els.layoutSelect?.querySelector('option[value=""]');
+  if (emptyLayout) emptyLayout.textContent = t("chooseLayout");
+  els.layoutMode && (els.layoutMode.textContent = t("layout"));
+  els.legend?.setAttribute("aria-label", t("colorLegend"));
+  els.search?.setAttribute("placeholder", t("searchPlaceholder"));
+  const deviceOptions = els.deviceFilter?.querySelectorAll("option");
+  if (deviceOptions?.length) {
+    deviceOptions[0].textContent = t("allInputs");
+    deviceOptions[1].textContent = t("keyboard");
+    deviceOptions[2].textContent = t("mouse");
+    deviceOptions[3].textContent = t("gamepad");
+    deviceOptions[4].textContent = t("unbound");
+  }
+  const panelHeads = document.querySelectorAll(".compact-panel .panelHead h2");
+  if (panelHeads[0] && !scan) panelHeads[0].textContent = t("conflicts");
+  if (panelHeads[1]) panelHeads[1].textContent = t("mappings");
+  els.remapTitle && (els.remapTitle.textContent = t("changeMapping"));
+  const remapLabel = els.dialog?.querySelector("label");
+  if (remapLabel?.firstChild) remapLabel.firstChild.textContent = `${t("newKey")} `;
+  if (els.newKey) els.newKey.placeholder = t("newKeyPlaceholder");
+  const dialogButtons = els.dialog?.querySelectorAll("button");
+  if (dialogButtons?.length) {
+    dialogButtons[0].textContent = t("cancel");
+    dialogButtons[1].textContent = t("createBackupApply");
+  }
+  const saveTitle = els.saveDialog?.querySelector("h2");
+  if (saveTitle) saveTitle.textContent = t("saveInputSettings");
+  if (els.saveText && !els.saveDialog?.open) els.saveText.textContent = t("saveHelp");
+  const saveLabel = els.saveDialog?.querySelector("label");
+  if (saveLabel?.firstChild) saveLabel.firstChild.textContent = `${t("targetPath")} `;
+  if (els.savePath) els.savePath.placeholder = t("targetPathPlaceholder");
+  const saveButtons = els.saveDialog?.querySelectorAll("button");
+  if (saveButtons?.length) {
+    saveButtons[0].textContent = t("cancel");
+    saveButtons[1].textContent = t("createBackupSave");
+  }
+}
+
 // Session state for the device-centric view (Tasks 11/12). Not persisted.
 const state = {
   registry: [],
@@ -59,12 +332,13 @@ const state = {
 };
 
 async function load() {
+  applyStaticTexts();
   showLoading(true);
   try {
     // Scan, hardware detection and the device registry load in parallel (design.md
     // "Datenfluss beim Seitenstart"). Devices/registry degrade gracefully.
     const [scanRes, devRes, registry] = await Promise.all([
-      fetch("/api/scan"),
+      fetch(`/api/scan${languageQuery()}`),
       fetch("/api/devices").catch(() => null),
       state.registry.length ? Promise.resolve(state.registry) : loadRegistry().catch(() => [])
     ]);
@@ -78,12 +352,12 @@ async function load() {
       state.devices = dev.devices || [];
       state.inputLanguage = dev.inputLanguage || null;
     } else if (devRes === null) {
-      showToast("Hardware detection unavailable", "info");
+      showToast(t("hardwareUnavailable"), "info");
     }
     resolveKeyboardProfile();
     render();
     await renderDeviceView();
-    showSyntaxStatus(scan, "Project input.settings");
+    showSyntaxStatus(scan, t("projectLabel"));
   } finally {
     showLoading(false);
   }
@@ -115,22 +389,22 @@ function showLoading(on) {
 
 function render() {
   const fileLabel = state.sessionFile
-    ? `Session-Datei: ${state.sessionFile.name}`
+    ? t("sessionFile", { name: state.sessionFile.name })
     : scan.paths.inputSettings;
-  els.paths.textContent = `${fileLabel} | Mods: ${scan.paths.modsDir}`;
+  els.paths.textContent = `${fileLabel} | ${t("mods")}: ${scan.paths.modsDir}`;
   els.stats.innerHTML = [
-    ["Bindings", scan.stats.bindings],
-    ["Actions", scan.stats.actions],
-    ["Commands", scan.stats.commands],
-    ["Sections", scan.stats.sections],
-    ["Keys", scan.stats.keys],
-    ["Mod-Actions", scan.stats.modActions],
-    ["Syntax", scan.syntax?.valid ? "OK" : "Error"]
+    [t("bindings"), scan.stats.bindings],
+    [t("actions"), scan.stats.actions],
+    [t("commands"), scan.stats.commands],
+    [t("sections"), scan.stats.sections],
+    [t("keys"), scan.stats.keys],
+    [t("modActions"), scan.stats.modActions],
+    [t("syntax"), scan.syntax?.valid ? "OK" : t("syntaxError")]
   ].map(([label, value]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join("");
 
   const currentSource = els.sourceFilter.value;
   const sources = [...new Set(scan.commands.map((item) => item.source))].sort();
-  els.sourceFilter.innerHTML = `<option value="">All sources</option>${sources.map((source) => {
+  els.sourceFilter.innerHTML = `<option value="">${escapeHtml(t("allSources"))}</option>${sources.map((source) => {
     return `<option value="${escapeHtml(source)}">${escapeHtml(source)}</option>`;
   }).join("")}`;
   els.sourceFilter.value = currentSource;
@@ -166,9 +440,9 @@ function groupConflicts(conflicts) {
 
 function renderConflicts() {
   const groups = groupConflicts(scan.conflicts);
-  els.conflictCount.textContent = `Conflicts (${groups.length})`;
+  els.conflictCount.textContent = `${t("conflicts")} (${groups.length})`;
   if (!groups.length) {
-    els.conflicts.innerHTML = `<div class="empty muted">No conflicts found.</div>`;
+    els.conflicts.innerHTML = `<div class="empty muted">${escapeHtml(t("noConflicts"))}</div>`;
     return;
   }
   // data-conflict-key lets the SVG popover scroll to & highlight the entry
@@ -179,9 +453,9 @@ function renderConflicts() {
       return `<span class="compact-token" title="${escapeHtml(src)}">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
     const shown = grp.sections.slice(0, 3).map(escapeHtml).join(", ");
-    const extra = grp.sections.length > 3 ? ` +${grp.sections.length - 3} weitere` : "";
-    const count = grp.sections.length > 1 ? ` · ${grp.sections.length} sections` : "";
-    const severity = grp.severity === "high" ? "Critical" : "Context";
+    const extra = grp.sections.length > 3 ? ` +${grp.sections.length - 3} ${t("more")}` : "";
+    const count = grp.sections.length > 1 ? ` · ${grp.sections.length} ${t("sections").toLowerCase()}` : "";
+    const severity = grp.severity === "high" ? t("critical") : t("context");
     return `
     <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
       <div class="compact-key">
@@ -195,7 +469,7 @@ function renderConflicts() {
 }
 
 function shortSource(src) {
-  return src === "game/input.xml" ? "Vanilla" : src;
+  return src === "game/input.xml" ? t("vanilla") : src;
 }
 
 function renderCommands() {
@@ -218,21 +492,21 @@ function renderCommands() {
     return haystack.includes(q);
   });
 
-  els.resultCount.textContent = `${filtered.length} results`;
+  els.resultCount.textContent = t("results", { count: filtered.length });
   els.commands.innerHTML = filtered.map((command) => {
-    const keys = command.keys.length ? command.keys : [{ label: "Unbound", device: "unbound", key: "IK_None" }];
-    const actions = command.actions.length > 2
-      ? `${command.actions.slice(0, 2).join(", ")} +${command.actions.length - 2}`
-      : command.actions.join(", ");
+    const keys = command.keys.length ? command.keys : [{ label: t("unbound"), device: "unbound", key: "IK_None" }];
+    const title = commandTitleText(command);
+    const sourceLine = commandSourceLine(command);
+    const actions = commandActionsLine(command);
     return `
       <article class="command">
         <div class="compact-main">
-          <div class="commandTitle">${escapeHtml(command.id)}</div>
-          <span class="source">${escapeHtml(command.displayName)} · ${escapeHtml(shortSource(command.source))}</span>
-          <div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>
+          <div class="commandTitle">${escapeHtml(title)}</div>
+          <span class="source">${escapeHtml(sourceLine)}</span>
+          ${actions ? `<div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>` : ""}
         </div>
         <div class="compact-keys">${keys.map((key) => keyChip(key)).join("")}</div>
-        <button class="compact-action" data-remap="${escapeHtml(command.id)}">Change</button>
+        <button class="compact-action" data-remap="${escapeHtml(command.id)}">${escapeHtml(t("change"))}</button>
       </article>
     `;
   }).join("");
@@ -242,16 +516,38 @@ function renderCommands() {
   });
 }
 
+function commandTitleText(command) {
+  return command.displayNameSource === "localized" && command.displayName ? command.displayName : command.id;
+}
+
+function commandSourceLine(command) {
+  const source = shortSource(command.source);
+  return command.displayNameSource === "localized" && command.id !== command.displayName
+    ? `${command.id} · ${source}`
+    : source;
+}
+
+function commandActionsLine(command) {
+  const actions = uniqueInformativeActions(command);
+  if (!actions.length) return "";
+  return actions.length > 2 ? `${actions.slice(0, 2).join(", ")} +${actions.length - 2}` : actions.join(", ");
+}
+
+function uniqueInformativeActions(command) {
+  return [...new Set(command.actions || [])]
+    .filter((action) => action && action !== command.id && action !== command.displayNameKey);
+}
+
 function keyChip(key) {
-  const hold = key.state === "Duration" ? ` hold ${key.idleTime || ""}s` : "";
+  const hold = key.state === "Duration" ? ` ${t("hold")} ${key.idleTime || ""}s` : "";
   return `<span class="chip ${key.device}" title="${escapeHtml(key.key || "")}">${escapeHtml(key.label)}${escapeHtml(hold)}</span>`;
 }
 
 function openRemap(commandId) {
   activeCommand = scan.commands.find((command) => command.id === commandId);
   if (!activeCommand) return;
-  els.remapTitle.textContent = `Change ${activeCommand.id}`;
-  els.remapText.textContent = `Changes all bindings for actions: ${activeCommand.actions.join(", ")}`;
+  els.remapTitle.textContent = t("changeTitle", { id: activeCommand.id });
+  els.remapText.textContent = t("changeText", { actions: activeCommand.actions.join(", ") });
   els.newKey.value = "";
   els.dialog.showModal();
 }
@@ -259,6 +555,10 @@ function openRemap(commandId) {
 if (typeof document !== "undefined") {
   els.remapForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (event.submitter?.value === "cancel") {
+      els.dialog.close();
+      return;
+    }
     if (!activeCommand) return;
     if (state.sessionFile) {
       await remapSessionContent(activeCommand.actions, els.newKey.value);
@@ -273,11 +573,11 @@ if (typeof document !== "undefined") {
     const result = await response.json();
     if (!response.ok) {
       // Toast instead of alert() (Task 8 / Requirement 9.6).
-      showToast(result.error || "Remap failed", "error");
+      showToast(result.error || t("remapFailed"), "error");
       return;
     }
     els.dialog.close();
-    showToast(`Changed ${result.changed} lines · Backup: ${result.backup}`, "success");
+    showToast(`${t("changedLines", { count: result.changed })} · ${t("backup", { path: result.backup })}`, "success");
     await load();
   });
 
@@ -289,6 +589,10 @@ if (typeof document !== "undefined") {
   els.loadInput?.addEventListener("change", handleLoadFile);
   els.saveFile?.addEventListener("click", openSaveDialog);
   els.saveForm?.addEventListener("submit", handleSaveFile);
+  els.languageSelect?.addEventListener("change", () => {
+    localStorage.setItem("witcher3-keymapper:language", els.languageSelect.value);
+    load().catch((error) => showToast(error.message || t("fileLoadFailed"), "error"));
+  });
 
   // Device tabs: switch active device, keep choice for the session (no storage).
   els.deviceTabs?.addEventListener("click", (event) => {
@@ -326,10 +630,10 @@ async function handleLoadFile() {
     const content = decodeInputSettingsBuffer(buffer);
     const form = new FormData();
     form.append("file", file);
-    const response = await fetch("/api/load", { method: "POST", body: form });
+    const response = await fetch(`/api/load${languageQuery()}`, { method: "POST", body: form });
     const result = await response.json();
     if (!response.ok) {
-      showToast(result.error || "File could not be loaded", "error");
+      showToast(result.error || t("fileLoadFailed"), "error");
       return;
     }
     scan = result;
@@ -339,9 +643,9 @@ async function handleLoadFile() {
     render();
     await renderDeviceView();
     showSyntaxStatus(scan, file.name);
-    showToast(`Loaded: ${file.name}`, "success");
+    showToast(t("loaded", { name: file.name }), "success");
   } catch (error) {
-    showToast(error.message || "File could not be loaded", "error");
+    showToast(error.message || t("fileLoadFailed"), "error");
   } finally {
     showLoading(false);
     if (els.loadInput) els.loadInput.value = "";
@@ -352,12 +656,12 @@ function showSyntaxStatus(scanData, label) {
   const syntax = scanData?.syntax;
   if (!syntax) return;
   if (syntax.valid) {
-    showToast(`${label}: syntax OK`, "success");
+    showToast(t("syntaxOk", { label }), "success");
     return;
   }
   const first = syntax.errors?.[0];
-  const where = first?.lineNumber ? `line ${first.lineNumber}` : "file";
-  showToast(`${label}: syntax error at ${where} (${first?.message || "invalid input.settings"})`, "error");
+  const where = first?.lineNumber ? t("line", { line: first.lineNumber }) : t("file");
+  showToast(t("syntaxErrorAt", { label, where, message: first?.message || t("invalidSettings") }), "error");
 }
 
 function decodeInputSettingsBuffer(buffer) {
@@ -366,7 +670,7 @@ function decodeInputSettingsBuffer(buffer) {
     return new TextDecoder("utf-16le").decode(bytes.subarray(2));
   }
   if (bytes[0] === 0xfe && bytes[1] === 0xff) {
-    throw new Error("UTF-16BE input.settings is not supported.");
+    throw new Error(t("utf16beUnsupported"));
   }
   return new TextDecoder("utf-8").decode(bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf
     ? bytes.subarray(3)
@@ -375,13 +679,13 @@ function decodeInputSettingsBuffer(buffer) {
 
 function openSaveDialog() {
   if (!currentContent) {
-    showToast("No file content loaded to save.", "error");
+    showToast(t("noContent"), "error");
     return;
   }
   if (els.saveText) {
     els.saveText.textContent = state.sessionFile
-      ? `Saves the loaded session file "${state.sessionFile.name}".`
-      : "Saves the current project input.settings content.";
+      ? t("saveLoadedSession", { name: state.sessionFile.name })
+      : t("saveProject");
   }
   els.savePath.value = state.sessionFile?.name || scan?.paths?.inputSettings || "input.settings";
   els.saveDialog.showModal();
@@ -389,6 +693,10 @@ function openSaveDialog() {
 
 async function handleSaveFile(event) {
   event.preventDefault();
+  if (event.submitter?.value === "cancel") {
+    els.saveDialog.close();
+    return;
+  }
   const targetPath = els.savePath.value.trim();
   if (!targetPath) return;
   showLoading(true);
@@ -400,11 +708,12 @@ async function handleSaveFile(event) {
     });
     const result = await response.json();
     if (!response.ok) {
-      showToast(result.error || "Save failed", "error");
+      showToast(result.error || t("saveFailed"), "error");
       return;
     }
     els.saveDialog.close();
-    showToast(`Saved: ${result.saved}${result.backup ? ` · Backup: ${result.backup}` : ""}`, "success");
+    const backup = result.backup ? ` · ${t("backup", { path: result.backup })}` : "";
+    showToast(`${t("saved", { path: result.saved })}${backup}`, "success");
   } finally {
     showLoading(false);
   }
@@ -416,19 +725,19 @@ async function remapSessionContent(actions, newKey, oldKey = "", sections = null
     const result = remapInputSettingsText(currentContent, actions, newKey, oldKey, sections);
     const form = new FormData();
     form.append("file", new Blob([result.content], { type: "text/plain" }), state.sessionFile?.name || "input.settings");
-    const response = await fetch("/api/load", { method: "POST", body: form });
+    const response = await fetch(`/api/load${languageQuery()}`, { method: "POST", body: form });
     const nextScan = await response.json();
     if (!response.ok) {
-      showToast(nextScan.error || "Could not rescan session remap", "error");
+      showToast(nextScan.error || t("rescanFailed"), "error");
       return;
     }
     currentContent = result.content;
     scan = nextScan;
     render();
     await renderDeviceView();
-    showToast(`Session changed: ${result.changed} lines`, "success");
+    showToast(t("sessionChanged", { count: result.changed }), "success");
   } catch (error) {
-    showToast(error.message || "Session remap failed", "error");
+    showToast(error.message || t("sessionRemapFailed"), "error");
   } finally {
     showLoading(false);
   }
@@ -443,7 +752,7 @@ function remapInputSettingsText(text, actions, newKey, oldKey = "", sections = n
   const old = String(oldKey || "").trim();
   const sectionSet = Array.isArray(sections) ? new Set(sections) : null;
   if (!actionSet.size || !/^IK_[A-Za-z0-9_]+$/.test(targetKey)) {
-    throw new Error("Need at least one action and a valid IK_* target key.");
+    throw new Error(t("needValidRemap"));
   }
 
   let currentSection = "";
@@ -465,7 +774,7 @@ function remapInputSettingsText(text, actions, newKey, oldKey = "", sections = n
     changed += 1;
     return line.replace(/^(\s*)IK_[^=]+=/, `$1${targetKey}=`);
   });
-  if (!changed) throw new Error("No matching bindings were changed.");
+  if (!changed) throw new Error(t("noMatchingBindings"));
   return { content: next.join("\n"), changed };
 }
 
@@ -486,9 +795,9 @@ function escapeHtml(value) {
  * ===================================================================== */
 
 function deviceLabel(device) {
-  if (device === "keyboard") return "Keyboard";
-  if (device === "controllers") return "Mouse/Gamepad";
-  return device === "mouse" ? "Mouse" : "Gamepad";
+  if (device === "keyboard") return t("keyboard");
+  if (device === "controllers") return t("controllers");
+  return device === "mouse" ? t("mouse") : t("gamepad");
 }
 
 function deviceHasBindings(device) {
@@ -537,16 +846,16 @@ async function renderDeviceView() {
   els.layoutMode?.setAttribute("aria-pressed", String(state.layoutMode && !isKeyboard));
   if (isKeyboard && state.layoutMode) state.layoutMode = false;
   if (isKeyboard && state.showLayoutDropdown && !state.keyboardProfileId) {
-    showDeviceEmpty("No keyboard layout detected. Choose a layout.");
+    showDeviceEmpty(t("noKeyboardLayout"));
     return;
   }
   if (!deviceHasBindings(state.activeDevice)) {
-    showDeviceEmpty(`No bindings found for ${deviceLabel(state.activeDevice)}.`);
+    showDeviceEmpty(t("noBindingsFor", { device: deviceLabel(state.activeDevice) }));
     return;
   }
 
   const profiles = (await Promise.all(activeProfileIds().map((id) => getProfile(id)))).filter(Boolean);
-  if (!profiles.length) { showDeviceEmpty("Device profile could not be loaded."); return; }
+  if (!profiles.length) { showDeviceEmpty(t("profileLoadFailed")); return; }
 
   const rendered = profiles.map((profile) => ({ profile, svg: renderDeviceSvg(profile) })).filter((item) => item.svg);
   if (!rendered.length) return; // SVG failed -> toast already shown, keep previous view
@@ -597,8 +906,20 @@ function updateTabState() {
 function renderLegend() {
   const items = buildLegend(state.topMods, state.hasOther, state.hasVanilla);
   els.legend.innerHTML = items.map((item) =>
-    `<span class="legend-item"><span class="legend-swatch" style="--sw:${item.color}"></span>${escapeHtml(item.label)}</span>`
+    `<span class="legend-item"><span class="legend-swatch" style="--sw:${item.color}"></span>${escapeHtml(localizeLegendLabel(item.label))}</span>`
   ).join("");
+}
+
+function localizeLegendLabel(label) {
+  const labels = {
+    "Vanilla: Movement": t("vanillaMovement"),
+    "Vanilla: Combat/Actions": t("vanillaAction"),
+    "Vanilla: Menus": t("vanillaMenu"),
+    "Other mods": t("otherMods"),
+    "Conflict": t("conflict"),
+    "Unbound": t("unbound")
+  };
+  return labels[label] || label;
 }
 
 // Task 10: hover tooltip (native SVG <title>) + keyboard activation.
@@ -769,15 +1090,19 @@ function openPopover(ik, anchorEl) {
   const body = cmds.length
     ? cmds.map((c) => `
         <div class="pop-row">
-          <div><div class="commandTitle">${escapeHtml(c.displayName || c.id)}</div><span class="source">${escapeHtml(c.id)} · ${escapeHtml(shortSource(c.source))}</span></div>
+          <div>
+            <div class="commandTitle">${escapeHtml(commandTitleText(c))}</div>
+            <span class="source">${escapeHtml(commandSourceLine(c))}</span>
+            ${commandActionsLine(c) ? `<div class="compact-meta">${escapeHtml(commandActionsLine(c))}</div>` : ""}
+          </div>
           <div class="pop-actions">
-            <button data-act="remap" data-cmd="${escapeHtml(c.id)}">Change</button>
-            <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">Clear</button>
+            <button data-act="remap" data-cmd="${escapeHtml(c.id)}">${escapeHtml(t("change"))}</button>
+            <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">${escapeHtml(t("clear"))}</button>
           </div>
         </div>`).join("")
-    : `<p class="muted">Unbound</p>`;
+    : `<p class="muted">${escapeHtml(t("unbound"))}</p>`;
   const conflictNote = conflicts.length
-    ? `<div class="pop-conflict">Conflict in: ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
+    ? `<div class="pop-conflict">${escapeHtml(t("conflictIn"))} ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
     : "";
   pop.innerHTML = `<div class="pop-head"><strong>${escapeHtml(label)}</strong><span class="muted">${escapeHtml(ik)}</span></div>${body}${conflictNote}`;
   document.body.appendChild(pop);
@@ -812,7 +1137,7 @@ function positionPopover(pop, anchorEl) {
 function confirmClear(button, ik, commandId) {
   if (button.dataset.confirm !== "1") {
     button.dataset.confirm = "1";
-    button.textContent = "Confirm clear";
+    button.textContent = t("confirmClear");
     return;
   }
   clearBinding(ik, commandId);
@@ -834,9 +1159,9 @@ async function clearBinding(ik, commandId) {
       body: JSON.stringify({ actions: command.actions, newKey: "IK_None", oldKey: ik })
     });
     const result = await res.json();
-    if (!res.ok) { showToast(result.error || "Clear failed", "error"); return; }
+    if (!res.ok) { showToast(result.error || t("clearFailed"), "error"); return; }
     closePopover();
-    showToast(`Cleared ${result.changed} binding(s) · Backup: ${result.backup}`, "success");
+    showToast(`${t("clearedBindings", { count: result.changed })} · ${t("backup", { path: result.backup })}`, "success");
     await load();
   } finally {
     showLoading(false);
@@ -1110,7 +1435,7 @@ function buildKeyEl(key, profileType = "keyboard") {
     tabindex: "0",
     role: "button"
   });
-  g.setAttribute("aria-label", `${key.label || key.ik}: unbelegt`);
+  g.setAttribute("aria-label", t("keyUnbound", { label: key.label || key.ik }));
   const x = key.x * coordScale * UNIT;
   const y = key.y * coordScale * UNIT;
   const w = key.w * coordScale * UNIT;
@@ -1258,15 +1583,15 @@ function renderDeviceSvg(profile) {
     if (profile.type === "gamepad") return renderGamepadSvg(profile);
     return renderKeyboardSvg(profile);
   } catch (error) {
-    showToast(`SVG generation failed: ${error.message}`, "error");
+    showToast(t("svgFailed", { message: error.message }), "error");
     return null;
   }
 }
 
 function summarizeKey(ik, label, scanData) {
-  if (!scanData) return `${label}: unbelegt`;
+  if (!scanData) return t("keyUnbound", { label });
   const cmds = scanData.commands.filter((c) => c.keys.some((k) => k.key === ik));
-  if (!cmds.length) return `${label}: unbound`;
+  if (!cmds.length) return t("keyUnbound", { label });
   const sources = [...new Set(cmds.map((c) => c.source))];
   return `${label}: ${cmds.map((c) => c.id).join(", ")} (${sources.join(", ")})`;
 }
@@ -1324,8 +1649,9 @@ function showToast(message, type = "info") {
 }
 
 if (typeof document !== "undefined") {
+  applyStaticTexts();
   load().catch((error) => {
-    document.body.innerHTML = `<main><h1>Error</h1><p>${escapeHtml(error.message)}</p></main>`;
+    document.body.innerHTML = `<main><h1>${escapeHtml(t("error"))}</h1><p>${escapeHtml(error.message)}</p></main>`;
   });
 }
 
