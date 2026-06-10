@@ -776,6 +776,42 @@ function humanizeDisplayName(value) {
   }).join(" ");
 }
 
+// Engine alias variants share the same logical function as an already-named
+// canonical command but live under a different action id with no localization
+// key, so they would otherwise appear as separate humanized rows duplicating the
+// canonical command (e.g. FastMenu vs the localized RadialMenu "Quick Access
+// Menu"). These are the collisions found while building CURATED_DISPLAY_NAMES
+// (Step 2.2); Step 3B merges them into the canonical row instead of inventing a
+// duplicate label. Keyed alias command id -> canonical command id.
+const ALIAS_COMMAND_CANONICAL = {
+  FastMenu: "RadialMenu",
+  HoldFastMenu: "RadialMenu",
+  GotoGlossary: "PanelGlossary",
+  IngameMenu: "HubMenu",
+  OpenMeditation: "PanelMeditation",
+  ExplorationInteraction: "Interaction",
+  SprintGallop: "GallopCanter"
+};
+
+// Display-only merge for the mappings list: fold each alias command's bindings
+// into its canonical command so the list shows one row, not two near-identical
+// ones. Conflict detection runs on raw entries/commandByAction and is left
+// untouched on purpose (the scanner is the single source of truth). Only merges
+// when the canonical command actually exists in this file, so no binding is ever
+// hidden when there is nothing to merge into. Must run before the per-command
+// keys[] dedup so merged bindings are de-duplicated together.
+function mergeAliasCommands(commandMap) {
+  for (const [aliasId, canonicalId] of Object.entries(ALIAS_COMMAND_CANONICAL)) {
+    const alias = commandMap.get(aliasId);
+    const canonical = commandMap.get(canonicalId);
+    if (!alias || !canonical) continue;
+    canonical.bindings.push(...alias.bindings);
+    canonical.actions = [...new Set([...canonical.actions, ...alias.actions])];
+    commandMap.delete(aliasId);
+  }
+  return commandMap;
+}
+
 // input defaults to the server-side input.settings, but /api/load passes a
 // pre-parsed in-memory upload so a loaded file is scanned without changing the
 // default path (Requirement 7.1, 7.10).
@@ -839,6 +875,17 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
     });
   }
 
+  // Binding source per command id, so findConflicts can report which colliding
+  // commands are vanilla vs. mod-owned (Requirement 5.4, 13.5). Captured BEFORE
+  // the alias merge so alias ids (FastMenu, …) keep their real source for the
+  // scanner; otherwise their conflict source would degrade to "unknown" and
+  // change conflict classification (the scanner must stay untouched by 3B).
+  const sourceByCommandId = new Map([...commandMap.values()].map((command) => [command.id, command.source]));
+
+  // Step 3B: fold engine alias variants into their canonical command (display
+  // only) before computing each command's de-duplicated keys[].
+  mergeAliasCommands(commandMap);
+
   for (const command of commandMap.values()) {
     const seen = new Set();
     command.keys = command.bindings
@@ -856,10 +903,6 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
         idleTime: binding.idleTime
       }));
   }
-
-  // Binding source per command id, so findConflicts can report which
-  // colliding commands are vanilla vs. mod-owned (Requirement 5.4, 13.5).
-  const sourceByCommandId = new Map([...commandMap.values()].map((command) => [command.id, command.source]));
 
   // Debug/scene-debug bindings (Debug_KillTarget, SCN_DBG_*, …) are console-only
   // tools, not player keybindings. They are already excluded from conflicts; drop
@@ -1525,6 +1568,8 @@ module.exports = {
   resolveDisplayNameInfo,
   curatedDisplayName,
   CURATED_DISPLAY_NAMES,
+  mergeAliasCommands,
+  ALIAS_COMMAND_CANONICAL,
   cleanLocalizedDisplayName,
   uiLanguageForTag,
   preferredLocalizationCodes,

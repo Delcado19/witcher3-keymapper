@@ -14,7 +14,7 @@ const {
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
-  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
+  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, mergeAliasCommands, ALIAS_COMMAND_CANONICAL, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
   isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile, resolveGamePaths
 } = require("../server.js");
 
@@ -217,6 +217,25 @@ ok("curatedDisplayName: returns language-specific official/community names, '' f
   // Commands without a curated entry must not be invented.
   assert.strictEqual(curatedDisplayName("FastMenu", "de"), "");
   assert.strictEqual(curatedDisplayName("NotARealCommand", "en"), "");
+});
+ok("mergeAliasCommands: folds alias bindings into the canonical command, deletes the alias, leaves orphans alone", () => {
+  const map = new Map([
+    ["RadialMenu", { id: "RadialMenu", displayName: "Quick Access Menu", displayNameSource: "localized", actions: ["RadialMenu"], bindings: [{ section: "Exploration", key: "IK_Tab" }] }],
+    ["FastMenu", { id: "FastMenu", displayName: "Fast Menu", displayNameSource: "humanized", actions: ["FastMenu"], bindings: [{ section: "Combat", key: "IK_Tab" }] }],
+    // Canonical missing for this alias -> must be left untouched, never silently dropped.
+    ["GotoGlossary", { id: "GotoGlossary", displayName: "Goto Glossary", displayNameSource: "humanized", actions: ["GotoGlossary"], bindings: [{ section: "Exploration", key: "IK_G" }] }]
+  ]);
+  mergeAliasCommands(map);
+  assert.ok(!map.has("FastMenu"), "merged alias is removed");
+  const radial = map.get("RadialMenu");
+  assert.strictEqual(radial.displayName, "Quick Access Menu", "canonical keeps its real name");
+  assert.strictEqual(radial.bindings.length, 2, "alias bindings folded in");
+  assert.deepStrictEqual(radial.actions, ["RadialMenu", "FastMenu"], "actions merged so a remap still hits both");
+  assert.ok(map.has("GotoGlossary"), "alias without canonical stays so no binding disappears");
+  // The alias map must only point at canonical ids, never at another alias.
+  for (const canonical of Object.values(ALIAS_COMMAND_CANONICAL)) {
+    assert.ok(!(canonical in ALIAS_COMMAND_CANONICAL), `${canonical} is canonical, must not also be an alias key`);
+  }
 });
 ok("CURATED_DISPLAY_NAMES: no curated label collides with another curated label, and known alias variants are excluded", () => {
   // Engine alias variants would duplicate an already-localized row, so they are
