@@ -1277,10 +1277,23 @@ function sendJson(res, status, payload) {
   res.end(body);
 }
 
-function serveStatic(res, pathname) {
+// Resolve a request pathname to a file inside publicDir, or null if it escapes.
+// A bare resolved.startsWith(publicDir) had two holes: a percent-encoded ".."
+// survives the URL normalization and is decoded by the caller into a real "..",
+// and the prefix match would also accept a sibling dir like "public-secret".
+// path.relative yields a "../"-prefixed or absolute path for anything outside
+// publicDir, closing both. Pure + exported for tests.
+function resolvePublicPath(pathname) {
   const target = pathname === "/" ? path.join(publicDir, "index.html") : path.join(publicDir, pathname);
   const resolved = path.resolve(target);
-  if (!resolved.startsWith(publicDir) || !fs.existsSync(resolved) || fs.statSync(resolved).isDirectory()) {
+  const rel = path.relative(publicDir, resolved);
+  if (rel !== "" && (rel.startsWith("..") || path.isAbsolute(rel))) return null;
+  return resolved;
+}
+
+function serveStatic(res, pathname) {
+  const resolved = resolvePublicPath(pathname);
+  if (!resolved || !fs.existsSync(resolved) || fs.statSync(resolved).isDirectory()) {
     res.writeHead(404);
     res.end("Not found");
     return;
@@ -1434,5 +1447,6 @@ module.exports = {
   humanizeDisplayName,
   handleSave,
   isAllowedHost,
-  isAllowedOrigin
+  isAllowedOrigin,
+  resolvePublicPath
 };

@@ -15,7 +15,7 @@ const {
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
   resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
-  isAllowedHost, isAllowedOrigin
+  isAllowedHost, isAllowedOrigin, resolvePublicPath
 } = require("../server.js");
 
 const registry = JSON.parse(
@@ -394,6 +394,17 @@ ok("isAllowedOrigin: only loopback or absent Origin is accepted (CSRF guard)", (
   assert.strictEqual(isAllowedOrigin({ headers: { origin: "http://localhost:5177" } }), true);
   assert.strictEqual(isAllowedOrigin({ headers: { origin: "https://evil.example" } }), false);
   assert.strictEqual(isAllowedOrigin({ headers: { origin: "not a url" } }), false);
+});
+
+ok("resolvePublicPath: serves files inside publicDir, rejects traversal escapes", () => {
+  assert.ok(resolvePublicPath("/").endsWith(path.join("public", "index.html")));
+  assert.ok(resolvePublicPath("/app.js").endsWith(path.join("public", "app.js")));
+  assert.ok(resolvePublicPath("/devices/index.json").includes(path.join("public", "devices")));
+  // Decoded "../" escapes (a percent-encoded ".." reaches here as a real "..").
+  assert.strictEqual(resolvePublicPath("/../server.js"), null);
+  assert.strictEqual(resolvePublicPath("/../../etc/passwd"), null);
+  // Sibling-prefix trick that a bare startsWith(publicDir) would have allowed.
+  assert.strictEqual(resolvePublicPath("/../public-secret/x"), null);
 });
 
 // ---- Property 1: profile round-trip (Validates Requirement 3.7) ----
