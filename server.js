@@ -981,13 +981,29 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
     const sources = commands.map((command) => sourceByCommandId?.get(command) || "unknown");
     if (isVanillaOnlyConflict(sources)) continue;
     const [section, key] = id.split("|");
+    // Relabel to canonical ids for DISPLAY ONLY (Step 3B). All grouping, benign-
+    // alias filtering (isBenignCommandSet) and counts above run on raw ids, so the
+    // conflict count is unchanged; renaming earlier would break the context-alias
+    // set recognition. This only makes the sidebar speak the same id the mappings
+    // list shows (e.g. Interaction instead of the folded-away ExplorationInteraction)
+    // so the conflict<->list linked-highlight points at a row that exists.
+    const displayCommands = [];
+    const displaySources = [];
+    const seenDisplay = new Set();
+    commands.forEach((command, index) => {
+      const canonical = ALIAS_COMMAND_CANONICAL[command] || command;
+      if (seenDisplay.has(canonical)) return;
+      seenDisplay.add(canonical);
+      displayCommands.push(canonical);
+      displaySources.push(sources[index]);
+    });
     conflicts.push({
       section,
       key,
       keyLabel: labelKey(key),
       severity: riskyKey(key, commands) ? "high" : "medium",
-      commands,
-      sources,
+      commands: displayCommands,
+      sources: displaySources,
       lines: candidateItems.map((item) => item.lineNumber)
     });
   }

@@ -459,6 +459,24 @@ ok("buildRemapPreview: total equals binding count (incl. IK_None), grouped by se
   assert.strictEqual(buildRemapPreview({ id: "x" }, "IK_A").total, 0);
 });
 
+ok("findConflicts: reports the canonical id for merged aliases so the sidebar matches the list", () => {
+  const entries = [
+    { section: "Exploration", key: "IK_Space", action: "JumpRoll", state: "Duration", idleTime: "0", lineNumber: 10 },
+    { section: "Exploration", key: "IK_Space", action: "ExplorationInteraction", state: "Duration", idleTime: "0", lineNumber: 11 }
+  ];
+  const commandByAction = new Map(); // neither action is an input.xml command -> id == action
+  const sourceByCommandId = new Map([["JumpRoll", "modFriendlyHUD"], ["ExplorationInteraction", "game/input.xml"]]);
+  const conflicts = findConflicts(entries, commandByAction, sourceByCommandId);
+  assert.strictEqual(conflicts.length, 1);
+  // ExplorationInteraction is folded into Interaction in the mappings list (Step 3B),
+  // so the conflict must speak "Interaction", never the raw alias id, or the linked
+  // highlight would point at a list row that no longer exists.
+  assert.ok(conflicts[0].commands.includes("Interaction"), "canonical id is reported");
+  assert.ok(!conflicts[0].commands.includes("ExplorationInteraction"), "raw alias id is not leaked");
+  const idx = conflicts[0].commands.indexOf("Interaction");
+  assert.strictEqual(conflicts[0].sources[idx], "game/input.xml", "source stays aligned after relabel");
+});
+
 ok("isAllowedHost: only loopback Host headers are accepted (DNS-rebinding guard)", () => {
   assert.strictEqual(isAllowedHost({ headers: { host: "127.0.0.1:5177" } }), true);
   assert.strictEqual(isAllowedHost({ headers: { host: "localhost:5177" } }), true);
