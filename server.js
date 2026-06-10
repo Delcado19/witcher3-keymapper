@@ -413,7 +413,25 @@ function collectRelevantFiles(dir, files, modName, depth = 0) {
   }
 }
 
+// Localization maps derive purely from the game/mod install (gameRoot + modsDir)
+// and the requested language — never from input.settings (which is parsed
+// separately in buildScan). Those install files don't change while the app runs,
+// but rebuilding the map re-reads ~1500 .ws scripts and re-parses every mod CSV
+// on every /api/scan (measured ~3.5s warm, ~6.4s cold). Memoize per language for
+// the process lifetime. Trade-off: a mod installed mid-session needs a server
+// restart to be picked up; Reload only re-reads input.settings, not this path.
+const localizationMapCache = new Map();
+
 function loadLocalizationMap(modsDir, languageTag) {
+  const cacheKey = `${modsDir}\0${languageTag}`;
+  const cached = localizationMapCache.get(cacheKey);
+  if (cached) return cached;
+  const map = buildLocalizationMap(modsDir, languageTag);
+  localizationMapCache.set(cacheKey, map);
+  return map;
+}
+
+function buildLocalizationMap(modsDir, languageTag) {
   const preferred = preferredLocalizationCodes(languageTag);
   const dictionaryKeys = collectLocalizationDictionaryKeys(defaults.gameRoot, modsDir);
   const files = findLocalizationCsvFiles(modsDir)
@@ -1216,7 +1234,20 @@ async function detectLayoutLanguageWin32() {
   }
 }
 
+// The active Windows input language effectively never changes while the app
+// runs, but each /api/scan called this synchronously, paying a full PowerShell
+// process start (hundreds of ms, blocking the event loop). Cache the first
+// result for the process lifetime; `undefined` means "not detected yet", while
+// `null` is a valid "unknown/non-Windows" result that is also cached.
+let cachedInputLanguage;
+
 function detectLayoutLanguageWin32Sync() {
+  if (cachedInputLanguage !== undefined) return cachedInputLanguage;
+  cachedInputLanguage = detectLayoutLanguageWin32SyncUncached();
+  return cachedInputLanguage;
+}
+
+function detectLayoutLanguageWin32SyncUncached() {
   if (process.platform !== "win32") return null;
   try {
     const out = execFileSync("powershell.exe", [
