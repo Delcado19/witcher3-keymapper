@@ -1302,10 +1302,46 @@ function serveStatic(res, pathname) {
   fs.createReadStream(resolved).pipe(res);
 }
 
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
+
+// DNS-rebinding guard. The server only binds to loopback, but a malicious page
+// can rebind its own domain to 127.0.0.1 and reach us from the victim's browser.
+// In that attack the browser still sends the attacker's domain in the Host
+// header, so requiring a loopback Host blocks it (and still allows curl/no-Host).
+function isAllowedHost(req) {
+  const host = req.headers.host;
+  if (!host) return true; // HTTP/1.0 / curl without Host: not a browser rebinding vector.
+  return LOOPBACK_HOSTS.has(host.replace(/:\d+$/, ""));
+}
+
+// CSRF guard for state-changing requests. A cross-site page that POSTs to our
+// loopback port has its browser attach its own Origin. Allow same-origin
+// loopback or a missing Origin (curl, the app's own same-document fetches).
+function isAllowedOrigin(req) {
+  const origin = req.headers.origin;
+  if (!origin) return true;
+  try {
+    return LOOPBACK_HOSTS.has(new URL(origin).hostname);
+  } catch {
+    return false;
+  }
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
   const requestedLanguage = url.searchParams.get("lang") || req.headers["x-keymapper-language"] || "";
   try {
+    if (!isAllowedHost(req)) {
+      res.writeHead(403);
+      res.end("Forbidden: non-loopback Host header");
+      return;
+    }
+    // Reject cross-origin writes before touching the filesystem (remap/save/load).
+    if (req.method === "POST" && !isAllowedOrigin(req)) {
+      res.writeHead(403);
+      res.end("Forbidden: cross-origin request");
+      return;
+    }
     if (req.method === "GET" && url.pathname === "/api/scan") return sendJson(res, 200, buildScan(undefined, requestedLanguage));
     if (req.method === "POST" && url.pathname === "/api/remap") {
       let raw = "";
@@ -1396,5 +1432,7 @@ module.exports = {
   uiLanguageForTag,
   preferredLocalizationCodes,
   humanizeDisplayName,
-  handleSave
+  handleSave,
+  isAllowedHost,
+  isAllowedOrigin
 };

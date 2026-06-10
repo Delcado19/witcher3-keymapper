@@ -2,7 +2,7 @@
 
 Local, dependency-free web tool for inspecting and editing Witcher 3 `input.settings` files: key bindings, conflict scanning, and a device-centric view with interactive keyboard, mouse, and gamepad diagrams.
 
-> Local use only. The server binds to `127.0.0.1`.
+> Local use only. The server binds to `127.0.0.1` and additionally rejects any request whose `Host` header is not loopback (DNS-rebinding guard) and any cross-origin `POST` (CSRF guard). Reaching it through a different hostname or a reverse proxy is intentionally blocked.
 
 ## Start
 

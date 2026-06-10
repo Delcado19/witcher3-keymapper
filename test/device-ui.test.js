@@ -14,7 +14,8 @@ const {
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
-  resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave
+  resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
+  isAllowedHost, isAllowedOrigin
 } = require("../server.js");
 
 const registry = JSON.parse(
@@ -377,6 +378,22 @@ ok("remapInputSettingsText: session remap respects action and oldKey", () => {
   assert.ok(result.content.includes("IK_None=(Action=Use,State=Duration)"));
   assert.ok(result.content.includes("IK_F=(Action=Use,State=Duration)"));
   assert.ok(result.content.includes("IK_E=(Action=Jump,State=Duration)"));
+});
+
+ok("isAllowedHost: only loopback Host headers are accepted (DNS-rebinding guard)", () => {
+  assert.strictEqual(isAllowedHost({ headers: { host: "127.0.0.1:5177" } }), true);
+  assert.strictEqual(isAllowedHost({ headers: { host: "localhost:5177" } }), true);
+  assert.strictEqual(isAllowedHost({ headers: { host: "localhost" } }), true);
+  assert.strictEqual(isAllowedHost({ headers: {} }), true); // curl without Host header
+  assert.strictEqual(isAllowedHost({ headers: { host: "attacker.com" } }), false);
+  assert.strictEqual(isAllowedHost({ headers: { host: "evil.example:5177" } }), false);
+});
+ok("isAllowedOrigin: only loopback or absent Origin is accepted (CSRF guard)", () => {
+  assert.strictEqual(isAllowedOrigin({ headers: {} }), true); // same-document fetch / curl
+  assert.strictEqual(isAllowedOrigin({ headers: { origin: "http://127.0.0.1:5177" } }), true);
+  assert.strictEqual(isAllowedOrigin({ headers: { origin: "http://localhost:5177" } }), true);
+  assert.strictEqual(isAllowedOrigin({ headers: { origin: "https://evil.example" } }), false);
+  assert.strictEqual(isAllowedOrigin({ headers: { origin: "not a url" } }), false);
 });
 
 // ---- Property 1: profile round-trip (Validates Requirement 3.7) ----
