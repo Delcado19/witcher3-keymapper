@@ -15,7 +15,7 @@ const {
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
   resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
-  isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile
+  isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile, resolveGamePaths
 } = require("../server.js");
 
 // Build a multipart/form-data body the way a browser would: each part is
@@ -451,6 +451,15 @@ ok("extractMultipartFile: returns null when no file/filename part is present", (
 });
 ok("extractMultipartFile: returns null when the boundary is absent", () => {
   assert.strictEqual(extractMultipartFile(Buffer.from("no multipart boundary here"), "----w3x"), null);
+});
+
+ok("resolveGamePaths: derives all game sub-paths from the game root", () => {
+  const gameRoot = path.join("X:", "Games", "Witcher 3");
+  const p = resolveGamePaths(gameRoot);
+  assert.strictEqual(p.gameRoot, gameRoot);
+  assert.strictEqual(p.modsDir, path.join(gameRoot, "Mods"));
+  assert.strictEqual(p.gameInputXml, path.join(gameRoot, "bin", "config", "r4game", "user_config_matrix", "pc", "input.xml"));
+  assert.strictEqual(p.vanillaDefaultDir, path.join(gameRoot, "bin", "config", "r4game", "legacy", "base"));
 });
 
 // ---- Property 1: profile round-trip (Validates Requirement 3.7) ----

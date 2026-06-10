@@ -8,12 +8,23 @@ const { execFile, execFileSync } = require("node:child_process");
 const root = __dirname;
 const publicDir = path.join(root, "public");
 
+// Witcher 3's install layout is fixed, so every game/mod path derives from the
+// game root. Keep them in one helper (pure + exported for tests) and default to
+// the local GOG install, overridable via W3_GAME_ROOT for other machines or the
+// planned Linux/Proton support — no code change needed to relocate the install.
+function resolveGamePaths(gameRoot) {
+  return {
+    gameRoot,
+    gameInputXml: path.join(gameRoot, "bin", "config", "r4game", "user_config_matrix", "pc", "input.xml"),
+    vanillaDefaultDir: path.join(gameRoot, "bin", "config", "r4game", "legacy", "base"),
+    modsDir: path.join(gameRoot, "Mods")
+  };
+}
+
 const defaults = {
-  inputSettings: path.join(root, "input.settings"),
-  gameRoot: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY",
-  gameInputXml: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\bin\\config\\r4game\\user_config_matrix\\pc\\input.xml",
-  vanillaDefaultDir: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\bin\\config\\r4game\\legacy\\base",
-  modsDir: "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY\\Mods",
+  // The project copy of input.settings, editable elsewhere via W3_INPUT_SETTINGS.
+  inputSettings: process.env.W3_INPUT_SETTINGS || path.join(root, "input.settings"),
+  ...resolveGamePaths(process.env.W3_GAME_ROOT || "F:\\GOG Galaxy\\Games\\The Witcher 3 Wild Hunt GOTY"),
   w3stringsCacheDir: path.join(root, ".cache", "w3strings")
 };
 
@@ -1449,5 +1460,6 @@ module.exports = {
   isAllowedHost,
   isAllowedOrigin,
   resolvePublicPath,
-  extractMultipartFile
+  extractMultipartFile,
+  resolveGamePaths
 };

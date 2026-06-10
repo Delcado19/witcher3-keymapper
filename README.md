@@ -15,6 +15,15 @@ node --check public/app.js
 
 There is no build step and no npm dependency install. Node 20 or newer is required.
 
+## Configuration
+
+Paths default to the local GOG install and can be relocated with environment variables — no code change needed:
+
+- `W3_GAME_ROOT` - the Witcher 3 install root. All game/mod sub-paths (`input.xml`, the legacy layout files, and `Mods/`) are derived from it. Default: `F:\GOG Galaxy\Games\The Witcher 3 Wild Hunt GOTY`.
+- `W3_INPUT_SETTINGS` - the `input.settings` the server reads and remaps. Default: the project copy next to `server.js`.
+- `W3STRINGS_NG_EXE` / `W3STRINGS_EXE` - explicit decoder path (see Optional Tools).
+- `PORT` - HTTP port (default `5177`).
+
 ## Optional Tools
 
 - `tools/w3strings-ng/w3strings-ng.exe` or `tools/w3strings-ng/w3strings-ng` is the preferred open-source decoder for `.w3strings` files (author: Odashikonbu; source: `Odashikonbu/w3strings-rust`; license: GPL-3.0). If the binary is absent, set `W3STRINGS_NG_EXE` or make it available on `PATH`. Build source: `https://github.com/Odashikonbu/w3strings-rust`, package `cli-tools`, command `cargo build --release`. The older Nexus `w3strings.exe` is kept only as a compatibility fallback.
