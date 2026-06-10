@@ -12,6 +12,10 @@
 /CLAUDE.md
 /.claude/
 
+# local reference material (in-game controls screenshots used to source curated
+# display names) — kept locally, never committed (large binary, not source).
+/screenshots/
+
 # misc
 .cache/
 .DS_Store
