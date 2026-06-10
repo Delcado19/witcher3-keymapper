@@ -1448,5 +1448,6 @@ module.exports = {
   handleSave,
   isAllowedHost,
   isAllowedOrigin,
-  resolvePublicPath
+  resolvePublicPath,
+  extractMultipartFile
 };

@@ -15,8 +15,22 @@ const {
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
   resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
-  isAllowedHost, isAllowedOrigin, resolvePublicPath
+  isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile
 } = require("../server.js");
+
+// Build a multipart/form-data body the way a browser would: each part is
+// `--boundary CRLF headers CRLF CRLF body CRLF`, terminated by `--boundary--`.
+// body is a Buffer so binary/UTF-16 payloads stay byte-exact.
+function buildMultipart(boundary, parts) {
+  const chunks = [];
+  for (const part of parts) {
+    chunks.push(Buffer.from(`--${boundary}\r\n${part.headers}\r\n\r\n`));
+    chunks.push(part.body);
+    chunks.push(Buffer.from("\r\n"));
+  }
+  chunks.push(Buffer.from(`--${boundary}--\r\n`));
+  return Buffer.concat(chunks);
+}
 
 const registry = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../public/devices/index.json"), "utf8")
@@ -405,6 +419,38 @@ ok("resolvePublicPath: serves files inside publicDir, rejects traversal escapes"
   assert.strictEqual(resolvePublicPath("/../../etc/passwd"), null);
   // Sibling-prefix trick that a bare startsWith(publicDir) would have allowed.
   assert.strictEqual(resolvePublicPath("/../public-secret/x"), null);
+});
+
+ok("extractMultipartFile: extracts the file field body as raw bytes", () => {
+  const boundary = "----w3ascii";
+  const body = Buffer.from("[Exploration]\nIK_A=(Action=Test)\n", "utf8");
+  const buf = buildMultipart(boundary, [
+    { headers: 'Content-Disposition: form-data; name="file"; filename="input.settings"', body }
+  ]);
+  assert.deepStrictEqual(extractMultipartFile(buf, boundary), body);
+});
+ok("extractMultipartFile: preserves UTF-16LE bytes and picks the file part among others", () => {
+  const boundary = "----w3utf16";
+  // BOM + UTF-16LE content — /api/load must hand this to decodeBuffer byte-exact.
+  const body = Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from("[InputSettings]", "utf16le")]);
+  const buf = buildMultipart(boundary, [
+    { headers: 'Content-Disposition: form-data; name="lang"', body: Buffer.from("de") },
+    { headers: 'Content-Disposition: form-data; name="file"; filename="input.settings"', body }
+  ]);
+  const out = extractMultipartFile(buf, boundary);
+  assert.deepStrictEqual(out, body);
+  assert.strictEqual(out[0], 0xff);
+  assert.strictEqual(out[1], 0xfe);
+});
+ok("extractMultipartFile: returns null when no file/filename part is present", () => {
+  const boundary = "----w3none";
+  const buf = buildMultipart(boundary, [
+    { headers: 'Content-Disposition: form-data; name="lang"', body: Buffer.from("de") }
+  ]);
+  assert.strictEqual(extractMultipartFile(buf, boundary), null);
+});
+ok("extractMultipartFile: returns null when the boundary is absent", () => {
+  assert.strictEqual(extractMultipartFile(Buffer.from("no multipart boundary here"), "----w3x"), null);
 });
 
 // ---- Property 1: profile round-trip (Validates Requirement 3.7) ----
