@@ -60,7 +60,7 @@ GitHub Actions runs on pushes and pull requests against `master` with Node 20 an
 - **Syntax validation** - project and uploaded files are checked for the expected Witcher `input.settings` shape before scanning.
 - **Section sorting before save** - saved files are sorted deterministically within each section while keeping same-key rows stable.
 - **Readable action names** - scans read vanilla and mod `input.xml`/`input_xml.txt`, mod localization CSVs, and optionally decoded `.w3strings`. A generated dictionary helps `w3strings-ng` resolve hashed string IDs.
-- **Mappings list and conflict sidebar** - search, source/device filters, and linked highlighting between conflict keys in the SVG and sidebar entries.
+- **Mappings list and conflict sidebar** - search, source/device filters, and linked highlighting between conflict keys in the SVG and sidebar entries. Console-only debug bindings (`Debug_*`, `SCN_DBG_*`) are hidden from the list since they are not player keybindings.
 
 ## Cross-Platform Status
 

@@ -856,6 +856,14 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
   // colliding commands are vanilla vs. mod-owned (Requirement 5.4, 13.5).
   const sourceByCommandId = new Map([...commandMap.values()].map((command) => [command.id, command.source]));
 
+  // Debug/scene-debug bindings (Debug_KillTarget, SCN_DBG_*, …) are console-only
+  // tools, not player keybindings. They are already excluded from conflicts; drop
+  // them from the mappings list too so they stop padding the list and the
+  // "untranslated" count with things no player ever rebinds.
+  const visibleCommands = [...commandMap.values()]
+    .filter((command) => !isDebugCommand(command.id))
+    .sort((a, b) => a.id.localeCompare(b.id));
+
   return {
     paths: defaults,
     // The save UI posts the current text to /api/save. Including it in scans
@@ -868,13 +876,13 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
       bindings: entries.length,
       actions: allActions.length,
       keys: new Set(entries.map((entry) => entry.key)).size,
-      commands: commandMap.size,
+      commands: visibleCommands.length,
       modActions: [...modSources.keys()].length
     },
     inputLanguage,
     uiLanguage,
     vanillaDefaultFile: vanillaDefaults.file || null,
-    commands: [...commandMap.values()].sort((a, b) => a.id.localeCompare(b.id)),
+    commands: visibleCommands,
     conflicts: findConflicts(entries, commandByAction, sourceByCommandId),
     unlistedActions: allActions.filter((action) => !isVanillaAction(action, knownActions)).sort()
   };
@@ -942,7 +950,7 @@ function findConflicts(entries, commandByAction, sourceByCommandId) {
 }
 
 function conflictRelevantItems(items) {
-  const gameplayItems = items.filter((item) => !isIgnoredConflictCommand(item.command));
+  const gameplayItems = items.filter((item) => !isDebugCommand(item.command));
   if (isBenignCommandSet(gameplayItems.map((item) => item.command))) return [];
 
   const byActivation = new Map();
@@ -975,7 +983,9 @@ function isBenignCommandSet(commands) {
   return BENIGN_COMMAND_GROUPS.some((group) => unique.every((command) => group.has(command)));
 }
 
-function isIgnoredConflictCommand(command) {
+// Console-only debug/scene-debug commands, excluded from both conflicts and the
+// mappings list — not player-facing keybindings.
+function isDebugCommand(command) {
   return /^Debug(Input)?$/.test(command) ||
     /^Debug_/.test(command) ||
     /^SCN_DBG_/.test(command);
