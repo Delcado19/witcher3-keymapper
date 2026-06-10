@@ -85,6 +85,7 @@ const I18N = {
     critical: "Critical",
     context: "Context",
     more: "more",
+    inContexts: "in {count} gameplay contexts",
     sessionFile: "Session file: {name}",
     mods: "Mods",
     vanilla: "Vanilla",
@@ -176,6 +177,7 @@ const I18N = {
     critical: "Kritisch",
     context: "Kontext",
     more: "weitere",
+    inContexts: "in {count} Spielkontexten",
     sessionFile: "Session-Datei: {name}",
     mods: "Mods",
     vanilla: "Spiel",
@@ -421,14 +423,31 @@ function render() {
 function groupConflicts(conflicts) {
   const map = new Map();
   for (const c of conflicts) {
-    const sig = `${c.key}|${[...c.commands].sort().join(",")}`;
+    // A conflict is "about" its non-vanilla command(s) overlapping a key. The set
+    // of vanilla commands sharing that key varies by context section (Combat adds
+    // LockAndGuard, *_Replacer_Ciri drops Focus, …), which used to fragment one
+    // physical key overload into several rows keyed by the exact command set.
+    // Group by key + the non-vanilla offender(s) so those context variants
+    // collapse into one reviewable entry; merge in the vanilla companions seen in
+    // any context so the row still lists everything sharing the key.
+    const sources = c.sources || [];
+    const offenders = c.commands.filter((_, i) => sources[i] !== "game/input.xml");
+    const signatureCommands = offenders.length ? offenders : c.commands;
+    const sig = `${c.key}|${[...signatureCommands].sort().join(",")}`;
     const existing = map.get(sig);
     if (!existing) {
       map.set(sig, {
-        key: c.key, keyLabel: c.keyLabel, commands: c.commands,
-        sources: c.sources || [], severity: c.severity, sections: [c.section]
+        key: c.key, keyLabel: c.keyLabel,
+        commands: [...c.commands], sources: [...sources],
+        severity: c.severity, sections: [c.section]
       });
     } else {
+      c.commands.forEach((cmd, i) => {
+        if (!existing.commands.includes(cmd)) {
+          existing.commands.push(cmd);
+          existing.sources.push(sources[i] || "unknown");
+        }
+      });
       if (!existing.sections.includes(c.section)) existing.sections.push(c.section);
       if (c.severity === "high") existing.severity = "high";
     }
@@ -452,9 +471,10 @@ function renderConflicts() {
       const src = grp.sources[i] || "unknown";
       return `<span class="compact-token" title="${escapeHtml(src)}">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
-    const shown = grp.sections.slice(0, 3).map(escapeHtml).join(", ");
-    const extra = grp.sections.length > 3 ? ` +${grp.sections.length - 3} ${t("more")}` : "";
-    const count = grp.sections.length > 1 ? ` · ${grp.sections.length} ${t("sections").toLowerCase()}` : "";
+    // Show how many gameplay contexts share this overload instead of listing the
+    // cryptic section names (Boat, *_Replacer_Ciri, …), which read as separate
+    // problems even though it is one physical key overload.
+    const contextNote = grp.sections.length > 1 ? t("inContexts", { count: grp.sections.length }) : "";
     const severity = grp.severity === "high" ? t("critical") : t("context");
     return `
     <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
@@ -463,7 +483,7 @@ function renderConflicts() {
         <span>${escapeHtml(severity)}</span>
       </div>
       <div class="compact-main">${commandList}</div>
-      <div class="compact-meta">${shown}${extra}${count}</div>
+      ${contextNote ? `<div class="compact-meta">${escapeHtml(contextNote)}</div>` : ""}
     </article>`;
   }).join("");
 }
@@ -1661,6 +1681,6 @@ if (typeof module !== "undefined" && module.exports) {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
     renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg,
-    applyColoring, applyConflicts, remapInputSettingsText
+    applyColoring, applyConflicts, remapInputSettingsText, groupConflicts
   };
 }

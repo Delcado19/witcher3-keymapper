@@ -7,7 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 
 const {
-  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText
+  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts
 } = require("../public/app.js");
 const {
   findConflicts, isVanillaAction, vanillaDefaultFileForLanguage,
@@ -460,6 +460,35 @@ ok("resolveGamePaths: derives all game sub-paths from the game root", () => {
   assert.strictEqual(p.modsDir, path.join(gameRoot, "Mods"));
   assert.strictEqual(p.gameInputXml, path.join(gameRoot, "bin", "config", "r4game", "user_config_matrix", "pc", "input.xml"));
   assert.strictEqual(p.vanillaDefaultDir, path.join(gameRoot, "bin", "config", "r4game", "legacy", "base"));
+});
+
+ok("groupConflicts: context-section variants of one key overload collapse into a single entry", () => {
+  // Same mod offender (AutoLootRadius) on one key, but the vanilla companions differ
+  // per context section — these used to render as three separate conflict rows.
+  const raw = [
+    { section: "Exploration", key: "IK_Pad_LeftTrigger", keyLabel: "LT", commands: ["AutoLootRadius", "Focus"], sources: ["modAutoLoot", "game/input.xml"], severity: "high" },
+    { section: "Combat", key: "IK_Pad_LeftTrigger", keyLabel: "LT", commands: ["AutoLootRadius", "Alternate", "LockAndGuard"], sources: ["modAutoLoot", "game/input.xml", "game/input.xml"], severity: "high" },
+    { section: "Combat_Replacer_Ciri", key: "IK_Pad_LeftTrigger", keyLabel: "LT", commands: ["AutoLootRadius", "LockAndGuard"], sources: ["modAutoLoot", "game/input.xml"], severity: "high" }
+  ];
+  const grouped = groupConflicts(raw);
+  assert.strictEqual(grouped.length, 1);
+  assert.strictEqual(grouped[0].sections.length, 3);
+  // The merged row still lists every command seen sharing the key.
+  assert.deepStrictEqual(grouped[0].commands.slice().sort(), ["Alternate", "AutoLootRadius", "Focus", "LockAndGuard"]);
+});
+ok("groupConflicts: same offender on different keys stays separate", () => {
+  const raw = [
+    { section: "Exploration", key: "IK_Space", keyLabel: "Space", commands: ["JumpRoll", "ExplorationInteraction"], sources: ["modFriendlyHUD", "game/input.xml"], severity: "medium" },
+    { section: "Exploration", key: "IK_Pad_B_CIRCLE", keyLabel: "B", commands: ["JumpRoll", "ExplorationInteraction"], sources: ["modFriendlyHUD", "game/input.xml"], severity: "medium" }
+  ];
+  assert.strictEqual(groupConflicts(raw).length, 2);
+});
+ok("groupConflicts: distinct mod offenders on the same key stay separate", () => {
+  const raw = [
+    { section: "Combat", key: "IK_E", keyLabel: "E", commands: ["ModA", "Interaction"], sources: ["modA", "game/input.xml"], severity: "medium" },
+    { section: "Combat", key: "IK_E", keyLabel: "E", commands: ["ModB", "Interaction"], sources: ["modB", "game/input.xml"], severity: "medium" }
+  ];
+  assert.strictEqual(groupConflicts(raw).length, 2);
 });
 
 // ---- Property 1: profile round-trip (Validates Requirement 3.7) ----

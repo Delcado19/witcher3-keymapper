@@ -51,7 +51,7 @@ GitHub Actions runs on pushes and pull requests against `master` with Node 20 an
 ## Features
 
 - **Device view** - tabs for keyboard and mouse/gamepad; each device renders a generated SVG diagram. Bound keys use a muted Witcher-style palette: vanilla movement, vanilla combat/actions, vanilla menus, top-five mods, other mods, conflicts, and unbound keys.
-- **Conflict scanner** - treats keyboard, mouse, and gamepad as parallel vanilla input methods. It filters known benign Witcher 3 aliases such as tap/hold pairs, movement axis helpers, D-pad sword/oil/potion multiplexing, menu duplicates, and debug-only bindings.
+- **Conflict scanner** - treats keyboard, mouse, and gamepad as parallel vanilla input methods. It filters known benign Witcher 3 aliases such as tap/hold pairs, movement axis helpers, D-pad sword/oil/potion multiplexing, menu duplicates, and debug-only bindings. The same physical overload repeated across context sections (Combat, Boat, the `*_Replacer_Ciri` variants, …) is collapsed into one entry per key + mod action and shown as "in N gameplay contexts" instead of listing the raw section names.
 - **Vanilla default supplement** - the project `input.settings` remains the primary file; missing stock actions are supplemented from the matching legacy layout file (`de*` -> `input_qwertz.ini`, `fr*` -> `input_azerty.ini`, otherwise `input_qwerty.ini`).
 - **Layout mode** - mouse and gamepad overlays can be calibrated in the browser. Drag to move, use the bottom-right handle to resize. Overrides are stored per profile in browser `localStorage`.
 - **Key popover** - click or press Enter/Space on a key to see actions, source, conflicts, and Change/Clear actions. Clear remaps that binding to `IK_None` and creates a backup.
