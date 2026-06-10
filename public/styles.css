@@ -546,6 +546,32 @@ dialog input:focus {
   margin-top: 6px;
 }
 
+/* Remap preview: factual list of bindings the change will rewrite (sections +
+   current keys + count). Deliberately not styled as a warning — conflicts are
+   reported by the authoritative re-scan after apply, not here. */
+.remap-preview {
+  margin: 2px 0 4px;
+  font-size: 15px;
+  color: var(--muted);
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.remap-preview-summary {
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.remap-preview-list {
+  margin: 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.remap-preview-section {
+  color: var(--gold);
+}
+
 @media (max-width: 900px) {
   .toolbar,
   .command,

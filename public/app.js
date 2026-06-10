@@ -29,6 +29,7 @@ const els = (typeof document !== "undefined") ? {
   remapTitle: document.querySelector("#remapTitle"),
   remapText: document.querySelector("#remapText"),
   newKey: document.querySelector("#newKey"),
+  remapPreview: document.querySelector("#remapPreview"),
   remapForm: document.querySelector("#remapForm"),
   deviceTabs: document.querySelector("#deviceTabs"),
   deviceSvg: document.querySelector("#deviceSvg"),
@@ -118,6 +119,8 @@ const I18N = {
     invalidSettings: "invalid input.settings",
     changeTitle: "Change {id}",
     changeText: "Changes all bindings for actions: {actions}",
+    remapPreviewSummary: "Affects {count} binding(s) in {sections} context(s)",
+    remapPreviewEmpty: "No current bindings to change",
     hold: "hold",
     clearFailed: "Clear failed",
     clearedBindings: "Cleared {count} binding(s)",
@@ -210,6 +213,8 @@ const I18N = {
     invalidSettings: "ungültige input.settings",
     changeTitle: "{id} ändern",
     changeText: "Ändert alle Belegungen für Aktionen: {actions}",
+    remapPreviewSummary: "Betrifft {count} Belegung(en) in {sections} Kontext(en)",
+    remapPreviewEmpty: "Keine aktuellen Belegungen zu ändern",
     hold: "halten",
     clearFailed: "Löschen fehlgeschlagen",
     clearedBindings: "{count} Bindung(en) gelöscht",
@@ -576,7 +581,48 @@ function openRemap(commandId) {
   els.remapTitle.textContent = t("changeTitle", { id: activeCommand.id });
   els.remapText.textContent = t("changeText", { actions: activeCommand.actions.join(", ") });
   els.newKey.value = "";
+  renderRemapPreview();
   els.dialog.showModal();
+}
+
+// Pure preview of which bindings a remap would rewrite. remap() matches purely by
+// action across every section (including IK_None "unbound" slots), so the affected
+// set is exactly command.bindings and `total` equals the server's `changed` count
+// (verified against SpecialAttackLight: 8 bindings = 8 rewritten lines). It does
+// NOT predict conflicts on purpose: the authoritative conflict view is the
+// re-scan after apply, not a cruder client-side check (Step 3 / AGENTS scanner
+// is the single source of truth).
+function buildRemapPreview(command, newKey) {
+  const bindings = Array.isArray(command?.bindings) ? command.bindings : [];
+  const target = String(newKey || "").trim();
+  const sectionsMap = new Map();
+  for (const binding of bindings) {
+    if (!sectionsMap.has(binding.section)) sectionsMap.set(binding.section, []);
+    sectionsMap.get(binding.section).push(binding.key);
+  }
+  const sections = [...sectionsMap.entries()].map(([section, keys]) => ({ section, keys }));
+  return {
+    total: bindings.length,
+    sectionCount: sections.length,
+    sections,
+    newKey: /^IK_[A-Za-z0-9_]+$/.test(target) ? target : ""
+  };
+}
+
+function renderRemapPreview() {
+  if (!els.remapPreview) return;
+  if (!activeCommand) { els.remapPreview.innerHTML = ""; return; }
+  const preview = buildRemapPreview(activeCommand, els.newKey?.value);
+  if (!preview.total) {
+    els.remapPreview.innerHTML = `<p class="remap-preview-summary">${escapeHtml(t("remapPreviewEmpty"))}</p>`;
+    return;
+  }
+  const arrow = preview.newKey ? ` → ${escapeHtml(preview.newKey)}` : "";
+  const summary = escapeHtml(t("remapPreviewSummary", { count: preview.total, sections: preview.sectionCount }));
+  const rows = preview.sections.map((section) =>
+    `<li><span class="remap-preview-section">${escapeHtml(section.section)}</span>: ${escapeHtml(section.keys.join(", "))}</li>`
+  ).join("");
+  els.remapPreview.innerHTML = `<p class="remap-preview-summary">${summary}${arrow}</p><ul class="remap-preview-list">${rows}</ul>`;
 }
 
 if (typeof document !== "undefined") {
@@ -608,6 +654,8 @@ if (typeof document !== "undefined") {
     await load();
   });
 
+  // Live-update the affected-bindings preview as the user types the target key.
+  els.newKey?.addEventListener("input", renderRemapPreview);
   els.search.addEventListener("input", renderCommands);
   els.sourceFilter.addEventListener("change", renderCommands);
   els.deviceFilter.addEventListener("change", renderCommands);
@@ -1688,6 +1736,6 @@ if (typeof module !== "undefined" && module.exports) {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
     renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg,
-    applyColoring, applyConflicts, remapInputSettingsText, groupConflicts
+    applyColoring, applyConflicts, remapInputSettingsText, groupConflicts, buildRemapPreview
   };
 }

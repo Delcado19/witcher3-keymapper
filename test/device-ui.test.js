@@ -7,7 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 
 const {
-  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts
+  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts, buildRemapPreview
 } = require("../public/app.js");
 const {
   findConflicts, isVanillaAction, vanillaDefaultFileForLanguage,
@@ -415,6 +415,29 @@ ok("remapInputSettingsText: session remap respects action and oldKey", () => {
   assert.ok(result.content.includes("IK_None=(Action=Use,State=Duration)"));
   assert.ok(result.content.includes("IK_F=(Action=Use,State=Duration)"));
   assert.ok(result.content.includes("IK_E=(Action=Jump,State=Duration)"));
+});
+
+ok("buildRemapPreview: total equals binding count (incl. IK_None), grouped by section, key validated", () => {
+  const command = {
+    id: "SpecialAttackLight",
+    bindings: [
+      { section: "Combat", key: "IK_LeftMouse" },
+      { section: "Combat", key: "IK_None" },
+      { section: "Exploration", key: "IK_Pad_X_SQUARE" }
+    ]
+  };
+  // remap() matches by action across all sections incl. IK_None, so the preview
+  // must count every binding (the trust check that preview == server `changed`).
+  const valid = buildRemapPreview(command, "IK_NumPad3");
+  assert.strictEqual(valid.total, 3);
+  assert.strictEqual(valid.sectionCount, 2);
+  assert.strictEqual(valid.newKey, "IK_NumPad3");
+  const combat = valid.sections.find((s) => s.section === "Combat");
+  assert.deepStrictEqual(combat.keys, ["IK_LeftMouse", "IK_None"]);
+  // Invalid/partial target key is not echoed as a destination.
+  assert.strictEqual(buildRemapPreview(command, "Num3").newKey, "");
+  // Missing bindings degrade gracefully.
+  assert.strictEqual(buildRemapPreview({ id: "x" }, "IK_A").total, 0);
 });
 
 ok("isAllowedHost: only loopback Host headers are accepted (DNS-rebinding guard)", () => {
