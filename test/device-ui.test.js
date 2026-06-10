@@ -14,7 +14,7 @@ const {
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
-  resolveDisplayName, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
+  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
   isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile, resolveGamePaths
 } = require("../server.js");
 
@@ -205,6 +205,29 @@ ok("resolveDisplayName: prefers localization and humanizes raw display keys", ()
   assert.strictEqual(resolveDisplayName("ControlLayout_RunSprint", localized), "Run Sprint");
   assert.strictEqual(resolveDisplayName("panel_groupname_fast_attack", localized), "Fast Attack");
   assert.strictEqual(humanizeDisplayName("move_forward"), "Move Forward");
+});
+ok("curatedDisplayName: returns language-specific official/community names, '' for unknown ids", () => {
+  // Step 2.2: official in-game labels (verbatim, including the hyphen spacing).
+  assert.strictEqual(curatedDisplayName("MoveFwd", "de"), "Bewegung - Oben");
+  assert.strictEqual(curatedDisplayName("MoveFwd", "en"), "Movement - Up");
+  // Hold-attack variants are disambiguated from the localized tap actions.
+  assert.strictEqual(curatedDisplayName("SpecialAttackLight", "de"), "Schneller Angriff (halten)");
+  // Non-"de" locales fall back to English.
+  assert.strictEqual(curatedDisplayName("PanelMap", "fr"), "Map");
+  // Commands without a curated entry must not be invented.
+  assert.strictEqual(curatedDisplayName("FastMenu", "de"), "");
+  assert.strictEqual(curatedDisplayName("NotARealCommand", "en"), "");
+});
+ok("CURATED_DISPLAY_NAMES: no curated label collides with another curated label, and known alias variants are excluded", () => {
+  // Engine alias variants would duplicate an already-localized row, so they are
+  // intentionally left humanized (deduplication is Step 3, not translation).
+  for (const excluded of ["FastMenu", "HoldFastMenu", "GotoGlossary", "IngameMenu", "OpenMeditation", "ExplorationInteraction", "SprintGallop"]) {
+    assert.ok(!(excluded in CURATED_DISPLAY_NAMES), `${excluded} must stay humanized`);
+  }
+  // Every entry must define both languages.
+  for (const [id, names] of Object.entries(CURATED_DISPLAY_NAMES)) {
+    assert.ok(names.de && names.en, `${id} must have de and en`);
+  }
 });
 ok("cleanLocalizedDisplayName: strips Witcher XML font markup from localized names", () => {
   assert.strictEqual(cleanLocalizedDisplayName('<font size="18">Aktuell (drücken) / Umschalten (halten)</font>'), "Aktuell (drücken) / Umschalten (halten)");

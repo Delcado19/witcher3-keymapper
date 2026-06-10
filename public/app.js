@@ -536,13 +536,20 @@ function renderCommands() {
   });
 }
 
+// A real, human-readable name exists when it is game-localized ("localized") or
+// supplied by our curated map ("curated", Step 2.2). Humanized technical ids are
+// suppressed in favour of the raw command id.
+function hasResolvedName(command) {
+  return command.displayNameSource === "localized" || command.displayNameSource === "curated";
+}
+
 function commandTitleText(command) {
-  return command.displayNameSource === "localized" && command.displayName ? command.displayName : command.id;
+  return hasResolvedName(command) && command.displayName ? command.displayName : command.id;
 }
 
 function commandSourceLine(command) {
   const source = shortSource(command.source);
-  return command.displayNameSource === "localized" && command.id !== command.displayName
+  return hasResolvedName(command) && command.id !== command.displayName
     ? `${command.id} · ${source}`
     : source;
 }

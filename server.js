@@ -810,10 +810,15 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
     const id = known ? known.id : entry.action;
     if (!commandMap.has(id)) {
       const display = resolveDisplayNameInfo(known?.displayName || entry.action, localizationMap);
+      // Step 2.2: fall back to a curated official/community name only when the
+      // decoder produced a humanized id (no localization key exists). Marked as
+      // "curated" so the UI treats it as a real name but it stays distinct from
+      // game-localized labels for traceability.
+      const curated = display.displayNameSource === "humanized" && curatedDisplayName(id, uiLanguage);
       commandMap.set(id, {
         id,
-        displayName: display.displayName,
-        displayNameSource: display.displayNameSource,
+        displayName: curated || display.displayName,
+        displayNameSource: curated ? "curated" : display.displayNameSource,
         displayNameKey: known?.displayName || entry.action,
         tags: known?.tags || "",
         source: modSources.get(entry.action) || (isVanillaAction(entry.action, knownActions) ? "game/input.xml" : "unknown"),
@@ -1021,6 +1026,62 @@ const BENIGN_COMMAND_GROUPS = [
   new Set(["PanelCraft", "PanelFakeHud"]),
   new Set(["Alternate", "LockAndGuard", "Focus"])
 ];
+
+// Curated display names for vanilla actions that have NO localization key in the
+// game resources, so the w3strings decoder cannot resolve them and they would
+// otherwise stay as humanized technical ids (Step 2.2 of the UI overhaul).
+//
+// Sourcing rules (kept deliberately conservative to avoid the "duplicate row"
+// chaos the user reported):
+//   * The first block is taken verbatim from the in-game "Key Bindings" /
+//     "Tastaturzuweisungen" and controller-scheme screens (screenshots/), so the
+//     labels match the game's own localization exactly. "Sheathe / verbergen"
+//     comes from the controller "Draw/Sheathe" labels.
+//   * The second block uses established Witcher 3 community/wiki terms for
+//     player-facing actions that have no screen of their own.
+// Every entry here was checked against the already-localized command labels: a
+// curated label must NOT equal a name an existing localized command displays,
+// otherwise the list would show two identical-looking rows. Engine alias
+// variants whose label would collide (FastMenu->RadialMenu, GotoGlossary->
+// PanelGlossary, IngameMenu->HubMenu, OpenMeditation->PanelMeditation,
+// ExplorationInteraction->Interaction, SprintGallop->GallopCanter) are
+// intentionally left humanized; deduplicating those aliases belongs to Step 3.
+// Keyed by command id (which equals the raw action for these keyless actions).
+const CURATED_DISPLAY_NAMES = {
+  // Verbatim from the in-game controls screens (screenshots/).
+  MoveFwd: { de: "Bewegung - Oben", en: "Movement - Up" },
+  MoveBck: { de: "Bewegung - Unten", en: "Movement - Down" },
+  MoveLft: { de: "Bewegung - Links", en: "Movement - Left" },
+  MoveRght: { de: "Bewegung - Rechts", en: "Movement - Right" },
+  Dismount: { de: "Absteigen", en: "Dismount" },
+  PanelMap: { de: "Karte", en: "Map" },
+  // Hold (charged) variants of the tap attack: same physical button, distinguished
+  // by State=Duration/IdleTime. Suffixed so they do not collide with the localized
+  // tap actions AttackLight/AttackHeavy ("Schneller/Starker Angriff").
+  SpecialAttackLight: { de: "Schneller Angriff (halten)", en: "Fast Attack (hold)" },
+  SpecialAttackHeavy: { de: "Starker Angriff (halten)", en: "Strong Attack (hold)" },
+  SwordSheathe: { de: "Schwert verbergen", en: "Sheathe Sword" },
+  // Established community/wiki terms (no in-game screen of their own).
+  OilSteel: { de: "Öl auf Stahlschwert", en: "Oil Steel Sword" },
+  OilSilver: { de: "Öl auf Silberschwert", en: "Oil Silver Sword" },
+  BuryBody: { de: "Leiche begraben", en: "Bury Body" },
+  PlaceTrophy: { de: "Trophäe anbringen", en: "Place Trophy" },
+  Follow: { de: "Folgen", en: "Follow" },
+  HorseKick: { de: "Pferd antreiben", en: "Spur Horse" },
+  MeditationAbort: { de: "Meditation abbrechen", en: "Cancel Meditation" },
+  UserMarkersToggle: { de: "Benutzermarkierung umschalten", en: "Toggle User Marker" },
+  DrinkPotionUpperHold: { de: "Trank (oben) trinken", en: "Drink Potion (upper)" },
+  DrinkPotionLowerHold: { de: "Trank (unten) trinken", en: "Drink Potion (lower)" }
+};
+
+// Looks up a curated display name for a command id in the active UI language
+// ("de"/"en"). Returns "" when there is no curated entry so callers keep their
+// existing humanized fallback.
+function curatedDisplayName(commandId, uiLanguage) {
+  const entry = CURATED_DISPLAY_NAMES[commandId];
+  if (!entry) return "";
+  return entry[uiLanguage === "de" ? "de" : "en"] || "";
+}
 
 // The official Witcher 3 controls chart shows keyboard, mouse and gamepad as
 // parallel first-class inputs. Some stock actions from that scheme are absent
@@ -1462,6 +1523,8 @@ module.exports = {
   decodeW3StringsToCachedCsv,
   resolveDisplayName,
   resolveDisplayNameInfo,
+  curatedDisplayName,
+  CURATED_DISPLAY_NAMES,
   cleanLocalizedDisplayName,
   uiLanguageForTag,
   preferredLocalizationCodes,
