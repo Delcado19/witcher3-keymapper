@@ -1111,10 +1111,11 @@ main {
 /* Leader layout needs horizontal room for both label columns, so it scales to the
    container width (the viewBox already bakes in the column gutters) instead of the
    old 720px device cap. */
+/* Fill the stage width so the wide viewBox is not shrunk (that is what made the
+   labels unreadably small); height follows. */
 .leader-svg {
   width: 100%;
-  max-width: 1120px;
-  max-height: 72vh;
+  max-height: 82vh;
   height: auto;
 }
 
@@ -1137,8 +1138,7 @@ main {
 
 .controller-layout .leader-svg {
   width: 100%;
-  max-width: 1120px;
-  max-height: 58vh;
+  max-height: none;
 }
 
 /* Leader-line controller scheme: off-device labels tied to each control by a 90°
@@ -1175,19 +1175,21 @@ main {
   stroke: var(--conflict-medium);
 }
 .leader-svg .leader-label {
-  font: 600 19px/1.1 'Crimson Text', serif;
+  font: 600 23px/1.15 'Crimson Text', serif;
   fill: #e9e2d4;
   pointer-events: none;
   paint-order: stroke;
-  stroke: rgba(0, 0, 0, 0.85);
-  stroke-width: 3px;
+  stroke: rgba(0, 0, 0, 0.9);
+  stroke-width: 3.5px;
 }
 .leader-svg .leader-head {
+  font-size: 25px;
   font-weight: 700;
+  letter-spacing: 0.04em;
   fill: var(--key-fill, #f0d8a0);
 }
 .leader-svg .leader-action {
-  font-size: 17px;
+  font-size: 22px;
   fill: #d6cfc0;
 }
 .leader-svg .leader-key:hover .leader-label {

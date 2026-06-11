@@ -1651,21 +1651,24 @@ function renderGamepadSvg(profile) {
 // look, instead of stamping labels onto the device. Anchors come from ax/ay
 // (percent of the PNG) in the profile; applyLeaderLabels fills the action text
 // once scan data is known.
-// maxLines caps stacked actions so dense columns (8 gamepad keys, slot ≈70u) stay
-// legible: head + 2 actions + "+N" = 4 lines span 3·lineH = 66u < slot. The popover
-// still shows the full binding list on click.
-const LEADER = { col: 360, gap: 28, pad: 24, mark: 9, row: 64, rail: 14, maxLines: 2, lineH: 22 };
+// Geometry is in viewBox units ≈ on-screen px (the SVG fills the stage width, so the
+// units stay roughly 1:1 and the labels read at their nominal font size). Wide columns
+// use the empty space beside the device; `slot` is the min vertical pitch per label so
+// a head + up to maxLines actions + "+N" block never overlaps its neighbour.
+const LEADER = { col: 540, gap: 64, pad: 34, mark: 8, slot: 118, maxLines: 2, lineH: 30 };
 
 function renderLeaderDevice(profile, extraClass) {
   const art = profile.artworkSize || { w: 800, h: 560 };
-  const { col, gap, pad, mark, row, rail } = LEADER;
+  const { col, gap, pad, mark, slot } = LEADER;
   const x0 = pad + col + gap;                 // device left edge
   const totalW = pad + col + gap + art.w + gap + col + pad;
   const sides = { left: [], right: [] };
   for (const key of profile.keys) sides[key.side === "right" ? "right" : "left"].push(key);
   sides.left.sort((a, b) => a.ay - b.ay);
   sides.right.sort((a, b) => a.ay - b.ay);
-  const colH = Math.max(sides.left.length, sides.right.length) * row;
+  // Spread the labels over at least `slot` units each so neighbours never collide; if the
+  // device is taller than that, match its height so the columns frame it (W3 scheme look).
+  const colH = Math.max(sides.left.length, sides.right.length) * slot;
   const contentH = Math.max(colH, art.h);
   const totalH = pad + contentH + pad;
   const devY = pad + (contentH - art.h) / 2;   // center the device against the taller column
@@ -1683,7 +1686,6 @@ function renderLeaderDevice(profile, extraClass) {
     const keys = sides[side];
     if (!keys.length) continue;
     const slotH = contentH / keys.length;
-    const railX = side === "left" ? x0 - rail : x0 + art.w + rail;
     const labelEndX = side === "left" ? pad + col : totalW - pad - col;
     keys.forEach((key, i) => {
       const anchorX = x0 + (key.ax / 100) * art.w;
@@ -1691,10 +1693,12 @@ function renderLeaderDevice(profile, extraClass) {
       const labelY = pad + slotH * (i + 0.5);
       const g = svgNode("g", { class: `key leader-key side-${side}`, "data-key": key.ik, tabindex: "0", role: "button" });
       g.setAttribute("aria-label", t("keyUnbound", { label: key.label || key.ik }));
-      // label edge -> rail -> rail -> anchor: H, V, H segments only -> 90° corners
+      // Horizontal from the label, then a single 90° bend straight down/up to the control
+      // (vertical sits exactly over the anchor). Keys are sorted by anchorY so the bends
+      // don't cross — the in-game controller-scheme look, no shared rail.
       g.appendChild(svgNode("polyline", {
         class: "leader-line",
-        points: `${labelEndX},${labelY} ${railX},${labelY} ${railX},${anchorY} ${anchorX},${anchorY}`
+        points: `${labelEndX},${labelY} ${anchorX},${labelY} ${anchorX},${anchorY}`
       }));
       // the anchor dot doubles as the .key-shape applyColoring/applyConflicts drive
       g.appendChild(svgNode("circle", { class: "key-shape", cx: anchorX, cy: anchorY, r: mark }));

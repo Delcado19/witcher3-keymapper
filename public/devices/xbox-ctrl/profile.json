@@ -8,22 +8,22 @@
   "artworkSize": { "w": 800, "h": 560 },
   "_comment": "Leader-line layout: ax/ay are the anchor point as a percentage of the PNG (0-100); side picks the label column. Fine-tune anchors against the PNG, not the old square SVG.",
   "keys": [
-    { "ik": "IK_Pad_LeftTrigger",   "label": "LT",    "ax": 19, "ay": 9,  "side": "left" },
-    { "ik": "IK_Pad_LeftShoulder",  "label": "LB",    "ax": 25, "ay": 7,  "side": "left" },
-    { "ik": "IK_Pad_LeftThumb",     "label": "L3",    "ax": 20, "ay": 19, "side": "left" },
-    { "ik": "IK_Pad_Back_Select",   "label": "Back",  "ax": 38, "ay": 21, "side": "left" },
-    { "ik": "IK_Pad_DigitUp",       "label": "▲",     "ax": 31, "ay": 41, "side": "left" },
-    { "ik": "IK_Pad_DigitLeft",     "label": "◀",     "ax": 27, "ay": 46, "side": "left" },
-    { "ik": "IK_Pad_DigitRight",    "label": "▶",     "ax": 35, "ay": 46, "side": "left" },
-    { "ik": "IK_Pad_DigitDown",     "label": "▼",     "ax": 31, "ay": 52, "side": "left" },
+    { "ik": "IK_Pad_LeftTrigger",   "label": "LT",    "ax": 18, "ay": 9,  "side": "left" },
+    { "ik": "IK_Pad_LeftShoulder",  "label": "LB",    "ax": 24, "ay": 7,  "side": "left" },
+    { "ik": "IK_Pad_LeftThumb",     "label": "L3",    "ax": 20, "ay": 25, "side": "left" },
+    { "ik": "IK_Pad_Back_Select",   "label": "Back",  "ax": 39, "ay": 33, "side": "left" },
+    { "ik": "IK_Pad_DigitUp",       "label": "▲",     "ax": 30, "ay": 43, "side": "left" },
+    { "ik": "IK_Pad_DigitLeft",     "label": "◀",     "ax": 26, "ay": 49, "side": "left" },
+    { "ik": "IK_Pad_DigitRight",    "label": "▶",     "ax": 35, "ay": 49, "side": "left" },
+    { "ik": "IK_Pad_DigitDown",     "label": "▼",     "ax": 30, "ay": 55, "side": "left" },
 
-    { "ik": "IK_Pad_RightTrigger",  "label": "RT",    "ax": 77, "ay": 9,  "side": "right" },
-    { "ik": "IK_Pad_RightShoulder", "label": "RB",    "ax": 71, "ay": 7,  "side": "right" },
-    { "ik": "IK_Pad_Start",         "label": "Start", "ax": 44, "ay": 21, "side": "right" },
-    { "ik": "IK_Pad_Y_TRIANGLE",    "label": "Y",     "ax": 70, "ay": 13, "side": "right" },
-    { "ik": "IK_Pad_X_SQUARE",      "label": "X",     "ax": 65, "ay": 20, "side": "right" },
-    { "ik": "IK_Pad_B_CIRCLE",      "label": "B",     "ax": 75, "ay": 20, "side": "right" },
-    { "ik": "IK_Pad_A_CROSS",       "label": "A",     "ax": 70, "ay": 27, "side": "right" },
-    { "ik": "IK_Pad_RightThumb",    "label": "R3",    "ax": 57, "ay": 38, "side": "right" }
+    { "ik": "IK_Pad_RightTrigger",  "label": "RT",    "ax": 78, "ay": 9,  "side": "right" },
+    { "ik": "IK_Pad_RightShoulder", "label": "RB",    "ax": 74, "ay": 7,  "side": "right" },
+    { "ik": "IK_Pad_Start",         "label": "Start", "ax": 46, "ay": 33, "side": "right" },
+    { "ik": "IK_Pad_Y_TRIANGLE",    "label": "Y",     "ax": 71, "ay": 21, "side": "right" },
+    { "ik": "IK_Pad_X_SQUARE",      "label": "X",     "ax": 66, "ay": 30, "side": "right" },
+    { "ik": "IK_Pad_B_CIRCLE",      "label": "B",     "ax": 77, "ay": 30, "side": "right" },
+    { "ik": "IK_Pad_A_CROSS",       "label": "A",     "ax": 71, "ay": 38, "side": "right" },
+    { "ik": "IK_Pad_RightThumb",    "label": "R3",    "ax": 57, "ay": 46, "side": "right" }
   ]
 }
