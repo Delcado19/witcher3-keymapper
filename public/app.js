@@ -37,6 +37,13 @@ const els = (typeof document !== "undefined") ? {
   layoutSelect: document.querySelector("#layoutSelect"),
   layoutSelectWrap: document.querySelector("#layoutSelectWrap"),
   layoutMode: document.querySelector("#layoutMode"),
+  editorBar: document.querySelector("#editorBar"),
+  editorFontDown: document.querySelector("#editorFontDown"),
+  editorFontUp: document.querySelector("#editorFontUp"),
+  editorGrid: document.querySelector("#editorGrid"),
+  editorReset: document.querySelector("#editorReset"),
+  editorSave: document.querySelector("#editorSave"),
+  editorHint: document.querySelector("#editorHint"),
   loadingBar: document.querySelector("#loadingBar")
 } : {};
 
@@ -55,6 +62,16 @@ const I18N = {
     gamepad: "Gamepad",
     layout: "Layout",
     chooseLayout: "Choose layout...",
+    editLayout: "Edit layout",
+    editLayoutDone: "Done editing",
+    editorSave: "Save",
+    editorReset: "Reset",
+    editorHint: "Drag the PNG, anchors, or labels. Double-click a label to rename. Shift bypasses snap.",
+    editorDirty: "{count} unsaved",
+    editLabelPrompt: "Button caption for {ik}:",
+    editorResetDone: "Reverted to the saved layout.",
+    editorSaveDone: "Saved {count} layout(s).",
+    editorSaveFailed: "Could not save {id}: {message}",
     colorLegend: "Color legend",
     searchPlaceholder: "Search action, key, mod, or context",
     allSources: "All sources",
@@ -147,6 +164,16 @@ const I18N = {
     gamepad: "Gamepad",
     layout: "Layout",
     chooseLayout: "Layout wählen...",
+    editLayout: "Layout bearbeiten",
+    editLayoutDone: "Fertig",
+    editorSave: "Speichern",
+    editorReset: "Zurücksetzen",
+    editorHint: "PNG, Anker oder Beschriftungen ziehen. Doppelklick auf eine Beschriftung zum Umbenennen. Shift umgeht das Raster.",
+    editorDirty: "{count} ungespeichert",
+    editLabelPrompt: "Tastenbeschriftung für {ik}:",
+    editorResetDone: "Auf gespeichertes Layout zurückgesetzt.",
+    editorSaveDone: "{count} Layout(s) gespeichert.",
+    editorSaveFailed: "{id} konnte nicht gespeichert werden: {message}",
     colorLegend: "Farblegende",
     searchPlaceholder: "Aktion, Taste, Mod oder Kontext suchen",
     allSources: "Alle Quellen",
@@ -277,7 +304,8 @@ function applyStaticTexts() {
   els.layoutSelect?.setAttribute("aria-label", t("chooseLayout"));
   const emptyLayout = els.layoutSelect?.querySelector('option[value=""]');
   if (emptyLayout) emptyLayout.textContent = t("chooseLayout");
-  els.layoutMode && (els.layoutMode.textContent = t("layout"));
+  els.layoutMode && (els.layoutMode.textContent = state.layoutMode ? t("editLayoutDone") : t("editLayout"));
+  updateEditorBar();
   els.legend?.setAttribute("aria-label", t("colorLegend"));
   els.search?.setAttribute("placeholder", t("searchPlaceholder"));
   const deviceOptions = els.deviceFilter?.querySelectorAll("option");
@@ -328,8 +356,10 @@ const state = {
   hasOther: false,
   currentSvg: null,
   currentProfile: null,
-  layoutMode: false,
-  layoutDrag: null,
+  layoutMode: false,           // leader-layout editor active (controllers tab only)
+  leaderDrag: null,            // in-flight editor drag descriptor
+  editGrid: true,              // snap dragged coords to a grid while editing
+  dirtyProfiles: new Set(),    // ids with unsaved editor changes
   sessionFile: null
 };
 
@@ -680,11 +710,83 @@ if (typeof document !== "undefined") {
   });
 
   els.layoutMode?.addEventListener("click", () => {
-    if (state.activeDevice === "keyboard") return;
+    if (state.activeDevice !== "controllers") return;
     state.layoutMode = !state.layoutMode;
+    els.layoutMode.setAttribute("aria-pressed", state.layoutMode ? "true" : "false");
     closePopover();
     renderDeviceView();
   });
+  els.editorGrid?.addEventListener("change", () => { state.editGrid = els.editorGrid.checked; });
+  els.editorFontDown?.addEventListener("click", () => adjustEditorFont(-2));
+  els.editorFontUp?.addEventListener("click", () => adjustEditorFont(2));
+  els.editorReset?.addEventListener("click", resetLeaderLayouts);
+  els.editorSave?.addEventListener("click", saveLeaderLayouts);
+}
+
+// Show/hide the editor toolbar with the edit toggle, reflect dirty state on Save, and
+// keep the toggle's label/pressed-state in sync (called from renderDeviceView too).
+function updateEditorBar() {
+  if (!els.editorBar) return;
+  const on = state.layoutMode && state.activeDevice === "controllers";
+  els.editorBar.classList.toggle("hidden", !on);
+  els.layoutMode && els.layoutMode.setAttribute("aria-pressed", state.layoutMode ? "true" : "false");
+  if (els.layoutMode) els.layoutMode.textContent = state.layoutMode ? t("editLayoutDone") : t("editLayout");
+  const dirty = state.dirtyProfiles.size > 0;
+  if (els.editorSave) {
+    els.editorSave.disabled = !dirty;
+    els.editorSave.textContent = t("editorSave");
+  }
+  if (els.editorReset) els.editorReset.textContent = t("editorReset");
+  if (els.editorHint) els.editorHint.textContent = dirty ? t("editorDirty", { count: state.dirtyProfiles.size }) : t("editorHint");
+}
+
+// Nudge the active profiles' default label size. fontScale multiplies the CSS sizes
+// (applied per-tspan in applyLeaderLabels) so the whole label block scales together.
+function adjustEditorFont(delta) {
+  let changed = false;
+  for (const profile of activeProfileIds().map((id) => state.profileCache.get(id)).filter(isEditableProfile)) {
+    const base = profile.fontSize || LEADER_BASE_FONT;
+    const next = clamp(round2(base + delta), 10, 48);
+    if (next !== base) { profile.fontSize = next; markProfileDirty(profile.id); changed = true; }
+  }
+  if (changed) renderDeviceView();
+}
+
+// Throw away unsaved edits by re-fetching the committed profile.json from the server.
+async function resetLeaderLayouts() {
+  for (const id of [...state.dirtyProfiles]) {
+    state.profileCache.delete(id);
+    await getProfile(id); // re-fetch fresh copy into the cache
+  }
+  state.dirtyProfiles.clear();
+  renderDeviceView();
+  showToast(t("editorResetDone"), "info");
+}
+
+// Persist every edited profile back to its committed profile.json via the guarded
+// write endpoint (see server.js POST /api/profile).
+async function saveLeaderLayouts() {
+  const ids = [...state.dirtyProfiles];
+  if (!ids.length) return;
+  let ok = 0;
+  for (const id of ids) {
+    const profile = state.profileCache.get(id);
+    if (!profile) continue;
+    try {
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, profile })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      state.dirtyProfiles.delete(id);
+      ok++;
+    } catch (error) {
+      showToast(t("editorSaveFailed", { id, message: error.message }), "error");
+    }
+  }
+  updateEditorBar();
+  if (ok) showToast(t("editorSaveDone", { count: ok }), "info");
 }
 
 async function handleLoadFile() {
@@ -884,10 +986,13 @@ function activeProfileIds() {
 
 async function getProfile(id) {
   if (!id) return null;
-  if (state.profileCache.has(id)) return applyLayoutOverrides(state.profileCache.get(id));
+  // Return the cached instance directly (no copy): the layout editor mutates this
+  // object live during a drag, and persistence is server-side (POST /api/profile),
+  // not the old per-browser localStorage overlay.
+  if (state.profileCache.has(id)) return state.profileCache.get(id);
   const profile = await loadProfile(id);
   if (profile) state.profileCache.set(id, profile);
-  return profile ? applyLayoutOverrides(profile) : null;
+  return profile || null;
 }
 
 // Colour map + legend flags are derived once per scan and reused across tab
@@ -907,11 +1012,12 @@ async function renderDeviceView() {
 
   const isKeyboard = state.activeDevice === "keyboard";
   els.layoutSelectWrap?.classList.toggle("hidden", !(isKeyboard && state.showLayoutDropdown));
-  // The drag/resize layout editor only ever applied to the old draggable mouse/gamepad
-  // overlays. Those are now fixed-anchor leader-line diagrams (ax/ay in profile.json),
-  // so the Layout toggle no longer has anything to edit — keep it hidden everywhere.
-  els.layoutMode?.classList.add("hidden");
-  state.layoutMode = false;
+  // The leader-layout editor only applies to the artwork controller schemes (mouse/
+  // gamepad), so the toggle shows on that tab and is force-off everywhere else.
+  const editable = state.activeDevice === "controllers";
+  els.layoutMode?.classList.toggle("hidden", !editable);
+  if (!editable) state.layoutMode = false;
+  updateEditorBar();
   if (isKeyboard && state.showLayoutDropdown && !state.keyboardProfileId) {
     showDeviceEmpty(t("noKeyboardLayout"));
     return;
@@ -935,7 +1041,7 @@ async function renderDeviceView() {
     applyConflicts(svg, scan.conflicts);
     if (profile.artwork) applyLeaderLabels(svg, profile, scan);
     attachKeyInteractions(svg);
-    attachLayoutEditor(svg, profile);
+    attachLeaderEditor(svg, profile);
     if (host) {
       const frame = document.createElement("div");
       frame.className = `controller-layout controller-${profile.type}`;
@@ -1019,63 +1125,7 @@ function attachKeyInteractions(svg) {
   });
 }
 
-function layoutStorageKey(profileId) {
-  return `witcher3-keymapper:layout:${profileId}`;
-}
-
-function applyLayoutOverrides(profile) {
-  if (typeof localStorage === "undefined") return profile;
-  try {
-    const raw = localStorage.getItem(layoutStorageKey(profile.id));
-    if (!raw) return profile;
-    const overrides = JSON.parse(raw);
-    const copy = { ...profile, keys: profile.keys.map((key) => ({ ...key })) };
-    for (const key of copy.keys) {
-      if (overrides[key.ik]) Object.assign(key, overrides[key.ik]);
-    }
-    return copy;
-  } catch (error) {
-    console.warn("Layout overrides could not be loaded", error);
-    return profile;
-  }
-}
-
-function saveLayoutOverride(profile, key) {
-  if (typeof localStorage === "undefined") return;
-  try {
-    const storageKey = layoutStorageKey(profile.id);
-    const overrides = JSON.parse(localStorage.getItem(storageKey) || "{}");
-    overrides[key.ik] = { x: key.x, y: key.y, w: key.w, h: key.h, coord: key.coord };
-    localStorage.setItem(storageKey, JSON.stringify(overrides));
-  } catch (error) {
-    console.warn("Layout override could not be saved", error);
-  }
-}
-
-function attachLayoutEditor(svg, profile) {
-  // Leader-line artwork devices anchor by ax/ay (percent), not the x/y/w/h the
-  // drag editor manipulates, so the editor would read undefined geometry — skip them.
-  if (!state.layoutMode || state.activeDevice === "keyboard" || profile.artwork) return;
-  svg.classList.add("layout-editing");
-  svg.querySelectorAll("[data-key]").forEach((g) => {
-    const ik = g.getAttribute("data-key");
-    const key = profile.keys.find((item) => item.ik === ik);
-    const shape = g.querySelector(".key-shape");
-    if (!key || !shape) return;
-    const handle = svgNode("rect", { class: "layout-resize", width: 14, height: 14, rx: 2 });
-    g.appendChild(handle);
-    positionResizeHandle(key, handle);
-    g.addEventListener("pointerdown", (event) => startLayoutDrag(event, svg, profile, key, g, shape, handle, "move"));
-    handle.addEventListener("pointerdown", (event) => startLayoutDrag(event, svg, profile, key, g, shape, handle, "resize"));
-  });
-}
-
-function positionResizeHandle(key, handle) {
-  const scale = key.coord === "px" ? 0.01 : 1;
-  handle.setAttribute("x", (key.x + key.w) * scale * UNIT - 7);
-  handle.setAttribute("y", (key.y + key.h) * scale * UNIT - 7);
-}
-
+// Convert a pointer event to SVG user-space (= canvas) coordinates.
 function svgPoint(svg, event) {
   const point = svg.createSVGPoint();
   point.x = event.clientX;
@@ -1084,62 +1134,204 @@ function svgPoint(svg, event) {
   return ctm ? point.matrixTransform(ctm.inverse()) : { x: 0, y: 0 };
 }
 
-function startLayoutDrag(event, svg, profile, key, g, shape, handle, mode) {
+/* ---------------- Leader-layout editor ----------------
+   Direct-manipulation editor for the mouse/gamepad controller schemes. Operates on
+   the EXPLICIT coordinate model (profile.canvas/art + per-key ax/ay/lx/ly); edits
+   mutate the cached profile live and persist via POST /api/profile. Four drag targets:
+   move/resize the PNG (art rect), move an anchor (ax/ay, % of art) and move a label
+   (lx/ly, canvas units). The leader line is re-derived from those each redraw, so it
+   can never detach. Snap-to-grid + smart guides layer on in onLeaderDrag. */
+const EDIT_GRID = 8;          // canvas-unit grid for snap-to-grid
+const ART_MIN = 60;           // smallest allowed PNG box edge
+
+// Editor only applies to seeded artwork profiles (explicit model present).
+function isEditableProfile(profile) {
+  return !!(profile && profile.artwork && profile.canvas && profile.art);
+}
+
+function attachLeaderEditor(svg, profile) {
+  if (!state.layoutMode || !isEditableProfile(profile)) return;
+  svg.classList.add("layout-editing");
+  drawEditHandles(svg, profile, computeLeaderLayout(profile));
+}
+
+// (Re)attach the editor affordances onto the freshly built scene: the PNG is the
+// move target, a corner square resizes it, each anchor dot and each label is draggable.
+// Called after every redraw because the scene's children are rebuilt each drag tick.
+function drawEditHandles(svg, profile, layout) {
+  const rootEl = svg.querySelector("g");
+  if (!rootEl) return;
+  const img = rootEl.querySelector(".device-artwork");
+  if (img) {
+    img.classList.add("edit-art");
+    img.addEventListener("pointerdown", (e) => startLeaderDrag(e, svg, profile, { type: "art-move" }));
+  }
+  const a = layout.art;
+  const handle = svgNode("rect", { class: "edit-handle edit-art-resize", x: a.x + a.w - 9, y: a.y + a.h - 9, width: 18, height: 18, rx: 3 });
+  handle.addEventListener("pointerdown", (e) => startLeaderDrag(e, svg, profile, { type: "art-resize" }));
+  rootEl.appendChild(handle);
+  rootEl.querySelectorAll("[data-key]").forEach((g) => {
+    const ik = g.getAttribute("data-key");
+    const dot = g.querySelector(".key-shape");
+    if (dot) {
+      dot.classList.add("edit-anchor");
+      dot.addEventListener("pointerdown", (e) => startLeaderDrag(e, svg, profile, { type: "anchor", ik }));
+    }
+    const text = g.querySelector(".leader-label");
+    if (text) {
+      text.classList.add("edit-label");
+      text.addEventListener("pointerdown", (e) => startLeaderDrag(e, svg, profile, { type: "label", ik }));
+      text.addEventListener("dblclick", (e) => { e.preventDefault(); e.stopPropagation(); promptLabelText(profile, ik); });
+    }
+  });
+}
+
+// Rebuild the scene in place (image + keys + coloring + labels + edit handles). The
+// svg-level pointer listeners survive because only rootEl's children are replaced.
+function redrawEditing(svg, profile) {
+  const rootEl = svg.querySelector("g");
+  if (!rootEl) return;
+  rootEl.textContent = "";
+  const layout = computeLeaderLayout(profile);
+  buildLeaderSceneInto(rootEl, layout, profile);
+  applyColoring(svg, state.colorMap, scan);
+  applyConflicts(svg, scan.conflicts);
+  applyLeaderLabels(svg, profile, scan);
+  drawEditHandles(svg, profile, layout);
+}
+
+function startLeaderDrag(event, svg, profile, target) {
+  if (!state.layoutMode) return;
   event.preventDefault();
   event.stopPropagation();
+  const key = target.ik ? profile.keys.find((k) => k.ik === target.ik) : null;
   const start = svgPoint(svg, event);
-  state.layoutDrag = { svg, profile, key, g, shape, handle, mode, start, base: { x: key.x, y: key.y, w: key.w, h: key.h } };
-  svg.addEventListener("pointermove", onLayoutDrag);
-  svg.addEventListener("pointerup", endLayoutDrag, { once: true });
-  svg.addEventListener("pointerleave", endLayoutDrag, { once: true });
-}
-
-function onLayoutDrag(event) {
-  const drag = state.layoutDrag;
-  if (!drag) return;
-  const current = svgPoint(drag.svg, event);
-  const coordScale = drag.key.coord === "px" ? 100 : 1;
-  const dx = ((current.x - drag.start.x) / UNIT) * coordScale;
-  const dy = ((current.y - drag.start.y) / UNIT) * coordScale;
-  if (drag.mode === "resize") {
-    const minSize = drag.key.coord === "px" ? 12 : 0.2;
-    drag.key.w = Math.max(minSize, drag.base.w + dx);
-    drag.key.h = Math.max(minSize, drag.base.h + dy);
-  } else {
-    drag.key.x = drag.base.x + dx;
-    drag.key.y = drag.base.y + dy;
+  const base = {};
+  if (target.type === "art-move" || target.type === "art-resize") {
+    base.x = profile.art.x; base.y = profile.art.y; base.w = profile.art.w; base.h = profile.art.h;
+  } else if (target.type === "anchor" && key) {
+    base.ax = key.ax; base.ay = key.ay;
+  } else if (target.type === "label" && key) {
+    base.lx = key.lx; base.ly = key.ly;
   }
-  updateKeyGeometry(drag.key, drag.g, drag.shape, drag.handle);
+  state.leaderDrag = { svg, profile, target, key, start, base, moved: false };
+  try { svg.setPointerCapture(event.pointerId); } catch (_) { /* jsdom/stub: no capture */ }
+  svg.addEventListener("pointermove", onLeaderDrag);
+  svg.addEventListener("pointerup", endLeaderDrag, { once: true });
 }
 
-function endLayoutDrag() {
-  const drag = state.layoutDrag;
-  if (!drag) return;
-  drag.svg.removeEventListener("pointermove", onLayoutDrag);
-  saveLayoutOverride(drag.profile, drag.key);
-  state.layoutDrag = null;
+// Round to the snap grid unless Shift is held (Pixaroma-style bypass).
+function snap(value, bypass) {
+  return state.editGrid && !bypass ? Math.round(value / EDIT_GRID) * EDIT_GRID : value;
 }
 
-function updateKeyGeometry(key, g, shape, handle) {
-  const scale = key.coord === "px" ? 0.01 : 1;
-  const x = key.x * scale * UNIT;
-  const y = key.y * scale * UNIT;
-  const w = key.w * scale * UNIT;
-  const h = key.h * scale * UNIT;
-  if (shape.tagName === "circle" || shape.tag === "circle") {
-    shape.setAttribute("cx", x + w / 2);
-    shape.setAttribute("cy", y + h / 2);
-    shape.setAttribute("r", Math.max(Math.min(w, h) / 2 - GAP, 1));
-  } else {
-    shape.setAttribute("x", x);
-    shape.setAttribute("y", y);
-    shape.setAttribute("width", Math.max(w, 1));
-    shape.setAttribute("height", Math.max(h, 1));
+// Alignment targets for smart guides: every OTHER control's anchor + label X/Y, plus
+// the canvas and PNG centers — the lines a dragged element can snap onto.
+function collectSnapTargets(layout, excludeIk) {
+  const xs = [], ys = [];
+  for (const k of layout.keys) {
+    if (k.key.ik === excludeIk) continue;
+    xs.push(k.anchorX, k.lx);
+    ys.push(k.anchorY, k.ly);
   }
-  const text = g.querySelector(".key-label");
-  text?.setAttribute("x", x + w / 2);
-  text?.setAttribute("y", y + h / 2);
-  positionResizeHandle(key, handle);
+  xs.push(layout.canvas.w / 2, layout.art.x + layout.art.w / 2);
+  ys.push(layout.canvas.h / 2, layout.art.y + layout.art.h / 2);
+  return { xs, ys };
+}
+
+// Nearest target within `dist`, or null. `dist` is in canvas units (screen px / scale).
+function nearestSnap(value, targets, dist) {
+  let best = null, bestD = dist;
+  for (const t of targets) {
+    const d = Math.abs(value - t);
+    if (d <= bestD) { bestD = d; best = t; }
+  }
+  return best;
+}
+
+function onLeaderDrag(event) {
+  const drag = state.leaderDrag;
+  if (!drag) return;
+  const p = svgPoint(drag.svg, event);
+  const bypass = event.shiftKey;
+  const dx = p.x - drag.start.x;
+  const dy = p.y - drag.start.y;
+  const { target, key, base } = drag;
+  // Smart-guide threshold: 8 screen px converted to canvas units via the live scale, so
+  // the snap zone feels the same regardless of how small the side-by-side device renders.
+  const ctm = drag.svg.getScreenCTM && drag.svg.getScreenCTM();
+  const snapDist = 8 / ((ctm && ctm.a) || 1);
+  const layout = computeLeaderLayout(drag.profile);   // other elements are unaffected mid-drag
+  const targets = bypass ? { xs: [], ys: [] } : collectSnapTargets(layout, key && key.ik);
+  const guides = [];
+  // Apply grid snap first, then let a nearby alignment target override it and record a guide.
+  const guideX = (val) => { const s = nearestSnap(val, targets.xs, snapDist); if (s != null) { guides.push({ axis: "x", value: s }); return s; } return val; };
+  const guideY = (val) => { const s = nearestSnap(val, targets.ys, snapDist); if (s != null) { guides.push({ axis: "y", value: s }); return s; } return val; };
+
+  if (target.type === "art-move") {
+    let x = snap(base.x + dx, bypass), y = snap(base.y + dy, bypass);
+    // snap the PNG's CENTER to alignment lines, then back out to its top-left.
+    const cx = guideX(x + base.w / 2), cy = guideY(y + base.h / 2);
+    x = cx - base.w / 2; y = cy - base.h / 2;
+    drag.profile.art.x = round2(x); drag.profile.art.y = round2(y);
+  } else if (target.type === "art-resize") {
+    drag.profile.art.w = Math.max(ART_MIN, snap(base.w + dx, bypass));
+    drag.profile.art.h = Math.max(ART_MIN, snap(base.h + dy, bypass));
+  } else if (target.type === "anchor" && key) {
+    const a = drag.profile.art;
+    const x = guideX(snap(a.x + (base.ax / 100) * a.w + dx, bypass));
+    const y = guideY(snap(a.y + (base.ay / 100) * a.h + dy, bypass));
+    key.ax = clamp(round2(((x - a.x) / a.w) * 100), 0, 100);
+    key.ay = clamp(round2(((y - a.y) / a.h) * 100), 0, 100);
+  } else if (target.type === "label" && key) {
+    key.lx = round2(guideX(snap(base.lx + dx, bypass)));
+    key.ly = round2(guideY(snap(base.ly + dy, bypass)));
+  }
+  drag.moved = true;
+  redrawEditing(drag.svg, drag.profile);
+  drawGuides(drag.svg, layout, guides);
+}
+
+// Draw the live alignment guides (full-canvas dashed lines) on top of the scene.
+function drawGuides(svg, layout, guides) {
+  if (!guides.length) return;
+  const rootEl = svg.querySelector("g");
+  if (!rootEl) return;
+  for (const gd of guides) {
+    rootEl.appendChild(gd.axis === "x"
+      ? svgNode("line", { class: "leader-guide", x1: gd.value, y1: 0, x2: gd.value, y2: layout.canvas.h })
+      : svgNode("line", { class: "leader-guide", x1: 0, y1: gd.value, x2: layout.canvas.w, y2: gd.value }));
+  }
+}
+
+function endLeaderDrag() {
+  const drag = state.leaderDrag;
+  if (!drag) return;
+  drag.svg.removeEventListener("pointermove", onLeaderDrag);
+  state.leaderDrag = null;
+  // Final redraw with no guides so the last tick's alignment lines don't linger.
+  redrawEditing(drag.svg, drag.profile);
+  if (drag.moved) markProfileDirty(drag.profile.id);
+}
+
+const round2 = (n) => Math.round(n * 100) / 100;
+function clamp(n, lo, hi) { return Math.min(hi, Math.max(lo, n)); }
+
+function markProfileDirty(id) {
+  state.dirtyProfiles.add(id);
+  updateEditorBar();
+}
+
+// Replace a control's button caption (RB/LT/X/A/START/R3/…). Inline prompt is
+// adequate for a local authoring tool; the label is free text.
+function promptLabelText(profile, ik) {
+  const key = profile.keys.find((k) => k.ik === ik);
+  if (!key) return;
+  const next = window.prompt(t("editLabelPrompt", { ik }), key.label || "");
+  if (next == null) return;            // cancelled
+  key.label = next.trim();
+  markProfileDirty(profile.id);
+  renderDeviceView();
 }
 
 /* ---------------- Task 9: Popover_Controller ---------------- */
@@ -1674,6 +1866,11 @@ function renderGamepadSvg(profile) {
 // of lost in whitespace. The gamepad keeps the wide budget for its long German action
 // names. Render reads `profile.leader.<field> ?? LEADER.<field>`.
 const LEADER = { col: 420, gap: 28, pad: 28, mark: 8, minPitch: 72, maxLines: 2, lineH: 26 };
+// Default label font metrics (mirror styles.css .leader-action / .leader-head). The
+// editor's fontSize override is expressed relative to LEADER_BASE_FONT (the primary
+// action line); the head caption + line pitch scale proportionally.
+const LEADER_BASE_FONT = 24;
+const LEADER_HEAD_FONT = 15;
 
 // Resolve a leader geometry field, letting each profile override the global default
 // (e.g. the mouse uses a much narrower text column than the gamepad).
@@ -1704,7 +1901,35 @@ function layoutLabelColumn(keys, devY, artH, minPitch) {
   return y;
 }
 
-function renderLeaderDevice(profile, extraClass) {
+// Gap (viewBox units) between a label's text edge and where its leader line attaches,
+// so the line never touches the glyphs. Matched to the old fixed ±8 column inset.
+const LABEL_GAP = 8;
+
+// Pure geometry for a leader-line device. Returns canvas/art rects and per-key
+// {anchorX, anchorY, lx, ly, sign, textAnchor} in canvas units — no DOM, so it is
+// reusable for rendering, for the layout editor's hit-testing, and for seeding.
+//
+// Two branches, never mixed (the advisor's "don't run two positioning systems live"):
+//   - EXPLICIT (profile.canvas + profile.art): the editor's authored output. Every
+//     label position is stored (lx/ly), so render is a pure read and a dragged label
+//     can't be clobbered by a re-run of the auto-layout.
+//   - LEGACY (no canvas): the original auto-layout. Used to RENDER un-seeded profiles
+//     and, run once, to SEED the explicit model (computeLeaderSeed writes it back).
+function computeLeaderLayout(profile) {
+  if (profile.canvas && profile.art) {
+    const art = { ...profile.art };
+    const keys = profile.keys.map((key) => {
+      const anchorX = art.x + (key.ax / 100) * art.w;
+      const anchorY = art.y + (key.ay / 100) * art.h;
+      const lx = key.lx, ly = key.ly;
+      // Which side the label sits on is derived from its position, so dragging a
+      // label across the device flips the leader attach edge + text alignment for free.
+      const sign = (anchorX - lx) >= 0 ? 1 : -1;
+      return { key, anchorX, anchorY, lx, ly, sign, textAnchor: sign > 0 ? "end" : "start" };
+    });
+    return { canvas: { ...profile.canvas }, art, keys };
+  }
+
   const art = profile.artworkSize || { w: 800, h: 560 };
   // Text-column width is resolved PER SIDE: a device may carry short labels on one
   // side and long ones on the other (the mouse has 1-word actions left, but
@@ -1715,7 +1940,7 @@ function renderLeaderDevice(profile, extraClass) {
   const colLeft = leaderOpt(profile, "colLeft") ?? col;
   const colRight = leaderOpt(profile, "colRight") ?? col;
   const minPitch = leaderOpt(profile, "minPitch");
-  const { gap, pad, mark, lineH } = LEADER;
+  const { gap, pad, lineH } = LEADER;
   const x0 = pad + colLeft + gap;             // device left edge
   const totalW = pad + colLeft + gap + art.w + gap + colRight + pad;
   const sides = { left: [], right: [] };
@@ -1738,46 +1963,63 @@ function renderLeaderDevice(profile, extraClass) {
   const devY = devY0 + offset;
   const totalH = (bottom - top) + 2 * pad;
 
-  const svg = svgNode("svg", { class: `device-svg leader-svg ${extraClass}`, viewBox: `0 0 ${totalW} ${totalH}`, role: "group" });
+  const keys = [];
+  for (const side of ["left", "right"]) {
+    const sideKeys = sides[side];
+    const labelEndX = side === "left" ? pad + colLeft : totalW - pad - colRight;
+    sideKeys.forEach((key, i) => {
+      const anchorX = x0 + (key.ax / 100) * art.w;
+      const anchorY = devY + (key.ay / 100) * art.h;
+      const ly = colY[side][i] + offset;
+      // lx is the text edge; the leader attaches LABEL_GAP closer to the device, which
+      // reproduces the old labelEndX exactly (textX = labelEndX ∓ LABEL_GAP).
+      const lx = side === "left" ? labelEndX - LABEL_GAP : labelEndX + LABEL_GAP;
+      keys.push({ key, anchorX, anchorY, lx, ly, sign: side === "left" ? 1 : -1, textAnchor: side === "left" ? "end" : "start" });
+    });
+  }
+  return { canvas: { w: totalW, h: totalH }, art: { x: x0, y: devY, w: art.w, h: art.h }, keys };
+}
+
+// Build the image + per-key (leader line, anchor dot, label) into rootEl from a
+// precomputed layout. Split out of renderLeaderDevice so the layout editor can redraw
+// the scene in place on every drag (the svg-level pointer listener stays attached
+// because only rootEl's children are rebuilt, not the svg).
+function buildLeaderSceneInto(rootEl, layout, profile) {
+  const { art, keys } = layout;
+  const { mark } = LEADER;
+  rootEl.appendChild(svgNode("image", {
+    class: "device-artwork", href: profile.artwork,
+    x: art.x, y: art.y, width: art.w, height: art.h, preserveAspectRatio: "xMidYMid meet"
+  }));
+  for (const { key, anchorX, anchorY, lx, ly, sign, textAnchor } of keys) {
+    const attachX = lx + LABEL_GAP * sign;
+    const g = svgNode("g", { class: `key leader-key side-${sign > 0 ? "left" : "right"}`, "data-key": key.ik, tabindex: "0", role: "button" });
+    g.setAttribute("aria-label", t("keyUnbound", { label: key.label || key.ik }));
+    // Horizontal from the label, then a single 90° bend straight down/up to the control
+    // (vertical sits exactly over the anchor) — the in-game controller-scheme look.
+    g.appendChild(svgNode("polyline", {
+      class: "leader-line",
+      points: `${attachX},${ly} ${anchorX},${ly} ${anchorX},${anchorY}`
+    }));
+    // the anchor dot doubles as the .key-shape applyColoring/applyConflicts drive
+    g.appendChild(svgNode("circle", { class: "key-shape", cx: anchorX, cy: anchorY, r: mark }));
+    const text = svgNode("text", { class: "key-label leader-label", x: lx, y: ly, "text-anchor": textAnchor });
+    if (key.fontSize) text.setAttribute("font-size", key.fontSize);
+    const head = svgNode("tspan", { class: "leader-head", x: lx });
+    head.textContent = key.label || key.ik;
+    text.appendChild(head);
+    g.appendChild(text);
+    rootEl.appendChild(g);
+  }
+}
+
+function renderLeaderDevice(profile, extraClass) {
+  const layout = computeLeaderLayout(profile);
+  const svg = svgNode("svg", { class: `device-svg leader-svg ${extraClass}`, viewBox: `0 0 ${layout.canvas.w} ${layout.canvas.h}`, role: "group" });
   svg.setAttribute("aria-label", profile.name);
   const rootEl = svgNode("g", {});
   svg.appendChild(rootEl);
-  rootEl.appendChild(svgNode("image", {
-    class: "device-artwork", href: profile.artwork,
-    x: x0, y: devY, width: art.w, height: art.h, preserveAspectRatio: "xMidYMid meet"
-  }));
-
-  for (const side of ["left", "right"]) {
-    const keys = sides[side];
-    if (!keys.length) continue;
-    const labelEndX = side === "left" ? pad + colLeft : totalW - pad - colRight;
-    keys.forEach((key, i) => {
-      const anchorX = x0 + (key.ax / 100) * art.w;
-      const anchorY = devY + (key.ay / 100) * art.h;
-      const labelY = colY[side][i] + offset;
-      const g = svgNode("g", { class: `key leader-key side-${side}`, "data-key": key.ik, tabindex: "0", role: "button" });
-      g.setAttribute("aria-label", t("keyUnbound", { label: key.label || key.ik }));
-      // Horizontal from the label, then a single 90° bend straight down/up to the control
-      // (vertical sits exactly over the anchor). Keys are sorted by anchorY so the bends
-      // don't cross — the in-game controller-scheme look, no shared rail.
-      g.appendChild(svgNode("polyline", {
-        class: "leader-line",
-        points: `${labelEndX},${labelY} ${anchorX},${labelY} ${anchorX},${anchorY}`
-      }));
-      // the anchor dot doubles as the .key-shape applyColoring/applyConflicts drive
-      g.appendChild(svgNode("circle", { class: "key-shape", cx: anchorX, cy: anchorY, r: mark }));
-      const textX = side === "left" ? labelEndX - 8 : labelEndX + 8;
-      const text = svgNode("text", {
-        class: "key-label leader-label", x: textX, y: labelY,
-        "text-anchor": side === "left" ? "end" : "start"
-      });
-      const head = svgNode("tspan", { class: "leader-head", x: textX });
-      head.textContent = key.label || key.ik;
-      text.appendChild(head);
-      g.appendChild(text);
-      rootEl.appendChild(g);
-    });
-  }
+  buildLeaderSceneInto(rootEl, layout, profile);
   return svg;
 }
 
@@ -1805,7 +2047,13 @@ function boundActionNames(ik, scan) {
 function applyLeaderLabels(svg, profile, scan) {
   if (!svg) return;
   const maxLines = leaderOpt(profile, "maxLines");
-  const { lineH } = LEADER;
+  // Default label metrics come from CSS (head 15px, action 24px, lineH 26). When a
+  // profile carries an explicit fontSize (the editor's A−/A+ control), it scales the
+  // whole block: tspan px are set inline and lineH scales with it. Without fontSize the
+  // tspans stay unstyled so CSS renders exactly as before (default unchanged).
+  const fs = profile.fontSize;
+  const scale = fs ? fs / LEADER_BASE_FONT : 1;
+  const lineH = LEADER.lineH * scale;
   svg.querySelectorAll("[data-key]").forEach((g) => {
     const text = g.querySelector(".leader-label");
     if (!text) return;
@@ -1818,10 +2066,12 @@ function applyLeaderLabels(svg, profile, scan) {
     // Center the head+actions block vertically on the label's anchor row.
     const total = 1 + lines.length;
     const head = svgNode("tspan", { class: "leader-head", x: textX, dy: -((total - 1) * lineH) / 2 });
+    if (fs) head.setAttribute("font-size", round2(LEADER_HEAD_FONT * scale));
     head.textContent = key ? (key.label || ik) : ik;
     text.appendChild(head);
     for (const name of lines) {
       const ts = svgNode("tspan", { class: "leader-action", x: textX, dy: lineH });
+      if (fs) ts.setAttribute("font-size", round2(fs));
       ts.textContent = name;
       text.appendChild(ts);
     }
@@ -1913,7 +2163,7 @@ if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
-    renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg, renderLeaderDevice,
+    renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg, renderLeaderDevice, computeLeaderLayout, drawEditHandles,
     applyColoring, applyConflicts, applyLeaderLabels, boundActionNames, remapInputSettingsText, groupConflicts, buildRemapPreview
   };
 }

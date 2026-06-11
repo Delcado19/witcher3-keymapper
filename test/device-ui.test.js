@@ -7,7 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 
 const {
-  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts, buildRemapPreview
+  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts, buildRemapPreview, computeLeaderLayout
 } = require("../public/app.js");
 const {
   findConflicts, isVanillaAction, vanillaDefaultFileForLanguage,
@@ -15,6 +15,7 @@ const {
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
   resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, mergeAliasCommands, ALIAS_COMMAND_CANONICAL, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
+  assertValidProfilePayload,
   isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile, resolveGamePaths
 } = require("../server.js");
 
@@ -624,6 +625,57 @@ ok("Property: buildColorMap is deterministic (100 iters)", () => {
   for (let i = 0; i < 100; i++) {
     const again = buildColorMap(cmds, []);
     assert.deepStrictEqual([...again.entries()].sort(), [...first.entries()].sort());
+  }
+});
+
+// ---- Leader-layout editor model ----
+const mouseProfile = JSON.parse(fs.readFileSync(path.join(__dirname, "../public/devices/mouse-5btn/profile.json"), "utf8"));
+
+ok("computeLeaderLayout: explicit branch derives anchors from art% and side from sign", () => {
+  const layout = computeLeaderLayout(mouseProfile);
+  assert.ok(layout.canvas.w > 0 && layout.art.w > 0);
+  for (const entry of layout.keys) {
+    const k = entry.key;
+    // anchor is art.x/y + ax/ay% of the art box
+    assert.ok(Math.abs(entry.anchorX - (layout.art.x + (k.ax / 100) * layout.art.w)) < 1e-6);
+    assert.ok(Math.abs(entry.anchorY - (layout.art.y + (k.ay / 100) * layout.art.h)) < 1e-6);
+    // label sits at its stored lx/ly and text-anchor follows which side of the anchor it is
+    assert.strictEqual(entry.lx, k.lx);
+    assert.strictEqual(entry.textAnchor, entry.anchorX - k.lx >= 0 ? "end" : "start");
+  }
+});
+
+ok("computeLeaderLayout: moving the PNG moves every anchor but never the labels", () => {
+  const before = computeLeaderLayout(mouseProfile);
+  const moved = JSON.parse(JSON.stringify(mouseProfile));
+  moved.art.x += 50; // shove the PNG right
+  const after = computeLeaderLayout(moved);
+  const byIk = new Map(after.keys.map((e) => [e.key.ik, e]));
+  for (const b of before.keys) {
+    const a = byIk.get(b.key.ik);
+    assert.ok(Math.abs(a.anchorX - (b.anchorX + 50)) < 1e-6, "anchor tracks the image");
+    assert.strictEqual(a.lx, b.lx, "label stays put in the margin");
+  }
+});
+
+ok("assertValidProfilePayload: accepts a real seeded profile", () => {
+  assert.doesNotThrow(() => assertValidProfilePayload("mouse-5btn", mouseProfile));
+});
+
+ok("assertValidProfilePayload: rejects bad id, mismatch, missing canvas/art/keys", () => {
+  const cases = [
+    ["../evil", mouseProfile],
+    ["mouse-5btn", { ...mouseProfile, id: "other" }],
+    ["mouse-5btn", { ...mouseProfile, canvas: null }],
+    ["mouse-5btn", { ...mouseProfile, art: { x: 0, y: 0, w: 1 } }],     // missing h
+    ["mouse-5btn", { ...mouseProfile, keys: [] }],
+    ["mouse-5btn", { ...mouseProfile, keys: [{ ik: "IK_X", ax: 1, ay: 1, lx: 1 }] }] // missing ly
+  ];
+  for (const [id, profile] of cases) {
+    let threw = null;
+    try { assertValidProfilePayload(id, profile); } catch (e) { threw = e; }
+    assert.ok(threw, `expected rejection for ${id}`);
+    assert.strictEqual(threw.statusCode, 400);
   }
 });
 

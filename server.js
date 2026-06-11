@@ -1323,6 +1323,59 @@ function handleSave(body) {
   return { saved: targetPath, backup };
 }
 
+// Validate an editor-authored device profile before it touches disk. Keeps the
+// write endpoint from persisting structurally broken JSON that would later crash the
+// renderer. Throws a 400-tagged error on any violation.
+function assertValidProfilePayload(id, profile) {
+  const fail = (msg) => { const e = new Error(msg); e.statusCode = 400; throw e; };
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(id)) fail("Invalid profile id.");
+  if (!profile || typeof profile !== "object") fail("Missing profile object.");
+  if (profile.id !== id) fail("Profile id mismatch.");
+  if (!profile.canvas || !Number.isFinite(profile.canvas.w) || !Number.isFinite(profile.canvas.h)) fail("Invalid canvas.");
+  for (const f of ["x", "y", "w", "h"]) {
+    if (!profile.art || !Number.isFinite(profile.art[f])) fail("Invalid art rect.");
+  }
+  if (!Array.isArray(profile.keys) || !profile.keys.length) fail("Profile has no keys.");
+  for (const key of profile.keys) {
+    if (!key || typeof key.ik !== "string") fail("Key missing ik.");
+    for (const f of ["ax", "ay", "lx", "ly"]) {
+      if (!Number.isFinite(key[f])) fail(`Key ${key.ik} has non-numeric ${f}.`);
+    }
+  }
+}
+
+// POST /api/profile — persist the layout editor's changes back to the committed
+// public/devices/<id>/profile.json. The cross-origin / non-loopback guards already ran
+// in the request handler; here we add path containment so a crafted id can't escape
+// public/devices (mirrors resolvePublicPath's path.relative check), and we only
+// overwrite a profile.json that already exists — never create arbitrary files.
+function handleSaveProfile(body) {
+  const id = String(body && body.id || "").trim();
+  const profile = body && body.profile;
+  assertValidProfilePayload(id, profile);
+  const devicesDir = path.join(publicDir, "devices");
+  const target = path.resolve(path.join(devicesDir, id, "profile.json"));
+  const rel = path.relative(devicesDir, target);
+  if (rel.startsWith("..") || path.isAbsolute(rel)) {
+    const e = new Error("Profile path escapes the devices directory."); e.statusCode = 400; throw e;
+  }
+  if (!fs.existsSync(target)) {
+    const e = new Error(`Unknown profile: ${id}`); e.statusCode = 404; throw e;
+  }
+  // Back up to .cache (gitignored, NOT under public/) so the backup is neither served
+  // statically nor committed alongside the profile.
+  const backupDir = path.join(root, ".cache", "profile-backups");
+  fs.mkdirSync(backupDir, { recursive: true });
+  const backup = path.join(backupDir, `${id}.${timestamp()}.json`);
+  try {
+    fs.copyFileSync(target, backup);
+  } catch (cause) {
+    const e = new Error(`Backup failed, write aborted: ${cause.message}`); e.statusCode = 500; throw e;
+  }
+  fs.writeFileSync(target, JSON.stringify(profile, null, 2) + "\n", "utf8");
+  return { saved: path.relative(root, target), backup: path.relative(root, backup) };
+}
+
 // Windows-only hardware detection for /api/devices. PowerShell PnP query for
 // USB-HID devices + the active Windows input language. Both degrade to empty
 // values on failure or non-Windows so the route never 500s (Requirement 8.9, 8.10).
@@ -1547,6 +1600,18 @@ const server = http.createServer((req, res) => {
       });
       return;
     }
+    if (req.method === "POST" && url.pathname === "/api/profile") {
+      let raw = "";
+      req.on("data", (chunk) => { raw += chunk; });
+      req.on("end", () => {
+        try {
+          sendJson(res, 200, handleSaveProfile(JSON.parse(raw || "{}")));
+        } catch (error) {
+          sendJson(res, error.statusCode || 500, { error: error.message });
+        }
+      });
+      return;
+    }
     if (req.method === "GET") return serveStatic(res, decodeURIComponent(url.pathname));
     res.writeHead(405);
     res.end("Method not allowed");
@@ -1591,6 +1656,8 @@ module.exports = {
   preferredLocalizationCodes,
   humanizeDisplayName,
   handleSave,
+  handleSaveProfile,
+  assertValidProfilePayload,
   isAllowedHost,
   isAllowedOrigin,
   resolvePublicPath,

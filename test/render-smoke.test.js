@@ -37,6 +37,7 @@ class El {
   }
   setAttribute(k, v) { this.attrs[k] = String(v); }
   getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
+  addEventListener() { /* no-op: editor wiring is exercised structurally, not driven */ }
   appendChild(c) { this.children.push(c); return c; }
   get firstChild() { return this.children[0] || null; }
   insertBefore(node, ref) {
@@ -193,6 +194,17 @@ ok("renderDeviceSvg dispatches by type", () => {
   assert.strictEqual(ui.renderDeviceSvg(mouse).getAttribute("class").includes("mouse-svg"), true);
   assert.strictEqual(ui.renderDeviceSvg(gamepad).getAttribute("class").includes("gamepad-svg"), true);
   assert.strictEqual(ui.renderDeviceSvg(profile).getAttribute("class").includes("keyboard-svg"), true);
+});
+
+// The layout editor's affordance layer must build without error and mark the PNG, a
+// resize handle, and every anchor + label as a drag target (structural, not driven).
+ok("drawEditHandles: builds PNG/resize/anchor/label affordances for every key", () => {
+  const svg = ui.renderGamepadSvg(gamepad);
+  ui.drawEditHandles(svg, gamepad, ui.computeLeaderLayout(gamepad));
+  assert.strictEqual(svg.querySelectorAll(".edit-art").length, 1, "PNG is a move target");
+  assert.strictEqual(svg.querySelectorAll(".edit-art-resize").length, 1, "one resize handle");
+  assert.strictEqual(svg.querySelectorAll(".edit-anchor").length, gamepad.keys.length, "every anchor draggable");
+  assert.strictEqual(svg.querySelectorAll(".edit-label").length, gamepad.keys.length, "every label draggable");
 });
 
 console.log(`\n${passed} Render-Tests bestanden.`);

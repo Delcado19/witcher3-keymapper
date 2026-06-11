@@ -692,11 +692,51 @@ select:focus-visible,
   font-size: 15px;
 }
 
-.layout-mode.is-active {
+.layout-mode.is-active,
+.layout-mode[aria-pressed="true"] {
   border-color: var(--gold);
   color: var(--gold);
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
   background: rgba(212, 175, 55, 0.1);
+}
+
+/* ---- Layout editor toolbar ---- */
+.editor-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 4px 8px;
+  width: 100%;
+  justify-content: flex-end;
+}
+.editor-bar.hidden { display: none; }
+.editor-btn {
+  min-height: 24px;
+  padding: 3px 10px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.editor-btn:disabled { opacity: 0.5; cursor: default; }
+.editor-save:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.editor-grid {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text);
+}
+.editor-hint {
+  font-size: 12px;
+  color: var(--muted, #9a9384);
+  flex: 1 1 100%;
+  text-align: right;
 }
 
 /* ---- Device stage / SVG ---- */
@@ -773,17 +813,44 @@ select:focus-visible,
 .key:focus-visible .key-shape {
   filter: drop-shadow(0 0 calc(var(--glow-size) + 4px) var(--key-fill, var(--gold)));
 }
-.layout-editing .key {
+/* ---- Leader-layout editor affordances ---- */
+.layout-editing .edit-art {
+  /* override .device-artwork { pointer-events: none } (0,1,0) so the PNG can be grabbed
+     to move it; this selector is (0,2,0) and wins. */
+  pointer-events: all;
+  cursor: move;
+  outline: 1px dashed rgba(212, 175, 55, 0.7);
+}
+.layout-editing .edit-anchor {
+  cursor: grab;
+  stroke: var(--gold);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 3;
+}
+/* Specificity must beat `.leader-svg .leader-label { pointer-events: none }` (0,2,0),
+   which is later in source order — a plain `.layout-editing .edit-label` ties and loses,
+   leaving labels un-draggable. The svg carries both leader-svg + layout-editing, so
+   chaining them (0,3,0) wins cleanly and re-enables pointer events on the label. */
+.leader-svg.layout-editing .edit-label {
+  pointer-events: all;
   cursor: move;
 }
-.layout-editing .key-shape {
-  stroke-dasharray: 8 5;
+.leader-svg.layout-editing .edit-label:hover .leader-head,
+.leader-svg.layout-editing .edit-label:hover .leader-action {
+  fill: #fff;
 }
-.layout-editing .layout-resize {
+.edit-handle.edit-art-resize {
   fill: var(--gold);
   stroke: #111;
   stroke-width: 2;
   cursor: nwse-resize;
+}
+/* Smart-guide lines drawn while dragging (Pixaroma-style). */
+.leader-guide {
+  stroke: #66e0ff;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
 }
 .key-label {
   fill: #f4f6f7;

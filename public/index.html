@@ -48,7 +48,15 @@
             <option value="ansi-us-104">ANSI-US 104</option>
           </select>
         </label>
-        <button id="layoutMode" class="layout-mode" type="button" aria-pressed="false">Layout</button>
+        <button id="layoutMode" class="layout-mode" type="button" aria-pressed="false">Edit layout</button>
+        <div id="editorBar" class="editor-bar hidden" role="toolbar" aria-label="Layout editor">
+          <button id="editorFontDown" class="editor-btn" type="button" title="Smaller labels">A−</button>
+          <button id="editorFontUp" class="editor-btn" type="button" title="Larger labels">A+</button>
+          <label class="editor-grid"><input id="editorGrid" type="checkbox" checked> <span>Snap</span></label>
+          <button id="editorReset" class="editor-btn" type="button">Reset</button>
+          <button id="editorSave" class="editor-btn editor-save" type="button" disabled>Save</button>
+          <span id="editorHint" class="editor-hint"></span>
+        </div>
       </div>
       <div class="device-stage">
         <div id="deviceSvg" class="device-svg-host" aria-live="polite"></div>

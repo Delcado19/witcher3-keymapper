@@ -5,25 +5,145 @@
   "layout": "xbox-ctrl",
   "fallback": true,
   "artwork": "/devices/xbox-ctrl/device.png",
-  "artworkSize": { "w": 800, "h": 560 },
-  "_comment": "Leader-line layout: ax/ay are the anchor point as a percentage of the PNG (0-100); side picks the label column. Fine-tune anchors against the PNG, not the old square SVG.",
+  "canvas": {
+    "w": 1752,
+    "h": 757.2
+  },
+  "art": {
+    "x": 476,
+    "y": 169.2,
+    "w": 800,
+    "h": 560
+  },
+  "_comment": "Free-form leader-line layout (authored by the in-app layout editor). canvas{w,h} is the fixed viewBox; art{x,y,w,h} is the PNG rect in canvas units. Per key: ax/ay = anchor as % of the PNG (tracks the image when it moves/resizes); lx/ly = the label's text position in canvas units; the leader line is derived from both each render so it cannot detach. A key may carry fontSize to scale its label.",
   "keys": [
-    { "ik": "IK_Pad_LeftTrigger",   "label": "LT",    "ax": 18, "ay": 9,  "side": "left" },
-    { "ik": "IK_Pad_LeftShoulder",  "label": "LB",    "ax": 24, "ay": 7,  "side": "left" },
-    { "ik": "IK_Pad_LeftThumb",     "label": "L3",    "ax": 20, "ay": 25, "side": "left" },
-    { "ik": "IK_Pad_Back_Select",   "label": "Back",  "ax": 39, "ay": 33, "side": "left" },
-    { "ik": "IK_Pad_DigitUp",       "label": "▲",     "ax": 30, "ay": 43, "side": "left" },
-    { "ik": "IK_Pad_DigitLeft",     "label": "◀",     "ax": 26, "ay": 49, "side": "left" },
-    { "ik": "IK_Pad_DigitRight",    "label": "▶",     "ax": 35, "ay": 49, "side": "left" },
-    { "ik": "IK_Pad_DigitDown",     "label": "▼",     "ax": 30, "ay": 55, "side": "left" },
-
-    { "ik": "IK_Pad_RightTrigger",  "label": "RT",    "ax": 78, "ay": 9,  "side": "right" },
-    { "ik": "IK_Pad_RightShoulder", "label": "RB",    "ax": 74, "ay": 7,  "side": "right" },
-    { "ik": "IK_Pad_Start",         "label": "Start", "ax": 46, "ay": 33, "side": "right" },
-    { "ik": "IK_Pad_Y_TRIANGLE",    "label": "Y",     "ax": 71, "ay": 21, "side": "right" },
-    { "ik": "IK_Pad_X_SQUARE",      "label": "X",     "ax": 66, "ay": 30, "side": "right" },
-    { "ik": "IK_Pad_B_CIRCLE",      "label": "B",     "ax": 77, "ay": 30, "side": "right" },
-    { "ik": "IK_Pad_A_CROSS",       "label": "A",     "ax": 71, "ay": 38, "side": "right" },
-    { "ik": "IK_Pad_RightThumb",    "label": "R3",    "ax": 57, "ay": 46, "side": "right" }
+    {
+      "ik": "IK_Pad_LeftTrigger",
+      "label": "LT",
+      "ax": 18,
+      "ay": 9,
+      "lx": 440,
+      "ly": 178.2
+    },
+    {
+      "ik": "IK_Pad_LeftShoulder",
+      "label": "LB",
+      "ax": 24,
+      "ay": 7,
+      "lx": 440,
+      "ly": 106.2
+    },
+    {
+      "ik": "IK_Pad_LeftThumb",
+      "label": "L3",
+      "ax": 20,
+      "ay": 25,
+      "lx": 440,
+      "ly": 250.2
+    },
+    {
+      "ik": "IK_Pad_Back_Select",
+      "label": "Back",
+      "ax": 39,
+      "ay": 33,
+      "lx": 440,
+      "ly": 322.2
+    },
+    {
+      "ik": "IK_Pad_DigitUp",
+      "label": "▲",
+      "ax": 30,
+      "ay": 43,
+      "lx": 440,
+      "ly": 394.2
+    },
+    {
+      "ik": "IK_Pad_DigitLeft",
+      "label": "◀",
+      "ax": 26,
+      "ay": 49,
+      "lx": 440,
+      "ly": 466.2
+    },
+    {
+      "ik": "IK_Pad_DigitRight",
+      "label": "▶",
+      "ax": 35,
+      "ay": 49,
+      "lx": 440,
+      "ly": 538.2
+    },
+    {
+      "ik": "IK_Pad_DigitDown",
+      "label": "▼",
+      "ax": 30,
+      "ay": 55,
+      "lx": 440,
+      "ly": 610.2
+    },
+    {
+      "ik": "IK_Pad_RightTrigger",
+      "label": "RT",
+      "ax": 78,
+      "ay": 9,
+      "lx": 1312,
+      "ly": 139
+    },
+    {
+      "ik": "IK_Pad_RightShoulder",
+      "label": "RB",
+      "ax": 74,
+      "ay": 7,
+      "lx": 1312,
+      "ly": 67
+    },
+    {
+      "ik": "IK_Pad_Start",
+      "label": "Start",
+      "ax": 46,
+      "ay": 33,
+      "lx": 1312,
+      "ly": 427
+    },
+    {
+      "ik": "IK_Pad_Y_TRIANGLE",
+      "label": "Y",
+      "ax": 71,
+      "ay": 21,
+      "lx": 1312,
+      "ly": 211
+    },
+    {
+      "ik": "IK_Pad_X_SQUARE",
+      "label": "X",
+      "ax": 66,
+      "ay": 30,
+      "lx": 1312,
+      "ly": 283
+    },
+    {
+      "ik": "IK_Pad_B_CIRCLE",
+      "label": "B",
+      "ax": 77,
+      "ay": 30,
+      "lx": 1312,
+      "ly": 355
+    },
+    {
+      "ik": "IK_Pad_A_CROSS",
+      "label": "A",
+      "ax": 71,
+      "ay": 38,
+      "lx": 1312,
+      "ly": 499
+    },
+    {
+      "ik": "IK_Pad_RightThumb",
+      "label": "R3",
+      "ax": 57,
+      "ay": 46,
+      "lx": 1312,
+      "ly": 571
+    }
   ]
 }
