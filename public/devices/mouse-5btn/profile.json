@@ -4,14 +4,16 @@
   "type": "mouse",
   "layout": "mouse-5btn",
   "fallback": true,
-  "artwork": "/devices/mouse-5btn/device.svg",
-  "size": { "w": 16.72, "h": 16.72 },
+  "artwork": "/devices/mouse-5btn/device.png",
+  "artworkSize": { "w": 800, "h": 1485 },
+  "_comment": "Leader-line layout: ax/ay are the anchor point as a percentage of the PNG (0-100); side picks the label column.",
   "keys": [
-    { "ik": "IK_LeftMouse",   "label": "Left",    "coord": "px", "x": 548, "y": 280, "w": 165, "h": 82,  "shape": "main" },
-    { "ik": "IK_RightMouse",  "label": "Right",   "coord": "px", "x": 975, "y": 280, "w": 165, "h": 82,  "shape": "main" },
-    { "ik": "IK_MouseZ",      "label": "Wheel",   "coord": "px", "x": 755, "y": 359, "w": 165, "h": 82,  "shape": "side" },
-    { "ik": "IK_MiddleMouse", "label": "M3",      "coord": "px", "x": 755, "y": 524, "w": 165, "h": 82,  "shape": "side" },
-    { "ik": "IK_Mouse4",      "label": "M4",      "coord": "px", "x": 271, "y": 750, "w": 165, "h": 82,  "shape": "side" },
-    { "ik": "IK_Mouse5",      "label": "M5",      "coord": "px", "x": 271, "y": 840, "w": 165, "h": 82,  "shape": "side" }
+    { "ik": "IK_LeftMouse",   "label": "Left",  "ax": 28, "ay": 18, "side": "left" },
+    { "ik": "IK_Mouse4",      "label": "M4",    "ax": 8,  "ay": 40, "side": "left" },
+    { "ik": "IK_Mouse5",      "label": "M5",    "ax": 8,  "ay": 47, "side": "left" },
+
+    { "ik": "IK_RightMouse",  "label": "Right", "ax": 70, "ay": 18, "side": "right" },
+    { "ik": "IK_MouseZ",      "label": "Wheel", "ax": 50, "ay": 10, "side": "right" },
+    { "ik": "IK_MiddleMouse", "label": "M3",    "ax": 50, "ay": 22, "side": "right" }
   ]
 }

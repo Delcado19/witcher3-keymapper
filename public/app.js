@@ -907,10 +907,11 @@ async function renderDeviceView() {
 
   const isKeyboard = state.activeDevice === "keyboard";
   els.layoutSelectWrap?.classList.toggle("hidden", !(isKeyboard && state.showLayoutDropdown));
-  els.layoutMode?.classList.toggle("hidden", isKeyboard);
-  els.layoutMode?.classList.toggle("is-active", state.layoutMode && !isKeyboard);
-  els.layoutMode?.setAttribute("aria-pressed", String(state.layoutMode && !isKeyboard));
-  if (isKeyboard && state.layoutMode) state.layoutMode = false;
+  // The drag/resize layout editor only ever applied to the old draggable mouse/gamepad
+  // overlays. Those are now fixed-anchor leader-line diagrams (ax/ay in profile.json),
+  // so the Layout toggle no longer has anything to edit — keep it hidden everywhere.
+  els.layoutMode?.classList.add("hidden");
+  state.layoutMode = false;
   if (isKeyboard && state.showLayoutDropdown && !state.keyboardProfileId) {
     showDeviceEmpty(t("noKeyboardLayout"));
     return;
@@ -932,6 +933,7 @@ async function renderDeviceView() {
   for (const { profile, svg } of rendered) {
     applyColoring(svg, state.colorMap, scan);
     applyConflicts(svg, scan.conflicts);
+    if (profile.artwork) applyLeaderLabels(svg, profile, scan);
     attachKeyInteractions(svg);
     attachLayoutEditor(svg, profile);
     if (host) {
@@ -1043,7 +1045,9 @@ function saveLayoutOverride(profile, key) {
 }
 
 function attachLayoutEditor(svg, profile) {
-  if (!state.layoutMode || state.activeDevice === "keyboard") return;
+  // Leader-line artwork devices anchor by ax/ay (percent), not the x/y/w/h the
+  // drag editor manipulates, so the editor would read undefined geometry — skip them.
+  if (!state.layoutMode || state.activeDevice === "keyboard" || profile.artwork) return;
   svg.classList.add("layout-editing");
   svg.querySelectorAll("[data-key]").forEach((g) => {
     const ik = g.getAttribute("data-key");
@@ -1603,7 +1607,7 @@ function renderKeyboardSvg(profile) {
 }
 
 function renderMouseSvg(profile) {
-  if (profile.artwork) return buildDeviceSvg(profile, "mouse-svg artwork-svg", 0).svg;
+  if (profile.artwork) return renderLeaderDevice(profile, "mouse-svg artwork-svg");
   const pad = 20;
   const { svg, root } = buildDeviceSvg(profile, "mouse-svg", pad);
   const { w, h } = deviceExtent(profile);
@@ -1617,7 +1621,7 @@ function renderMouseSvg(profile) {
 }
 
 function renderGamepadSvg(profile) {
-  if (profile.artwork) return buildDeviceSvg(profile, "gamepad-svg artwork-svg", 0).svg;
+  if (profile.artwork) return renderLeaderDevice(profile, "gamepad-svg artwork-svg");
   const pad = 46;
   const { svg, root } = buildDeviceSvg(profile, "gamepad-svg", pad);
   const { w, h } = deviceExtent(profile);
@@ -1639,6 +1643,113 @@ function renderGamepadSvg(profile) {
   });
   root.insertBefore(body, root.firstChild);
   return svg;
+}
+
+// Leader-line artwork devices (mouse/gamepad): the PNG sits between two label
+// columns and every control's bound action(s) are parked in a column, tied to the
+// control by an orthogonal (90°) leader line — the in-game "Controller Scheme"
+// look, instead of stamping labels onto the device. Anchors come from ax/ay
+// (percent of the PNG) in the profile; applyLeaderLabels fills the action text
+// once scan data is known.
+// maxLines caps stacked actions so dense columns (8 gamepad keys, slot ≈70u) stay
+// legible: head + 2 actions + "+N" = 4 lines span 3·lineH = 66u < slot. The popover
+// still shows the full binding list on click.
+const LEADER = { col: 360, gap: 28, pad: 24, mark: 9, row: 64, rail: 14, maxLines: 2, lineH: 22 };
+
+function renderLeaderDevice(profile, extraClass) {
+  const art = profile.artworkSize || { w: 800, h: 560 };
+  const { col, gap, pad, mark, row, rail } = LEADER;
+  const x0 = pad + col + gap;                 // device left edge
+  const totalW = pad + col + gap + art.w + gap + col + pad;
+  const sides = { left: [], right: [] };
+  for (const key of profile.keys) sides[key.side === "right" ? "right" : "left"].push(key);
+  sides.left.sort((a, b) => a.ay - b.ay);
+  sides.right.sort((a, b) => a.ay - b.ay);
+  const colH = Math.max(sides.left.length, sides.right.length) * row;
+  const contentH = Math.max(colH, art.h);
+  const totalH = pad + contentH + pad;
+  const devY = pad + (contentH - art.h) / 2;   // center the device against the taller column
+
+  const svg = svgNode("svg", { class: `device-svg leader-svg ${extraClass}`, viewBox: `0 0 ${totalW} ${totalH}`, role: "group" });
+  svg.setAttribute("aria-label", profile.name);
+  const rootEl = svgNode("g", {});
+  svg.appendChild(rootEl);
+  rootEl.appendChild(svgNode("image", {
+    class: "device-artwork", href: profile.artwork,
+    x: x0, y: devY, width: art.w, height: art.h, preserveAspectRatio: "xMidYMid meet"
+  }));
+
+  for (const side of ["left", "right"]) {
+    const keys = sides[side];
+    if (!keys.length) continue;
+    const slotH = contentH / keys.length;
+    const railX = side === "left" ? x0 - rail : x0 + art.w + rail;
+    const labelEndX = side === "left" ? pad + col : totalW - pad - col;
+    keys.forEach((key, i) => {
+      const anchorX = x0 + (key.ax / 100) * art.w;
+      const anchorY = devY + (key.ay / 100) * art.h;
+      const labelY = pad + slotH * (i + 0.5);
+      const g = svgNode("g", { class: `key leader-key side-${side}`, "data-key": key.ik, tabindex: "0", role: "button" });
+      g.setAttribute("aria-label", t("keyUnbound", { label: key.label || key.ik }));
+      // label edge -> rail -> rail -> anchor: H, V, H segments only -> 90° corners
+      g.appendChild(svgNode("polyline", {
+        class: "leader-line",
+        points: `${labelEndX},${labelY} ${railX},${labelY} ${railX},${anchorY} ${anchorX},${anchorY}`
+      }));
+      // the anchor dot doubles as the .key-shape applyColoring/applyConflicts drive
+      g.appendChild(svgNode("circle", { class: "key-shape", cx: anchorX, cy: anchorY, r: mark }));
+      const textX = side === "left" ? labelEndX - 8 : labelEndX + 8;
+      const text = svgNode("text", {
+        class: "key-label leader-label", x: textX, y: labelY,
+        "text-anchor": side === "left" ? "end" : "start"
+      });
+      const head = svgNode("tspan", { class: "leader-head", x: textX });
+      head.textContent = key.label || key.ik;
+      text.appendChild(head);
+      g.appendChild(text);
+      rootEl.appendChild(g);
+    });
+  }
+  return svg;
+}
+
+// The action names bound to a control, deduped (one control often carries the same
+// command across several gameplay contexts). Mirrors the sidebar's display label.
+function boundActionNames(ik, scan) {
+  if (!scan || !scan.commands) return [];
+  const names = scan.commands
+    .filter((command) => command.keys.some((key) => key.key === ik))
+    .map((command) => commandTitleText(command));
+  return [...new Set(names)].filter(Boolean);
+}
+
+// Fill each leader label with its bound actions, stacked and capped (a pad key can
+// carry many context bindings; the popover still shows the full list on click).
+function applyLeaderLabels(svg, profile, scan) {
+  if (!svg) return;
+  const { maxLines, lineH } = LEADER;
+  svg.querySelectorAll("[data-key]").forEach((g) => {
+    const text = g.querySelector(".leader-label");
+    if (!text) return;
+    const ik = g.getAttribute("data-key");
+    const key = profile.keys.find((item) => item.ik === ik);
+    const textX = text.getAttribute("x");
+    const all = boundActionNames(ik, scan);
+    const lines = all.slice(0, maxLines);
+    const extra = all.length - lines.length;
+    if (extra > 0) lines.push(`+${extra}`);
+    if (!lines.length) lines.push("—");
+    text.textContent = ""; // rebuild tspans for the new binding state
+    const total = 1 + lines.length;
+    const head = svgNode("tspan", { class: "leader-head", x: textX, dy: -((total - 1) * lineH) / 2 });
+    head.textContent = key ? (key.label || ik) : ik;
+    text.appendChild(head);
+    for (const name of lines) {
+      const ts = svgNode("tspan", { class: "leader-action", x: textX, dy: lineH });
+      ts.textContent = name;
+      text.appendChild(ts);
+    }
+  });
 }
 
 // Dispatch by profile.type; on failure show a toast and keep the previous SVG
@@ -1726,7 +1837,7 @@ if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
-    renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg,
-    applyColoring, applyConflicts, remapInputSettingsText, groupConflicts, buildRemapPreview
+    renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg, renderLeaderDevice,
+    applyColoring, applyConflicts, applyLeaderLabels, boundActionNames, remapInputSettingsText, groupConflicts, buildRemapPreview
   };
 }

@@ -127,19 +127,37 @@ ok("applyConflicts marks high/medium keys", () => {
   assert.ok(byKey("IK_R").classList.contains("conflict-medium"));
 });
 
-ok("mouse SVG: 6 keys + artwork backdrop", () => {
+// Mouse/gamepad now use the leader-line model: a PNG backdrop, one circular anchor
+// marker per control (the .key-shape applyColoring drives) and one 90° leader line
+// per control, with the labels parked off-device.
+ok("mouse SVG: 6 leader keys, artwork + leader lines", () => {
   const svg = ui.renderMouseSvg(mouse);
+  assert.ok(svg.getAttribute("class").includes("leader-svg"));
   assert.strictEqual(svg.querySelectorAll("[data-key]").length, 6);
-  assert.ok(svg.querySelectorAll(".device-artwork").length === 1);
-  assert.strictEqual(svg.querySelectorAll(".key-shape").filter((n) => n.tag === "rect").length, 6);
+  assert.strictEqual(svg.querySelectorAll(".device-artwork").length, 1);
+  assert.strictEqual(svg.querySelectorAll(".key-shape").filter((n) => n.tag === "circle").length, 6);
+  assert.strictEqual(svg.querySelectorAll(".leader-line").length, 6);
 });
 
-ok("gamepad SVG: 16 keys + artwork backdrop", () => {
+ok("gamepad SVG: 16 leader keys, artwork + leader lines", () => {
   const svg = ui.renderGamepadSvg(gamepad);
+  assert.ok(svg.getAttribute("class").includes("leader-svg"));
   assert.strictEqual(svg.querySelectorAll("[data-key]").length, 16);
-  assert.ok(svg.querySelectorAll(".device-artwork").length === 1);
-  assert.strictEqual(gamepad.keys.filter((k) => k.shape.startsWith("dpad-")).length, 4);
-  assert.ok(svg.querySelectorAll(".key-shape").filter((n) => n.tag === "circle").length >= 6);
+  assert.strictEqual(svg.querySelectorAll(".device-artwork").length, 1);
+  assert.strictEqual(svg.querySelectorAll(".key-shape").filter((n) => n.tag === "circle").length, 16);
+  assert.strictEqual(svg.querySelectorAll(".leader-line").length, 16);
+});
+
+ok("applyLeaderLabels: stacks bound action names under the control label", () => {
+  const svg = ui.renderGamepadSvg(gamepad);
+  const scan = { commands: [
+    { id: "Dodge", displayName: "Dodge", displayNameSource: "curated", keys: [{ key: "IK_Pad_A_CROSS" }] }
+  ] };
+  ui.applyLeaderLabels(svg, gamepad, scan);
+  const g = svg.querySelectorAll("[data-key]").find((n) => n.getAttribute("data-key") === "IK_Pad_A_CROSS");
+  const label = g.querySelector(".leader-label");
+  assert.ok(label.textContent.includes("A"), "physical button label stays as the head");
+  assert.ok(label.textContent.includes("Dodge"), "bound action name is stacked under it");
 });
 
 ok("renderDeviceSvg dispatches by type", () => {

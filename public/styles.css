@@ -1108,30 +1108,90 @@ main {
   max-height: 58vh;
 }
 
-.mouse-svg.artwork-svg,
-.gamepad-svg.artwork-svg {
-  width: min(100%, 720px);
-  max-height: 46vh;
+/* Leader layout needs horizontal room for both label columns, so it scales to the
+   container width (the viewBox already bakes in the column gutters) instead of the
+   old 720px device cap. */
+.leader-svg {
+  width: 100%;
+  max-width: 1120px;
+  max-height: 72vh;
+  height: auto;
 }
 
+/* Mouse + gamepad stack vertically (each needs full width for its side columns)
+   rather than sitting side by side as before. */
 .controller-layouts {
   width: 100%;
-  display: grid;
-  grid-template-columns: minmax(220px, 0.86fr) minmax(260px, 1fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 24px;
 }
 
 .controller-layout {
   min-width: 0;
+  width: 100%;
   display: flex;
   justify-content: center;
 }
 
-.controller-layout .mouse-svg.artwork-svg,
-.controller-layout .gamepad-svg.artwork-svg {
+.controller-layout .leader-svg {
   width: 100%;
-  max-height: 40vh;
+  max-width: 1120px;
+  max-height: 58vh;
+}
+
+/* Leader-line controller scheme: off-device labels tied to each control by a 90°
+   elbow line; line/anchor colour follows the binding's --key-fill (applyColoring). */
+.leader-svg .leader-line {
+  fill: none;
+  stroke: rgba(179, 138, 85, 0.5);
+  stroke-width: 2.5;
+}
+.leader-svg .leader-key.bound .leader-line {
+  stroke: var(--key-fill, var(--gold));
+}
+.leader-svg .leader-key .key-shape {
+  fill: var(--key-fill, #2a2f3a);
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 2;
+  opacity: 0.95;
+}
+.leader-svg .leader-key.bound .key-shape {
+  filter: drop-shadow(0 0 6px var(--key-fill));
+}
+.leader-svg .leader-key:hover .key-shape,
+.leader-svg .leader-key:focus-visible .key-shape {
+  filter: drop-shadow(0 0 9px var(--gold));
+}
+.leader-svg .leader-key.conflict-high .leader-line,
+.leader-svg .leader-key.conflict-high .key-shape {
+  stroke: #ff4d4d;
+}
+/* Medium needs its own leader-scoped rule: the base .leader-key .key-shape (3 classes)
+   otherwise out-specifies the generic .key.conflict-medium and the amber would never show. */
+.leader-svg .leader-key.conflict-medium .leader-line,
+.leader-svg .leader-key.conflict-medium .key-shape {
+  stroke: var(--conflict-medium);
+}
+.leader-svg .leader-label {
+  font: 600 19px/1.1 'Crimson Text', serif;
+  fill: #e9e2d4;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.85);
+  stroke-width: 3px;
+}
+.leader-svg .leader-head {
+  font-weight: 700;
+  fill: var(--key-fill, #f0d8a0);
+}
+.leader-svg .leader-action {
+  font-size: 17px;
+  fill: #d6cfc0;
+}
+.leader-svg .leader-key:hover .leader-label {
+  fill: #fff;
 }
 
 .legend {
