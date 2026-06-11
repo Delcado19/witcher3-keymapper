@@ -20,10 +20,10 @@
     {
       "ik": "IK_Pad_LeftTrigger",
       "label": "LT",
-      "ax": 30,
+      "ax": 30.53,
       "ay": 1.21,
       "lx": 536,
-      "ly": 24
+      "ly": 48
     },
     {
       "ik": "IK_Pad_LeftShoulder",
@@ -31,14 +31,14 @@
       "ax": 22.5,
       "ay": 7,
       "lx": 536,
-      "ly": 112
+      "ly": 120
     },
     {
       "ik": "IK_Pad_LeftThumb",
       "label": "L3",
       "ax": 25,
       "ay": 26.75,
-      "lx": 536,
+      "lx": 408,
       "ly": 264
     },
     {
@@ -54,7 +54,7 @@
       "label": "▲",
       "ax": 37.89,
       "ay": 42.5,
-      "lx": 368,
+      "lx": 488,
       "ly": 344
     },
     {
@@ -62,24 +62,24 @@
       "label": "◀",
       "ax": 32.63,
       "ay": 50,
-      "lx": 368,
-      "ly": 448
+      "lx": 504,
+      "ly": 464
     },
     {
       "ik": "IK_Pad_DigitRight",
       "label": "▶",
       "ax": 41.5,
       "ay": 50,
-      "lx": 368,
-      "ly": 640
+      "lx": 504,
+      "ly": 648
     },
     {
       "ik": "IK_Pad_DigitDown",
       "label": "▼",
       "ax": 37.89,
       "ay": 58.06,
-      "lx": 368,
-      "ly": 544
+      "lx": 504,
+      "ly": 552
     },
     {
       "ik": "IK_Pad_RightTrigger",
@@ -87,15 +87,15 @@
       "ax": 68.5,
       "ay": 1.21,
       "lx": 968.04,
-      "ly": 24
+      "ly": 48
     },
     {
       "ik": "IK_Pad_RightShoulder",
       "label": "RB",
       "ax": 76.84,
       "ay": 7,
-      "lx": 1376,
-      "ly": 24
+      "lx": 1152,
+      "ly": 48
     },
     {
       "ik": "IK_Pad_Start",
@@ -118,15 +118,15 @@
       "label": "X",
       "ax": 66.32,
       "ay": 26.37,
-      "lx": 1456,
-      "ly": 432
+      "lx": 1440,
+      "ly": 448
     },
     {
       "ik": "IK_Pad_B_CIRCLE",
       "label": "B",
       "ax": 80.5,
       "ay": 27.32,
-      "lx": 1456,
+      "lx": 1440,
       "ly": 268.71
     },
     {
@@ -135,7 +135,7 @@
       "ax": 72.63,
       "ay": 37.66,
       "lx": 1216,
-      "ly": 320
+      "ly": 378.6
     },
     {
       "ik": "IK_Pad_RightThumb",
