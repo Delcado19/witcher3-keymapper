@@ -68,6 +68,8 @@ const I18N = {
     editorHint: "Drag the PNG, anchors, or labels. Double-click a label to rename. Shift bypasses snap. “Done” applies.",
     editorDirty: "{count} unsaved",
     editLabelPrompt: "Button caption for {ik}:",
+    assignSearch: "Bind a command to this key…",
+    assignNoMatch: "No matching command.",
     editorResetDone: "Reverted to the saved layout.",
     editorSaveDone: "Saved {count} layout(s).",
     editorSaveFailed: "Could not save {id}: {message}",
@@ -170,6 +172,8 @@ const I18N = {
     editorHint: "PNG, Anker oder Beschriftungen ziehen. Doppelklick auf eine Beschriftung zum Umbenennen. Shift umgeht das Raster. Fertig übernimmt.",
     editorDirty: "{count} ungespeichert",
     editLabelPrompt: "Tastenbeschriftung für {ik}:",
+    assignSearch: "Befehl auf diese Taste legen…",
+    assignNoMatch: "Kein passender Befehl.",
     editorResetDone: "Auf gespeichertes Layout zurückgesetzt.",
     editorSaveDone: "{count} Layout(s) gespeichert.",
     editorSaveFailed: "{id} konnte nicht gespeichert werden: {message}",
@@ -1368,7 +1372,11 @@ function openPopover(ik, anchorEl) {
             <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">${escapeHtml(t("clear"))}</button>
           </div>
         </div>`).join("")
-    : `<p class="muted">${escapeHtml(t("unbound"))}</p>`;
+    : `<div class="assign">
+         <p class="muted">${escapeHtml(t("unbound"))}</p>
+         <input class="assign-search" type="search" placeholder="${escapeHtml(t("assignSearch"))}" aria-label="${escapeHtml(t("assignSearch"))}">
+         <div class="assign-list" role="listbox"></div>
+       </div>`;
   const conflictNote = conflicts.length
     ? `<div class="pop-conflict">${escapeHtml(t("conflictIn"))} ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
     : "";
@@ -1382,11 +1390,44 @@ function openPopover(ik, anchorEl) {
   pop.querySelectorAll('[data-act="clear"]').forEach((b) =>
     b.addEventListener("click", () => confirmClear(b, ik, b.dataset.cmd)));
 
+  if (!cmds.length) wireAssignPicker(pop, ik); // free key: offer to bind a command
+
   if (conflicts.length) highlightConflicts(ik);
 
   document.addEventListener("keydown", onPopoverKeydown);
   // Defer so the opening click itself doesn't immediately close the popover.
   setTimeout(() => document.addEventListener("click", onOutsideClick, true), 0);
+}
+
+// Free-key popover: a searchable command picker so a physical key with no binding
+// (e.g. M4) can be assigned a command straight from the device scheme. Picking a command
+// reuses the remap dialog with this key prefilled, so the apply/backup/rescan path is shared.
+function wireAssignPicker(pop, ik) {
+  const search = pop.querySelector(".assign-search");
+  const list = pop.querySelector(".assign-list");
+  if (!list) return;
+  const all = [...scan.commands].sort((a, b) => commandTitleText(a).localeCompare(commandTitleText(b)));
+  const render = (q) => {
+    const query = (q || "").trim().toLowerCase();
+    const matches = all.filter((c) =>
+      !query || commandTitleText(c).toLowerCase().includes(query) || c.id.toLowerCase().includes(query)
+    ).slice(0, 50);
+    list.innerHTML = matches.map((c) =>
+      `<button class="assign-item" data-cmd="${escapeHtml(c.id)}">` +
+      `<span class="assign-name">${escapeHtml(commandTitleText(c))}</span>` +
+      `<span class="assign-id">${escapeHtml(c.id)}</span></button>`
+    ).join("") || `<p class="muted assign-empty">${escapeHtml(t("assignNoMatch"))}</p>`;
+    list.querySelectorAll(".assign-item").forEach((b) =>
+      b.addEventListener("click", () => assignKeyToCommand(ik, b.dataset.cmd)));
+  };
+  render("");
+  search && search.addEventListener("input", () => render(search.value));
+}
+
+function assignKeyToCommand(ik, commandId) {
+  closePopover();
+  openRemap(commandId);
+  if (els.newKey) { els.newKey.value = ik; renderRemapPreview(); }
 }
 
 function positionPopover(pop, anchorEl) {
