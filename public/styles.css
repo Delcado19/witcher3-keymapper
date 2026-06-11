@@ -133,14 +133,6 @@ h2 {
   margin-left: auto;
 }
 
-#paths {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 17px;
-  font-family: 'Crimson Text', serif;
-  letter-spacing: 0.03em;
-}
-
 main {
   padding: 8px 12px 20px;
 }
@@ -1351,7 +1343,6 @@ h1::after {
   pointer-events: none;
 }
 
-.topbar > .header-paths,
 .topbar > .top-actions {
   position: relative;
   z-index: 2;
@@ -1368,20 +1359,6 @@ h1::after {
   display: none;
 }
 
-.header-paths {
-  position: absolute;
-  left: 20px;
-  bottom: 12px;
-  z-index: 2;
-  color: #9a9083;
-  max-width: min(42vw, 680px);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 15px;
-  text-align: left;
-  pointer-events: none;
-}
 
 button,
 input,
@@ -1554,10 +1531,6 @@ dialog::after {
 
   .top-actions {
     justify-content: flex-end;
-  }
-
-  .header-paths {
-    max-width: calc(100% - 40px);
   }
 }
 

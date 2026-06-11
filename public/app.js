@@ -6,7 +6,6 @@ let currentContent = "";
 // property tests of the pure helpers (matchDevice, colorizer); in the browser
 // it behaves exactly as before.
 const els = (typeof document !== "undefined") ? {
-  paths: document.querySelector("#paths"),
   stats: document.querySelector("#stats"),
   search: document.querySelector("#search"),
   sourceFilter: document.querySelector("#sourceFilter"),
@@ -87,8 +86,6 @@ const I18N = {
     context: "Context",
     more: "more",
     inContexts: "in {count} gameplay contexts",
-    sessionFile: "Session file: {name}",
-    mods: "Mods",
     vanilla: "Vanilla",
     hardwareUnavailable: "Hardware detection unavailable",
     projectLabel: "Project input.settings",
@@ -181,8 +178,6 @@ const I18N = {
     context: "Kontext",
     more: "weitere",
     inContexts: "in {count} Spielkontexten",
-    sessionFile: "Session-Datei: {name}",
-    mods: "Mods",
     vanilla: "Spiel",
     hardwareUnavailable: "Hardware-Erkennung nicht verfügbar",
     projectLabel: "Projekt-input.settings",
@@ -395,10 +390,6 @@ function showLoading(on) {
 }
 
 function render() {
-  const fileLabel = state.sessionFile
-    ? t("sessionFile", { name: state.sessionFile.name })
-    : scan.paths.inputSettings;
-  els.paths.textContent = `${fileLabel} | ${t("mods")}: ${scan.paths.modsDir}`;
   els.stats.innerHTML = [
     [t("bindings"), scan.stats.bindings],
     [t("actions"), scan.stats.actions],
