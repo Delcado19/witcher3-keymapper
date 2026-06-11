@@ -42,7 +42,6 @@ const els = (typeof document !== "undefined") ? {
   editorFontUp: document.querySelector("#editorFontUp"),
   editorGrid: document.querySelector("#editorGrid"),
   editorReset: document.querySelector("#editorReset"),
-  editorSave: document.querySelector("#editorSave"),
   editorHint: document.querySelector("#editorHint"),
   loadingBar: document.querySelector("#loadingBar")
 } : {};
@@ -66,7 +65,7 @@ const I18N = {
     editLayoutDone: "Done editing",
     editorSave: "Save",
     editorReset: "Reset",
-    editorHint: "Drag the PNG, anchors, or labels. Double-click a label to rename. Shift bypasses snap.",
+    editorHint: "Drag the PNG, anchors, or labels. Double-click a label to rename. Shift bypasses snap. “Done” applies.",
     editorDirty: "{count} unsaved",
     editLabelPrompt: "Button caption for {ik}:",
     editorResetDone: "Reverted to the saved layout.",
@@ -168,7 +167,7 @@ const I18N = {
     editLayoutDone: "Fertig",
     editorSave: "Speichern",
     editorReset: "Zurücksetzen",
-    editorHint: "PNG, Anker oder Beschriftungen ziehen. Doppelklick auf eine Beschriftung zum Umbenennen. Shift umgeht das Raster.",
+    editorHint: "PNG, Anker oder Beschriftungen ziehen. Doppelklick auf eine Beschriftung zum Umbenennen. Shift umgeht das Raster. Fertig übernimmt.",
     editorDirty: "{count} ungespeichert",
     editLabelPrompt: "Tastenbeschriftung für {ik}:",
     editorResetDone: "Auf gespeichertes Layout zurückgesetzt.",
@@ -711,16 +710,18 @@ if (typeof document !== "undefined") {
 
   els.layoutMode?.addEventListener("click", () => {
     if (state.activeDevice !== "controllers") return;
+    const wasEditing = state.layoutMode;
     state.layoutMode = !state.layoutMode;
     els.layoutMode.setAttribute("aria-pressed", state.layoutMode ? "true" : "false");
     closePopover();
+    // No explicit Save button: leaving edit mode ("Fertig") applies the layout to disk.
+    if (wasEditing && state.dirtyProfiles.size) saveLeaderLayouts();
     renderDeviceView();
   });
   els.editorGrid?.addEventListener("change", () => { state.editGrid = els.editorGrid.checked; });
   els.editorFontDown?.addEventListener("click", () => adjustEditorFont(-2));
   els.editorFontUp?.addEventListener("click", () => adjustEditorFont(2));
   els.editorReset?.addEventListener("click", resetLeaderLayouts);
-  els.editorSave?.addEventListener("click", saveLeaderLayouts);
 }
 
 // Show/hide the editor toolbar with the edit toggle, reflect dirty state on Save, and
@@ -732,10 +733,6 @@ function updateEditorBar() {
   els.layoutMode && els.layoutMode.setAttribute("aria-pressed", state.layoutMode ? "true" : "false");
   if (els.layoutMode) els.layoutMode.textContent = state.layoutMode ? t("editLayoutDone") : t("editLayout");
   const dirty = state.dirtyProfiles.size > 0;
-  if (els.editorSave) {
-    els.editorSave.disabled = !dirty;
-    els.editorSave.textContent = t("editorSave");
-  }
   if (els.editorReset) els.editorReset.textContent = t("editorReset");
   if (els.editorHint) els.editorHint.textContent = dirty ? t("editorDirty", { count: state.dirtyProfiles.size }) : t("editorHint");
 }
@@ -1141,9 +1138,9 @@ function svgPoint(svg, event) {
    move/resize the PNG (art rect), move an anchor (ax/ay, % of art) and move a label
    (lx/ly, canvas units). The leader line is re-derived from those each redraw, so it
    can never detach. Snap-to-grid + smart guides layer on in onLeaderDrag. */
-const EDIT_GRID = 8;          // canvas-unit grid for snap-to-grid
+const EDIT_GRID = 4;          // canvas-unit grid for snap-to-grid (fine, so anchors can sit on a button centre)
 const ART_MIN = 60;           // smallest allowed PNG box edge
-const SNAP_SCREEN_PX = 5;     // smart-guide engage distance (screen px); smaller = tighter
+const SNAP_SCREEN_PX = 3;     // smart-guide engage distance (screen px); smaller = tighter
 
 // Editor only applies to seeded artwork profiles (explicit model present).
 function isEditableProfile(profile) {
@@ -1871,7 +1868,7 @@ const LEADER = { col: 420, gap: 28, pad: 28, mark: 8, minPitch: 72, maxLines: 2,
 // editor's fontSize override is expressed relative to LEADER_BASE_FONT (the primary
 // action line); the head caption + line pitch scale proportionally.
 const LEADER_BASE_FONT = 24;
-const LEADER_HEAD_FONT = 22; // button caption (RB/A/X/M4…) — kept near the action size so it reads clearly
+const LEADER_HEAD_FONT = 24; // button caption (RB/A/X/M4…) — same size as the action font
 
 // Resolve a leader geometry field, letting each profile override the global default
 // (e.g. the mouse uses a much narrower text column than the gamepad).

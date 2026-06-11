@@ -854,7 +854,7 @@ select:focus-visible,
 }
 .key-label {
   fill: #f4f6f7;
-  font: 700 10px/1 "Segoe UI", system-ui, sans-serif;
+  font: 700 13px/1 "Segoe UI", system-ui, sans-serif;
   pointer-events: none;
   paint-order: stroke;
   stroke: rgba(0, 0, 0, 0.9);
@@ -1233,11 +1233,11 @@ main {
 }
 .leader-svg .leader-key .key-shape {
   fill: var(--key-fill, #2a2f3a);
-  /* Light rim (not black) so a dark/unbound anchor dot (e.g. M4) is still visible on the
-     near-black controller stage instead of vanishing into it. */
-  stroke: rgba(231, 218, 196, 0.45);
-  stroke-width: 2;
-  opacity: 0.95;
+  /* Bright rim (not black) so a dark/unbound anchor dot (M4/M5/M3/RT/L3…) stays clearly
+     visible on the near-black controller stage instead of sinking into it. */
+  stroke: rgba(238, 230, 210, 0.75);
+  stroke-width: 2.5;
+  opacity: 1;
 }
 .leader-svg .leader-key.bound .key-shape {
   filter: drop-shadow(0 0 6px var(--key-fill));
@@ -1271,9 +1271,9 @@ main {
    stage). The category colour still shows on the anchor dot + leader line. Sized to read
    at roughly the same scale as the action line. */
 .leader-svg .leader-head {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   fill: #e8dfca;
 }
