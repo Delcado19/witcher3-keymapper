@@ -2076,16 +2076,29 @@ function applyLeaderLabels(svg, profile, scan) {
     const ik = g.getAttribute("data-key");
     const key = profile.keys.find((item) => item.ik === ik);
     const textX = text.getAttribute("x");
-    const lines = boundActionNames(ik, scan).slice(0, maxLines);
+    const isBound = !!(scan && scan.commands && scan.commands.some((c) => c.keys.some((k) => k.key === ik)));
+    let lines = boundActionNames(ik, scan).slice(0, maxLines);
+    if (!lines.length && isBound) {
+      // Bound only to unresolved (mod/engine) actions like SCAARDodge: still show it IS
+      // bound (its humanized name) instead of a blank "—" that looks like a free button.
+      const raw = scan.commands.filter((c) => c.keys.some((k) => k.key === ik)).map((c) => c.displayName).filter(Boolean);
+      lines = [...new Set(raw)].slice(0, maxLines);
+    }
     if (!lines.length) lines.push("—");
     text.textContent = ""; // rebuild tspans for the new binding state
+    // Lift a near-black unbound anchor dot so the marker (e.g. M4) is clearly visible.
+    if (!isBound) {
+      const dot = g.querySelector(".key-shape");
+      dot && dot.style && dot.style.setProperty("fill", "#6b655b");
+    }
     // Center the head+actions block vertically on the label's anchor row.
     const total = 1 + lines.length;
     const head = svgNode("tspan", { class: "leader-head", x: textX, dy: -((total - 1) * lineH) / 2 });
     if (fs) head.setAttribute("font-size", round2(LEADER_HEAD_FONT * scale));
-    // Colour the caption by its binding category (brightened to stay readable), so the
-    // captions read as coloured buttons again instead of flat uniform text.
-    head.setAttribute("fill", readableOnDark(g.style && g.style.getPropertyValue("--key-fill")));
+    // Colour the caption by its binding category, brightened to stay readable on the dark
+    // stage. Set via inline style (not a fill attribute) so it beats the CSS .leader-head
+    // fill rule — otherwise dark categories (unbound M4, the grey "other" of M5) showed raw.
+    head.style.setProperty("fill", readableOnDark(g.style && g.style.getPropertyValue("--key-fill")));
     head.textContent = key ? (key.label || ik) : ik;
     text.appendChild(head);
     for (const name of lines) {
