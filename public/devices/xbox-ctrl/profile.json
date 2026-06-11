@@ -10,140 +10,141 @@
     "h": 757.2
   },
   "art": {
-    "x": 476,
-    "y": 169.2,
-    "w": 800,
-    "h": 560
+    "x": 496,
+    "y": 133.2,
+    "w": 760,
+    "h": 496
   },
   "_comment": "Free-form leader-line layout (authored by the in-app layout editor). canvas{w,h} is the fixed viewBox; art{x,y,w,h} is the PNG rect in canvas units. Per key: ax/ay = anchor as % of the PNG (tracks the image when it moves/resizes); lx/ly = the label's text position in canvas units; the leader line is derived from both each render so it cannot detach. A key may carry fontSize to scale its label.",
   "keys": [
     {
       "ik": "IK_Pad_LeftTrigger",
       "label": "LT",
-      "ax": 18,
-      "ay": 9,
-      "lx": 440,
-      "ly": 178.2
+      "ax": 30,
+      "ay": 1.21,
+      "lx": 536,
+      "ly": 64
     },
     {
       "ik": "IK_Pad_LeftShoulder",
       "label": "LB",
-      "ax": 24,
+      "ax": 22.5,
       "ay": 7,
-      "lx": 440,
-      "ly": 106.2
+      "lx": 536,
+      "ly": 126
     },
     {
       "ik": "IK_Pad_LeftThumb",
       "label": "L3",
-      "ax": 20,
-      "ay": 25,
-      "lx": 440,
-      "ly": 250.2
+      "ax": 25,
+      "ay": 26.75,
+      "lx": 536,
+      "ly": 264
     },
     {
       "ik": "IK_Pad_Back_Select",
       "label": "Back",
-      "ax": 39,
-      "ay": 33,
-      "lx": 440,
-      "ly": 322.2
+      "ax": 43.16,
+      "ay": 27.32,
+      "lx": 256,
+      "ly": 192
     },
     {
       "ik": "IK_Pad_DigitUp",
       "label": "▲",
-      "ax": 30,
-      "ay": 43,
-      "lx": 440,
-      "ly": 394.2
+      "ax": 37.89,
+      "ay": 42.5,
+      "lx": 368,
+      "ly": 344
     },
     {
       "ik": "IK_Pad_DigitLeft",
       "label": "◀",
-      "ax": 26,
-      "ay": 49,
-      "lx": 440,
-      "ly": 466.2
+      "ax": 32.63,
+      "ay": 50,
+      "lx": 368,
+      "ly": 421.18
     },
     {
       "ik": "IK_Pad_DigitRight",
       "label": "▶",
-      "ax": 35,
-      "ay": 49,
-      "lx": 440,
-      "ly": 538.2
+      "ax": 41.5,
+      "ay": 50,
+      "lx": 368,
+      "ly": 584
     },
     {
       "ik": "IK_Pad_DigitDown",
       "label": "▼",
-      "ax": 30,
-      "ay": 55,
-      "lx": 440,
-      "ly": 610.2
+      "ax": 37.89,
+      "ay": 58.06,
+      "lx": 368,
+      "ly": 488
     },
     {
       "ik": "IK_Pad_RightTrigger",
       "label": "RT",
-      "ax": 78,
-      "ay": 9,
-      "lx": 1312,
-      "ly": 139
+      "ax": 68.5,
+      "ay": 1.21,
+      "lx": 968.04,
+      "ly": 24
     },
     {
       "ik": "IK_Pad_RightShoulder",
       "label": "RB",
-      "ax": 74,
+      "ax": 76.84,
       "ay": 7,
-      "lx": 1312,
-      "ly": 67
+      "lx": 1376,
+      "ly": 24
     },
     {
       "ik": "IK_Pad_Start",
       "label": "Start",
-      "ax": 46,
-      "ay": 33,
-      "lx": 1312,
-      "ly": 427
+      "ax": 56.84,
+      "ay": 27.32,
+      "lx": 904,
+      "ly": 720
     },
     {
       "ik": "IK_Pad_Y_TRIANGLE",
       "label": "Y",
-      "ax": 71,
-      "ay": 21,
-      "lx": 1312,
-      "ly": 211
+      "ax": 72.63,
+      "ay": 18.31,
+      "lx": 1216,
+      "ly": 224
     },
     {
       "ik": "IK_Pad_X_SQUARE",
       "label": "X",
-      "ax": 66,
-      "ay": 30,
-      "lx": 1312,
-      "ly": 283
+      "ax": 66.32,
+      "ay": 26.37,
+      "lx": 1456,
+      "ly": 432
     },
     {
       "ik": "IK_Pad_B_CIRCLE",
       "label": "B",
-      "ax": 77,
-      "ay": 30,
-      "lx": 1312,
-      "ly": 355
+      "ax": 80.5,
+      "ay": 27.32,
+      "lx": 1456,
+      "ly": 268.71
     },
     {
       "ik": "IK_Pad_A_CROSS",
       "label": "A",
-      "ax": 71,
-      "ay": 38,
-      "lx": 1312,
-      "ly": 499
+      "ax": 72.63,
+      "ay": 37.66,
+      "lx": 1216,
+      "ly": 320
     },
     {
       "ik": "IK_Pad_RightThumb",
       "label": "R3",
-      "ax": 57,
-      "ay": 46,
-      "lx": 1312,
-      "ly": 571
+      "ax": 62.11,
+      "ay": 47.38,
+      "lx": 1016.6,
+      "ly": 720
     }
-  ]
+  ],
+  "fontSize": 34
 }

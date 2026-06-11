@@ -10,60 +10,61 @@
     "h": 733.48
   },
   "art": {
-    "x": 286,
-    "y": 37.48,
-    "w": 360,
-    "h": 668
+    "x": 304,
+    "y": 46.02,
+    "w": 336,
+    "h": 576
   },
   "_comment": "Free-form leader-line layout (authored by the in-app layout editor). canvas{w,h} is the fixed viewBox; art{x,y,w,h} is the PNG rect in canvas units. Per key: ax/ay = anchor as % of the PNG (tracks the image when it moves/resizes); lx/ly = the label's text position in canvas units; the leader line is derived from both each render so it cannot detach. A key may carry fontSize to scale its label.",
   "keys": [
     {
       "ik": "IK_LeftMouse",
       "label": "Left",
-      "ax": 28,
-      "ay": 18,
-      "lx": 250,
-      "ly": 151.97
+      "ax": 25,
+      "ay": 17,
+      "lx": 280,
+      "ly": 143.94
     },
     {
       "ik": "IK_Mouse4",
       "label": "M4",
       "ax": 8,
-      "ay": 40,
-      "lx": 250,
-      "ly": 298.93
+      "ay": 39.23,
+      "lx": 240,
+      "ly": 272
     },
     {
       "ik": "IK_Mouse5",
       "label": "M5",
       "ax": 8,
-      "ay": 47,
-      "lx": 250,
-      "ly": 362.93
+      "ay": 50,
+      "lx": 240,
+      "ly": 334.02
     },
     {
       "ik": "IK_RightMouse",
       "label": "Right",
       "ax": 70,
       "ay": 17,
-      "lx": 682,
-      "ly": 195
+      "lx": 656,
+      "ly": 143.94
     },
     {
       "ik": "IK_MouseZ",
       "label": "Wheel",
       "ax": 50,
-      "ay": 9,
-      "lx": 682,
-      "ly": 67
+      "ay": 14.75,
+      "lx": 656,
+      "ly": 8
     },
     {
       "ik": "IK_MiddleMouse",
       "label": "M3",
       "ax": 50,
-      "ay": 16,
-      "lx": 682,
-      "ly": 131
+      "ay": 25.34,
+      "lx": 656,
+      "ly": 416
     }
-  ]
+  ],
+  "fontSize": 34
 }
