@@ -1009,13 +1009,17 @@ select:focus-visible,
   color: var(--text);
   border-radius: 5px;
 }
-.assign-list { display: grid; gap: 2px; max-height: 240px; overflow-y: auto; }
+.assign-list { display: flex; flex-direction: column; gap: 2px; max-height: 240px; overflow-y: auto; }
+/* These are <button>s, so they inherit the global button styling (Cinzel/uppercase,
+   overflow:hidden, 17px). Override it: command names must read normally, and the row
+   must size to its text instead of collapsing and clipping it. */
 .assign-item {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   width: 100%;
+  min-height: 30px;
   padding: 5px 8px;
   text-align: left;
   background: transparent;
@@ -1023,13 +1027,19 @@ select:focus-visible,
   color: var(--text);
   cursor: pointer;
   border-radius: 5px;
+  overflow: visible;
+  font-family: 'Crimson Text', Georgia, serif;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 15px;
+  line-height: 1.25;
 }
 .assign-item:hover, .assign-item:focus-visible {
   border-color: var(--gold);
   background: rgba(212, 175, 55, 0.1);
 }
-.assign-name { font-weight: 600; }
-.assign-id { font-size: 11px; color: var(--muted, #9a9384); }
+.assign-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.assign-id { font-size: 12px; color: var(--muted, #9a9384); flex: none; }
 .assign-empty { margin: 4px 2px; }
 .pop-head strong,
 .pop-row strong {
