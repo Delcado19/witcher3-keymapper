@@ -1233,7 +1233,9 @@ main {
 }
 .leader-svg .leader-key .key-shape {
   fill: var(--key-fill, #2a2f3a);
-  stroke: rgba(0, 0, 0, 0.55);
+  /* Light rim (not black) so a dark/unbound anchor dot (e.g. M4) is still visible on the
+     near-black controller stage instead of vanishing into it. */
+  stroke: rgba(231, 218, 196, 0.45);
   stroke-width: 2;
   opacity: 0.95;
 }
@@ -1262,16 +1264,18 @@ main {
   stroke: rgba(0, 0, 0, 0.9);
   stroke-width: 3.5px;
 }
-/* In-game "Controller Scheme" hierarchy: the action name is primary (large, light),
-   the physical button is a small dimmed caption above it — the colored device glyph
-   already carries the button identity, so the text caption stays understated. */
+/* In-game "Controller Scheme" hierarchy: the action name is primary (large, light) and
+   the physical button caption (RB/A/X/M4…) sits above it. The caption is a fixed light
+   tone — NOT the binding's --key-fill — so it stays readable even when the control is
+   unbound or its category colour is dark (fixes M4/M3 being unreadable on the near-black
+   stage). The category colour still shows on the anchor dot + leader line. Sized to read
+   at roughly the same scale as the action line. */
 .leader-svg .leader-head {
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  fill: var(--key-fill, #b9a98a);
-  opacity: 0.85;
+  fill: #e8dfca;
 }
 .leader-svg .leader-action {
   font-size: 24px;

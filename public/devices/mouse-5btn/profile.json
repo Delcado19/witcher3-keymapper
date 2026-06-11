@@ -46,7 +46,7 @@
       "label": "Right",
       "ax": 70,
       "ay": 17,
-      "lx": 656,
+      "lx": 688,
       "ly": 143.94
     },
     {
@@ -54,17 +54,17 @@
       "label": "Wheel",
       "ax": 50,
       "ay": 14.75,
-      "lx": 656,
-      "ly": 8
+      "lx": 688,
+      "ly": 32
     },
     {
       "ik": "IK_MiddleMouse",
       "label": "M3",
       "ax": 50,
       "ay": 25.34,
-      "lx": 656,
+      "lx": 688,
       "ly": 416
     }
   ],
-  "fontSize": 34
+  "fontSize": 24
 }

@@ -23,7 +23,7 @@
       "ax": 30,
       "ay": 1.21,
       "lx": 536,
-      "ly": 64
+      "ly": 24
     },
     {
       "ik": "IK_Pad_LeftShoulder",
@@ -31,7 +31,7 @@
       "ax": 22.5,
       "ay": 7,
       "lx": 536,
-      "ly": 126
+      "ly": 112
     },
     {
       "ik": "IK_Pad_LeftThumb",
@@ -63,7 +63,7 @@
       "ax": 32.63,
       "ay": 50,
       "lx": 368,
-      "ly": 421.18
+      "ly": 448
     },
     {
       "ik": "IK_Pad_DigitRight",
@@ -71,7 +71,7 @@
       "ax": 41.5,
       "ay": 50,
       "lx": 368,
-      "ly": 584
+      "ly": 640
     },
     {
       "ik": "IK_Pad_DigitDown",
@@ -79,7 +79,7 @@
       "ax": 37.89,
       "ay": 58.06,
       "lx": 368,
-      "ly": 488
+      "ly": 544
     },
     {
       "ik": "IK_Pad_RightTrigger",
@@ -146,5 +146,5 @@
       "ly": 720
     }
   ],
-  "fontSize": 34
+  "fontSize": 24
 }

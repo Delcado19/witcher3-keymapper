@@ -1143,6 +1143,7 @@ function svgPoint(svg, event) {
    can never detach. Snap-to-grid + smart guides layer on in onLeaderDrag. */
 const EDIT_GRID = 8;          // canvas-unit grid for snap-to-grid
 const ART_MIN = 60;           // smallest allowed PNG box edge
+const SNAP_SCREEN_PX = 5;     // smart-guide engage distance (screen px); smaller = tighter
 
 // Editor only applies to seeded artwork profiles (explicit model present).
 function isEditableProfile(profile) {
@@ -1257,10 +1258,10 @@ function onLeaderDrag(event) {
   const dx = p.x - drag.start.x;
   const dy = p.y - drag.start.y;
   const { target, key, base } = drag;
-  // Smart-guide threshold: 8 screen px converted to canvas units via the live scale, so
+  // Smart-guide threshold in screen px, converted to canvas units via the live scale so
   // the snap zone feels the same regardless of how small the side-by-side device renders.
   const ctm = drag.svg.getScreenCTM && drag.svg.getScreenCTM();
-  const snapDist = 8 / ((ctm && ctm.a) || 1);
+  const snapDist = SNAP_SCREEN_PX / ((ctm && ctm.a) || 1);
   const layout = computeLeaderLayout(drag.profile);   // other elements are unaffected mid-drag
   const targets = bypass ? { xs: [], ys: [] } : collectSnapTargets(layout, key && key.ik);
   const guides = [];
@@ -1870,7 +1871,7 @@ const LEADER = { col: 420, gap: 28, pad: 28, mark: 8, minPitch: 72, maxLines: 2,
 // editor's fontSize override is expressed relative to LEADER_BASE_FONT (the primary
 // action line); the head caption + line pitch scale proportionally.
 const LEADER_BASE_FONT = 24;
-const LEADER_HEAD_FONT = 15;
+const LEADER_HEAD_FONT = 22; // button caption (RB/A/X/M4…) — kept near the action size so it reads clearly
 
 // Resolve a leader geometry field, letting each profile override the global default
 // (e.g. the mouse uses a much narrower text column than the gamepad).
