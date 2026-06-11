@@ -5,8 +5,8 @@
   "layout": "mouse-5btn",
   "fallback": true,
   "artwork": "/devices/mouse-5btn/device.png",
-  "artworkSize": { "w": 388, "h": 720 },
-  "_comment": "Leader-line layout. artworkSize is the DRAWN box in viewBox units (aspect-matched to the 800x1485 PNG), kept small so the tall mouse renders about as high as the gamepad is wide. ax/ay are the anchor point as a percentage of that box (0-100); side picks the label column.",
+  "artworkSize": { "w": 200, "h": 371 },
+  "_comment": "Leader-line layout. artworkSize is the DRAWN box in viewBox units (aspect-matched to the 800x1485 PNG: 200x371.25 rounded), kept small so the tall mouse renders compactly — 6 buttons no longer get spread across a 720u-tall box (the old dead-space root cause). ax/ay are the anchor point as a percentage of that box (0-100); side picks the label column.",
   "keys": [
     { "ik": "IK_LeftMouse",   "label": "Left",  "ax": 28, "ay": 18, "side": "left" },
     { "ik": "IK_Mouse4",      "label": "M4",    "ax": 8,  "ay": 40, "side": "left" },

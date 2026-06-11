@@ -1651,27 +1651,60 @@ function renderGamepadSvg(profile) {
 // look, instead of stamping labels onto the device. Anchors come from ax/ay
 // (percent of the PNG) in the profile; applyLeaderLabels fills the action text
 // once scan data is known.
-// Geometry is in viewBox units ≈ on-screen px (the SVG fills the stage width, so the
-// units stay roughly 1:1 and the labels read at their nominal font size). Wide columns
-// use the empty space beside the device; `slot` is the min vertical pitch per label so
-// a head + up to maxLines actions + "+N" block never overlaps its neighbour.
-const LEADER = { col: 540, gap: 64, pad: 34, mark: 8, slot: 118, maxLines: 2, lineH: 30 };
+// Geometry is in viewBox units ≈ on-screen px. The horizontal line length is
+// `gap + (ax%)·art.w` (independent of `col`), so `gap` — not `col` — is the lever
+// for short lines; `col` is purely the action-text width budget and is kept wide
+// enough that long names ("Schnellzugriff-Gegenstand benutzen") don't clip at the
+// SVG edge. `minPitch` is the min vertical gap between two labels so a head + 1
+// action + "+N" block never overlaps its neighbour.
+const LEADER = { col: 420, gap: 28, pad: 28, mark: 8, minPitch: 72, maxLines: 1, lineH: 28 };
+
+// Place each label as close to its control's anchor height as possible, then push
+// overlapping neighbours down by minPitch and recenter the column on the anchor band
+// so lines stay short and balanced. Replaces the old even-index spread that dumped a
+// few labels across the full device height (dead space + long, fanned-out lines).
+// `keys` must already be sorted by ay ascending. Returns one labelY per key.
+function layoutLabelColumn(keys, devY, artH, minPitch) {
+  const ideal = keys.map((k) => devY + (k.ay / 100) * artH);
+  const y = ideal.slice();
+  for (let i = 1; i < y.length; i++) {
+    if (y[i] < y[i - 1] + minPitch) y[i] = y[i - 1] + minPitch;
+  }
+  // The push-down only moves labels DOWN, biasing the column low. Shift the whole
+  // column up by the mean displacement so labels straddle their anchors symmetrically.
+  if (y.length) {
+    let mean = 0;
+    for (let i = 0; i < y.length; i++) mean += y[i] - ideal[i];
+    mean /= y.length;
+    for (let i = 0; i < y.length; i++) y[i] -= mean;
+  }
+  return y;
+}
 
 function renderLeaderDevice(profile, extraClass) {
   const art = profile.artworkSize || { w: 800, h: 560 };
-  const { col, gap, pad, mark, slot } = LEADER;
+  const { col, gap, pad, mark, minPitch, lineH } = LEADER;
   const x0 = pad + col + gap;                 // device left edge
   const totalW = pad + col + gap + art.w + gap + col + pad;
   const sides = { left: [], right: [] };
   for (const key of profile.keys) sides[key.side === "right" ? "right" : "left"].push(key);
   sides.left.sort((a, b) => a.ay - b.ay);
   sides.right.sort((a, b) => a.ay - b.ay);
-  // Spread the labels over at least `slot` units each so neighbours never collide; if the
-  // device is taller than that, match its height so the columns frame it (W3 scheme look).
-  const colH = Math.max(sides.left.length, sides.right.length) * slot;
-  const contentH = Math.max(colH, art.h);
-  const totalH = pad + contentH + pad;
-  const devY = pad + (contentH - art.h) / 2;   // center the device against the taller column
+
+  // First pass with the device top at `pad`; measure how far the anchor-bound labels
+  // reach above/below the device, then size the canvas and offset everything to fit.
+  const devY0 = pad;
+  const colY = {
+    left: layoutLabelColumn(sides.left, devY0, art.h, minPitch),
+    right: layoutLabelColumn(sides.right, devY0, art.h, minPitch)
+  };
+  const allY = [...colY.left, ...colY.right];
+  const labelReach = 1.5 * lineH;             // a stacked label reaches ~1.5 lines above/below its y
+  const top = allY.length ? Math.min(devY0, ...allY.map((v) => v - labelReach)) : devY0;
+  const bottom = allY.length ? Math.max(devY0 + art.h, ...allY.map((v) => v + labelReach)) : devY0 + art.h;
+  const offset = pad - top;                   // shift so the highest element sits at `pad`
+  const devY = devY0 + offset;
+  const totalH = (bottom - top) + 2 * pad;
 
   const svg = svgNode("svg", { class: `device-svg leader-svg ${extraClass}`, viewBox: `0 0 ${totalW} ${totalH}`, role: "group" });
   svg.setAttribute("aria-label", profile.name);
@@ -1685,12 +1718,11 @@ function renderLeaderDevice(profile, extraClass) {
   for (const side of ["left", "right"]) {
     const keys = sides[side];
     if (!keys.length) continue;
-    const slotH = contentH / keys.length;
     const labelEndX = side === "left" ? pad + col : totalW - pad - col;
     keys.forEach((key, i) => {
       const anchorX = x0 + (key.ax / 100) * art.w;
       const anchorY = devY + (key.ay / 100) * art.h;
-      const labelY = pad + slotH * (i + 0.5);
+      const labelY = colY[side][i] + offset;
       const g = svgNode("g", { class: `key leader-key side-${side}`, "data-key": key.ik, tabindex: "0", role: "button" });
       g.setAttribute("aria-label", t("keyUnbound", { label: key.label || key.ik }));
       // Horizontal from the label, then a single 90° bend straight down/up to the control

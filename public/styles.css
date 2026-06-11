@@ -1108,26 +1108,24 @@ main {
   max-height: 58vh;
 }
 
-/* Leader layout needs horizontal room for both label columns, so it scales to the
-   container width (the viewBox already bakes in the column gutters) instead of the
-   old 720px device cap. */
-/* Cap the diagram so it does not fill the whole window; the larger fonts keep the
-   labels readable at this width (a much smaller cap is what made them tiny before). */
+/* Leader diagrams scale by HEIGHT, not width: each device's viewBox already bakes in
+   its two label columns, so width-governed scaling blew the narrow mouse up far bigger
+   than the wide gamepad. Height-governing renders both at the same visual scale. */
 .leader-svg {
-  width: 100%;
-  max-width: 1360px;
-  max-height: 78vh;
+  width: auto;
+  max-width: 100%;
   height: auto;
 }
 
-/* Mouse + gamepad stack vertically (each needs full width for its side columns)
-   rather than sitting side by side as before. */
+/* Mouse + gamepad stack vertically, each capped to a fraction of the viewport height
+   so both fit on screen together at a matched scale (the mouse no longer scales up to
+   fill the width). */
 .controller-layouts {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
 .controller-layout {
@@ -1138,8 +1136,10 @@ main {
 }
 
 .controller-layout .leader-svg {
-  width: 100%;
-  max-height: none;
+  width: auto;
+  max-width: 100%;
+  max-height: 46vh;
+  height: auto;
 }
 
 /* Leader-line controller scheme: off-device labels tied to each control by a 90°
