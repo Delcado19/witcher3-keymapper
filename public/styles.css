@@ -1275,7 +1275,9 @@ main {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  fill: #e8dfca;
+  /* applyLeaderLabels overrides fill inline with the brightened binding colour so the
+     caption reads as a coloured button; this is the fallback. */
+  fill: var(--key-fill, #e8dfca);
 }
 .leader-svg .leader-action {
   font-size: 24px;

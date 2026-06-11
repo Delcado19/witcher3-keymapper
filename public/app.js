@@ -2042,6 +2042,24 @@ function boundActionNames(ik, scan) {
 // dimmed caption — the colored glyph on the device already says which button it is.
 // Action names are resolved-only (boundActionNames drops raw engine ids and the "+N"
 // counter); the full list stays in the click popover (progressive disclosure).
+// Keep a binding colour's HUE (so the caption still reads as its category — vanilla
+// movement/action/menu, mod, unbound) but lift dark tones toward light so they stay
+// legible on the near-black controller stage. Pure category colour made M4 (unbound,
+// near-black) and the dim sage movements unreadable; flat light text lost the colour
+// coding the user wants. This brightens without desaturating the hue.
+function readableOnDark(raw) {
+  const m = /#?([0-9a-fA-F]{6})/.exec(raw || "");
+  if (!m) return "#e8dfca";
+  let r = parseInt(m[1].slice(0, 2), 16), g = parseInt(m[1].slice(2, 4), 16), b = parseInt(m[1].slice(4, 6), 16);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const target = 165; // minimum perceived brightness for a caption on the dark stage
+  if (lum < target) {
+    const t = Math.min(0.82, (target - lum) / 255 + 0.22);
+    r = Math.round(r + (255 - r) * t); g = Math.round(g + (255 - g) * t); b = Math.round(b + (255 - b) * t);
+  }
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 function applyLeaderLabels(svg, profile, scan) {
   if (!svg) return;
   const maxLines = leaderOpt(profile, "maxLines");
@@ -2065,6 +2083,9 @@ function applyLeaderLabels(svg, profile, scan) {
     const total = 1 + lines.length;
     const head = svgNode("tspan", { class: "leader-head", x: textX, dy: -((total - 1) * lineH) / 2 });
     if (fs) head.setAttribute("font-size", round2(LEADER_HEAD_FONT * scale));
+    // Colour the caption by its binding category (brightened to stay readable), so the
+    // captions read as coloured buttons again instead of flat uniform text.
+    head.setAttribute("fill", readableOnDark(g.style && g.style.getPropertyValue("--key-fill")));
     head.textContent = key ? (key.label || ik) : ik;
     text.appendChild(head);
     for (const name of lines) {
