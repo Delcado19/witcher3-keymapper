@@ -5,8 +5,9 @@
   "layout": "mouse-5btn",
   "fallback": true,
   "artwork": "/devices/mouse-5btn/device.png",
-  "artworkSize": { "w": 200, "h": 371 },
-  "_comment": "Leader-line layout. artworkSize is the DRAWN box in viewBox units (aspect-matched to the 800x1485 PNG: 200x371.25 rounded), kept small so the tall mouse renders compactly — 6 buttons no longer get spread across a 720u-tall box (the old dead-space root cause). ax/ay are the anchor point as a percentage of that box (0-100); side picks the label column.",
+  "artworkSize": { "w": 360, "h": 668 },
+  "leader": { "colLeft": 230, "colRight": 430, "minPitch": 64 },
+  "_comment": "Leader-line layout. artworkSize is the DRAWN box in viewBox units (aspect-matched to the 800x1485 PNG: 360x668.25 rounded). On-screen photo width ≈ art.w / Σ(viewBox widths). The mouse's LEFT labels are short (Left/M4/M5) but its RIGHT labels are long ('Schnellzugriff-Gegenstand benutzen', 'Angriff parieren / kontern'), so `leader.colLeft` stays narrow (230) while `colRight` is wide (430) — a single narrow col clipped the long right side. The narrow left side plus art.w bumped to 360 keeps the photo prominent instead of lost in whitespace (fixes 'die maus ist viel zu klein') without clipping the right labels. The gamepad keeps the global symmetric col for its long German names. ax/ay are the anchor point as a percentage of that box (0-100); side picks the label column.",
   "keys": [
     { "ik": "IK_LeftMouse",   "label": "Left",  "ax": 28, "ay": 18, "side": "left" },
     { "ik": "IK_Mouse4",      "label": "M4",    "ax": 8,  "ay": 40, "side": "left" },

@@ -148,7 +148,7 @@ ok("gamepad SVG: 16 leader keys, artwork + leader lines", () => {
   assert.strictEqual(svg.querySelectorAll(".leader-line").length, 16);
 });
 
-ok("applyLeaderLabels: stacks bound action names under the control label", () => {
+ok("applyLeaderLabels: action name is primary, button label is the head caption", () => {
   const svg = ui.renderGamepadSvg(gamepad);
   const scan = { commands: [
     { id: "Dodge", displayName: "Dodge", displayNameSource: "curated", keys: [{ key: "IK_Pad_A_CROSS" }] }
@@ -156,8 +156,37 @@ ok("applyLeaderLabels: stacks bound action names under the control label", () =>
   ui.applyLeaderLabels(svg, gamepad, scan);
   const g = svg.querySelectorAll("[data-key]").find((n) => n.getAttribute("data-key") === "IK_Pad_A_CROSS");
   const label = g.querySelector(".leader-label");
-  assert.ok(label.textContent.includes("A"), "physical button label stays as the head");
-  assert.ok(label.textContent.includes("Dodge"), "bound action name is stacked under it");
+  assert.ok(label.textContent.includes("A"), "physical button label stays as the head caption");
+  assert.ok(label.textContent.includes("Dodge"), "resolved action name is the primary line");
+});
+
+// The controller scheme must show clean action words only — never raw engine ids
+// (SCAARDodge, AltQuenCasting, …) and no "+N" counter. boundActionNames drops any
+// command whose displayNameSource is not localized/curated; the popover keeps them.
+ok("applyLeaderLabels: drops humanized engine ids and never shows a +N counter", () => {
+  const svg = ui.renderGamepadSvg(gamepad);
+  const scan = { commands: [
+    { id: "GallopCanter", displayName: "Gallop", displayNameSource: "curated", keys: [{ key: "IK_Pad_A_CROSS" }] },
+    { id: "ConfirmRadialMenuSelection", displayName: "ConfirmRadialMenuSelection", displayNameSource: "humanized", keys: [{ key: "IK_Pad_A_CROSS" }] },
+    { id: "GI_Accelerate", displayName: "GI_Accelerate", displayNameSource: "humanized", keys: [{ key: "IK_Pad_A_CROSS" }] }
+  ] };
+  ui.applyLeaderLabels(svg, gamepad, scan);
+  const g = svg.querySelectorAll("[data-key]").find((n) => n.getAttribute("data-key") === "IK_Pad_A_CROSS");
+  const txt = g.querySelector(".leader-label").textContent;
+  assert.ok(txt.includes("Gallop"), "resolved name shown");
+  assert.ok(!txt.includes("ConfirmRadialMenuSelection") && !txt.includes("GI_Accelerate"), "humanized ids dropped");
+  assert.ok(!/\+\d/.test(txt), "no +N counter in the diagram");
+});
+
+// boundActionNames is resolved-only for the diagram (the popover uses the full list).
+ok("boundActionNames returns only localized/curated names, deduped", () => {
+  const scan = { commands: [
+    { id: "CastSign", displayName: "Cast Sign", displayNameSource: "localized", keys: [{ key: "IK_E" }] },
+    { id: "CastSignCtx2", displayName: "Cast Sign", displayNameSource: "localized", keys: [{ key: "IK_E" }] },
+    { id: "RawHelper", displayName: "RawHelper", displayNameSource: "humanized", keys: [{ key: "IK_E" }] }
+  ] };
+  const names = ui.boundActionNames("IK_E", scan);
+  assert.deepStrictEqual(names, ["Cast Sign"], "deduped, humanized dropped");
 });
 
 ok("renderDeviceSvg dispatches by type", () => {

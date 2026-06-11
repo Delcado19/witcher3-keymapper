@@ -1663,9 +1663,24 @@ function renderGamepadSvg(profile) {
 // `gap + (ax%)·art.w` (independent of `col`), so `gap` — not `col` — is the lever
 // for short lines; `col` is purely the action-text width budget and is kept wide
 // enough that long names ("Schnellzugriff-Gegenstand benutzen") don't clip at the
-// SVG edge. `minPitch` is the min vertical gap between two labels so a head + 1
-// action + "+N" block never overlaps its neighbour.
-const LEADER = { col: 420, gap: 28, pad: 28, mark: 8, minPitch: 72, maxLines: 1, lineH: 28 };
+// SVG edge. `minPitch` is the min vertical gap between two labels so a stacked
+// head + action block never overlaps its neighbour.
+//
+// PER-PROFILE OVERRIDES (fixes "die maus ist jetzt viel zu klein"): the side-by-side
+// devices are sized by viewBox width, and on-screen photo width ≈ art.w / Σ(viewBox
+// widths) — so a wide empty text budget shrinks the device. The mouse only carries
+// short labels (Left/Right/Wheel + ~1 action word), so it overrides `col` to a narrow
+// value and bumps its own art.w (in profile.json), making the photo prominent instead
+// of lost in whitespace. The gamepad keeps the wide budget for its long German action
+// names. Render reads `profile.leader.<field> ?? LEADER.<field>`.
+const LEADER = { col: 420, gap: 28, pad: 28, mark: 8, minPitch: 72, maxLines: 2, lineH: 26 };
+
+// Resolve a leader geometry field, letting each profile override the global default
+// (e.g. the mouse uses a much narrower text column than the gamepad).
+function leaderOpt(profile, field) {
+  const ov = profile && profile.leader;
+  return ov && ov[field] != null ? ov[field] : LEADER[field];
+}
 
 // Place each label as close to its control's anchor height as possible, then push
 // overlapping neighbours down by minPitch and recenter the column on the anchor band
@@ -1691,9 +1706,18 @@ function layoutLabelColumn(keys, devY, artH, minPitch) {
 
 function renderLeaderDevice(profile, extraClass) {
   const art = profile.artworkSize || { w: 800, h: 560 };
-  const { col, gap, pad, mark, minPitch, lineH } = LEADER;
-  const x0 = pad + col + gap;                 // device left edge
-  const totalW = pad + col + gap + art.w + gap + col + pad;
+  // Text-column width is resolved PER SIDE: a device may carry short labels on one
+  // side and long ones on the other (the mouse has 1-word actions left, but
+  // "Schnellzugriff-Gegenstand benutzen" right). A single narrow col would clip the
+  // long side, so colLeft/colRight default to `col`, and a profile can widen just the
+  // side that needs it without bloating the empty side (which would shrink the photo).
+  const col = leaderOpt(profile, "col");
+  const colLeft = leaderOpt(profile, "colLeft") ?? col;
+  const colRight = leaderOpt(profile, "colRight") ?? col;
+  const minPitch = leaderOpt(profile, "minPitch");
+  const { gap, pad, mark, lineH } = LEADER;
+  const x0 = pad + colLeft + gap;             // device left edge
+  const totalW = pad + colLeft + gap + art.w + gap + colRight + pad;
   const sides = { left: [], right: [] };
   for (const key of profile.keys) sides[key.side === "right" ? "right" : "left"].push(key);
   sides.left.sort((a, b) => a.ay - b.ay);
@@ -1726,7 +1750,7 @@ function renderLeaderDevice(profile, extraClass) {
   for (const side of ["left", "right"]) {
     const keys = sides[side];
     if (!keys.length) continue;
-    const labelEndX = side === "left" ? pad + col : totalW - pad - col;
+    const labelEndX = side === "left" ? pad + colLeft : totalW - pad - colRight;
     keys.forEach((key, i) => {
       const anchorX = x0 + (key.ax / 100) * art.w;
       const anchorY = devY + (key.ay / 100) * art.h;
@@ -1758,32 +1782,40 @@ function renderLeaderDevice(profile, extraClass) {
 }
 
 // The action names bound to a control, deduped (one control often carries the same
-// command across several gameplay contexts). Mirrors the sidebar's display label.
+// command across several gameplay contexts). For the controller-scheme diagram we
+// only surface REAL action names (displayNameSource localized/curated) and drop raw
+// engine ids — the in-game "Controller Scheme" shows clean action words, never code
+// names like SCAARDodge/AltQuenCasting/CiriHolster*/ComboDigit*/Alternate. The full
+// list (including internal helpers) stays one click away in the key popover, so this
+// is progressive disclosure, not data loss. See user complaint: "Beschriftungen ...
+// beschissen". (Popover keeps using commandTitleText for the complete list.)
 function boundActionNames(ik, scan) {
   if (!scan || !scan.commands) return [];
   const names = scan.commands
-    .filter((command) => command.keys.some((key) => key.key === ik))
-    .map((command) => commandTitleText(command));
+    .filter((command) => command.keys.some((key) => key.key === ik) && hasResolvedName(command))
+    .map((command) => command.displayName);
   return [...new Set(names)].filter(Boolean);
 }
 
-// Fill each leader label with its bound actions, stacked and capped (a pad key can
-// carry many context bindings; the popover still shows the full list on click).
+// Fill each leader label, in-game "Controller Scheme" style: the ACTION NAME is the
+// primary, well-readable line; the physical button (label) sits above it as a small,
+// dimmed caption — the colored glyph on the device already says which button it is.
+// Action names are resolved-only (boundActionNames drops raw engine ids and the "+N"
+// counter); the full list stays in the click popover (progressive disclosure).
 function applyLeaderLabels(svg, profile, scan) {
   if (!svg) return;
-  const { maxLines, lineH } = LEADER;
+  const maxLines = leaderOpt(profile, "maxLines");
+  const { lineH } = LEADER;
   svg.querySelectorAll("[data-key]").forEach((g) => {
     const text = g.querySelector(".leader-label");
     if (!text) return;
     const ik = g.getAttribute("data-key");
     const key = profile.keys.find((item) => item.ik === ik);
     const textX = text.getAttribute("x");
-    const all = boundActionNames(ik, scan);
-    const lines = all.slice(0, maxLines);
-    const extra = all.length - lines.length;
-    if (extra > 0) lines.push(`+${extra}`);
+    const lines = boundActionNames(ik, scan).slice(0, maxLines);
     if (!lines.length) lines.push("—");
     text.textContent = ""; // rebuild tspans for the new binding state
+    // Center the head+actions block vertically on the label's anchor row.
     const total = 1 + lines.length;
     const head = svgNode("tspan", { class: "leader-head", x: textX, dy: -((total - 1) * lineH) / 2 });
     head.textContent = key ? (key.label || ik) : ik;

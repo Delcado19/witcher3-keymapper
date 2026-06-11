@@ -1195,15 +1195,21 @@ main {
   stroke: rgba(0, 0, 0, 0.9);
   stroke-width: 3.5px;
 }
+/* In-game "Controller Scheme" hierarchy: the action name is primary (large, light),
+   the physical button is a small dimmed caption above it — the colored device glyph
+   already carries the button identity, so the text caption stays understated. */
 .leader-svg .leader-head {
-  font-size: 25px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  fill: var(--key-fill, #f0d8a0);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--key-fill, #b9a98a);
+  opacity: 0.85;
 }
 .leader-svg .leader-action {
-  font-size: 22px;
-  fill: #d6cfc0;
+  font-size: 24px;
+  font-weight: 600;
+  fill: #f1eadc;
 }
 .leader-svg .leader-key:hover .leader-label {
   fill: #fff;
