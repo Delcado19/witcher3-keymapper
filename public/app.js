@@ -939,6 +939,14 @@ async function renderDeviceView() {
     if (host) {
       const frame = document.createElement("div");
       frame.className = `controller-layout controller-${profile.type}`;
+      // Size each device's column proportional to its viewBox width so mouse and gamepad
+      // render at the SAME unit scale side by side (same font px, same line pitch). The
+      // wide gamepad gets proportionally more room than the small mouse instead of being
+      // squeezed into an equal half (which cramped its 16 labels and left the mouse half
+      // empty). flex-basis:0 + this grow makes each column's width strictly proportional.
+      const vbW = svg.viewBox?.baseVal?.width
+        || parseFloat((svg.getAttribute("viewBox") || "0 0 1 1").split(/\s+/)[2]) || 1;
+      frame.style.flexGrow = String(vbW);
       frame.appendChild(svg);
       host.appendChild(frame);
     }
