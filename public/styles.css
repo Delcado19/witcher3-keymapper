@@ -611,10 +611,6 @@ select:focus-visible,
 .device-head {
   align-items: stretch;
   padding: 0;
-  /* Let the editor toolbar (#editorBar, width:100%) wrap onto its own second line instead
-     of sharing the tab row. Without this the tall toolbar grew the flex row and — because of
-     align-items:stretch — stretched the device tabs (37px -> 64px) whenever edit mode opened. */
-  flex-wrap: wrap;
 }
 
 .device-tabs {
@@ -754,7 +750,7 @@ select:focus-visible,
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin: 4px 8px;
   width: 100%;
   justify-content: flex-end;
@@ -776,6 +772,7 @@ select:focus-visible,
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 .editor-btn::before {
   content: "";
@@ -803,11 +800,20 @@ select:focus-visible,
   gap: 4px;
   font-size: 14px;
   color: var(--text);
+  flex-shrink: 0;
 }
+/* The hint stays on the toolbar's single row (order:-1 puts it left of the buttons) and is the
+   only flex item allowed to shrink — it ellipsises on narrow widths. Keeping the toolbar one
+   line stops #editorBar from growing the header and stretching the device tabs. */
 .editor-hint {
+  order: -1;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 12px;
   color: var(--muted, #9a9384);
-  flex: 1 1 100%;
   text-align: right;
 }
 
