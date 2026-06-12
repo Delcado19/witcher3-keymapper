@@ -30,7 +30,7 @@ Paths default to the local GOG install and can be relocated with environment var
 
 ## Artwork
 
-Social and preview images should be stored as `docs/assets/witcher3-keymapper-social-preview.png`. The app background is `public/assets/keymapper-background.png`: a generated, full-bleed 16:9 dark fantasy image used with `background-size: cover` and no tiling. The app header uses `public/assets/keymapper-header.png` directly as the complete banner artwork, including the title, separator rules, ornament marks, `Fine-tune every action.` tagline, and three red claw marks. It is rendered with `background-size: cover`, cropped as needed, and never tiled. The style in `public/styles.css` is tuned around blackened metal, fine gold lines, muted red accents, and reduced parchment tones.
+Social and preview images should be stored as `docs/assets/witcher3-keymapper-social-preview.png`. The app background is `public/assets/keymapper-background.png`: a generated, full-bleed 16:9 dark fantasy image used with `background-size: cover` and no tiling. The app header uses `public/assets/keymapper-header.png` directly as the complete banner artwork, including the title, separator rules, ornament marks, `Fine-tune every action.` tagline, and three red claw marks. The topbar carries the image's exact 2172x480 aspect ratio, so the banner spans the full window width (its height grows with the width) and is rendered with `background-size: cover` and no tiling — full-bleed with neither side letterboxing nor cropping. The style in `public/styles.css` is tuned around blackened metal, fine gold lines, muted red accents, and reduced parchment tones.
 
 ## Language
 

@@ -1586,8 +1586,13 @@ h1::after {
 .topbar {
   position: relative;
   overflow: hidden;
-  min-height: clamp(200px, 24vh, 300px);
-  padding: 16px 20px 14px;
+  /* Banner spans the full window width; its height follows the logo's 2172x480 aspect ratio
+     so the artwork reaches both edges with no side letterboxing (per request: width-first,
+     height grows with width). Padding is 0 so the background-image is truly full-bleed — the
+     action controls carry their own inset via `.topbar > .top-actions`. */
+  aspect-ratio: 2172 / 480;
+  min-height: 0;
+  padding: 0;
   align-items: flex-start;
   background-color: #070707;
   border-bottom: 1px solid rgba(179, 138, 85, 0.36);
@@ -1608,19 +1613,22 @@ h1::after {
   pointer-events: none;
 }
 
-/* Sharp, complete logo over the backdrop — contain so the title, top ornament and
-   the three red claws are NEVER cropped (1680p -> 4K). */
+/* Sharp logo, full-bleed over the backdrop. Now that the topbar carries the image's exact
+   aspect ratio, `cover` fills the bar edge-to-edge with no crop and no side gaps. */
 .topbar-logo {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: url("/assets/keymapper-header.png") center / contain no-repeat;
+  background: url("/assets/keymapper-header.png") center / cover no-repeat;
   pointer-events: none;
 }
 
 .topbar > .top-actions {
   position: relative;
   z-index: 2;
+  /* Topbar padding is 0 for the full-bleed banner, so the action controls keep their own
+     inset from the window edges here. */
+  padding: 12px 16px;
 }
 
 .topbar::after {
