@@ -690,6 +690,12 @@ select:focus-visible,
   background: var(--panel);
   color: var(--text);
   font-size: 15px;
+  /* The global `button` rule adds letter-spacing 0.1em, which is applied *after* the
+     last glyph too. On a centred short label like "FERTIG"/"DONE" that trailing gap sits
+     on the right and visually pushes the text left. Indent by one spacing unit to
+     re-balance and keep the caption optically centred. */
+  text-align: center;
+  text-indent: 0.1em;
 }
 
 .layout-mode.is-active,
