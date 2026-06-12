@@ -63,15 +63,15 @@
       "ax": 33.16,
       "ay": 50,
       "lx": 460,
-      "ly": 468
+      "ly": 472
     },
     {
       "ik": "IK_Pad_DigitRight",
       "label": "▶",
       "ax": 42.11,
       "ay": 50,
-      "lx": 460,
-      "ly": 648
+      "lx": 464,
+      "ly": 664
     },
     {
       "ik": "IK_Pad_DigitDown",
@@ -79,7 +79,7 @@
       "ax": 37.37,
       "ay": 57.02,
       "lx": 460,
-      "ly": 552
+      "ly": 568
     },
     {
       "ik": "IK_Pad_RightTrigger",
