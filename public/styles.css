@@ -25,11 +25,11 @@
   --gold-bright: #d7b46a;
   --bronze: #9b6a33;
 
-  /* Teal/verdigris accent for the layout-editor toggle — deliberately off the gold/bronze
-     scale so the edit chip stands out from the device tabs. */
-  --edit: #2f8f86;
-  --edit-dark: #1c5c56;
-  --edit-bright: #5fc6ba;
+  /* Warm emerald accent for the layout-editor toggle — deliberately off the gold/bronze
+     scale so the edit chip stands out from the device tabs, but warmer than a cold teal. */
+  --edit: #3f9a5e;
+  --edit-dark: #245f3a;
+  --edit-bright: #6fcf8e;
 
   --danger: #9f2f2f;
   --danger-glow: #c85842;
@@ -611,6 +611,10 @@ select:focus-visible,
 .device-head {
   align-items: stretch;
   padding: 0;
+  /* Let the editor toolbar (#editorBar, width:100%) wrap onto its own second line instead
+     of sharing the tab row. Without this the tall toolbar grew the flex row and — because of
+     align-items:stretch — stretched the device tabs (37px -> 64px) whenever edit mode opened. */
+  flex-wrap: wrap;
 }
 
 .device-tabs {
@@ -706,7 +710,7 @@ select:focus-visible,
   position: relative;
   overflow: hidden;
   transition: all 0.2s ease;
-  box-shadow: 0 0 12px rgba(47, 143, 134, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 12px rgba(63, 154, 94, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   /* The header is a nowrap flexbox; in edit mode the editor toolbar (#editorBar, width:100%)
      shares the row. Without this guard flex-shrink squeezed the content box (~44px) below the
      "Fertig" label (~60px) and the text overflowed the right edge. Keep its natural width. */
@@ -727,21 +731,21 @@ select:focus-visible,
 }
 .layout-mode:hover::before { left: 100%; }
 .layout-mode:hover {
-  color: #06201d;
-  border-color: #7fe0d4;
+  color: #082010;
+  border-color: #8fe6a6;
   background: linear-gradient(180deg, var(--edit-bright) 0%, var(--edit) 100%);
 }
 
 .layout-mode.is-active,
 .layout-mode[aria-pressed="true"] {
-  color: #06201d;
+  color: #082010;
   font-weight: 700;
-  border-color: #7fe0d4;
+  border-color: #8fe6a6;
   background: linear-gradient(180deg, var(--edit-bright) 0%, var(--edit) 60%, var(--edit-dark) 100%);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 0 18px rgba(95, 198, 186, 0.6),
+    0 0 18px rgba(111, 207, 142, 0.6),
     0 3px 8px rgba(0, 0, 0, 0.6);
 }
 
