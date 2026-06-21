@@ -660,23 +660,28 @@ function openRemap(commandId) {
 // Pure preview of which bindings a remap would rewrite. remap() matches purely by
 // action across every section (including IK_None "unbound" slots), so the affected
 // set is exactly command.bindings and `total` equals the server's `changed` count
-// (verified against SpecialAttackLight: 8 bindings = 8 rewritten lines). It does
-// NOT predict conflicts on purpose: the authoritative conflict view is the
-// re-scan after apply, not a cruder client-side check (Step 3 / AGENTS scanner
-// is the single source of truth).
+// (the trust check: preview.total == server `changed`). To stay readable, the UI
+// collapses those bindings to the DISTINCT current keys: a bundled command like
+// Interaction has 1178 bindings but only ~7 distinct keys (E, gamepad A/Cross, …).
+// Deduping also keeps it honest — it surfaces that a keyboard remap also hits the
+// gamepad/mouse bindings, instead of burying that in a wall of repeated tokens. It
+// does NOT predict conflicts on purpose: the authoritative conflict view is the
+// re-scan after apply (the scanner is the single source of truth).
 function buildRemapPreview(command, newKey) {
   const bindings = Array.isArray(command?.bindings) ? command.bindings : [];
   const target = String(newKey || "").trim();
-  const sectionsMap = new Map();
+  const keyMap = new Map();
   for (const binding of bindings) {
-    if (!sectionsMap.has(binding.section)) sectionsMap.set(binding.section, []);
-    sectionsMap.get(binding.section).push(binding.key);
+    if (!keyMap.has(binding.key)) {
+      keyMap.set(binding.key, { key: binding.key, label: binding.keyLabel || binding.key, device: binding.device || "", count: 0 });
+    }
+    keyMap.get(binding.key).count += 1;
   }
-  const sections = [...sectionsMap.entries()].map(([section, keys]) => ({ section, keys }));
+  const keys = [...keyMap.values()].sort((a, b) => b.count - a.count);
   return {
     total: bindings.length,
-    sectionCount: sections.length,
-    sections,
+    sectionCount: new Set(bindings.map((b) => b.section)).size,
+    keys,
     newKey: /^IK_[A-Za-z0-9_]+$/.test(target) ? target : ""
   };
 }
@@ -689,12 +694,19 @@ function renderRemapPreview() {
     els.remapPreview.innerHTML = `<p class="remap-preview-summary">${escapeHtml(t("remapPreviewEmpty"))}</p>`;
     return;
   }
-  const arrow = preview.newKey ? ` → ${escapeHtml(preview.newKey)}` : "";
-  const summary = escapeHtml(t("remapPreviewSummary", { count: preview.total, sections: preview.sectionCount }));
-  const rows = preview.sections.map((section) =>
-    `<li><span class="remap-preview-section">${escapeHtml(section.section)}</span>: ${escapeHtml(section.keys.join(", "))}</li>`
-  ).join("");
-  els.remapPreview.innerHTML = `<p class="remap-preview-summary">${summary}${arrow}</p><ul class="remap-preview-list">${rows}</ul>`;
+  const newKeyLabel = preview.newKey ? preview.newKey.replace(/^IK_/, "") : "";
+  const arrow = newKeyLabel ? ` <span class="remap-preview-arrow">→ ${escapeHtml(newKeyLabel)}</span>` : "";
+  // One row per distinct current key (a chip carrying the device colour), not one
+  // per binding — turns the 1178-line wall into ~7 readable rows.
+  const rows = preview.keys.map((k) => {
+    const label = k.key === "IK_None" ? t("unbound") : k.label;
+    const count = k.count > 1 ? ` <span class="remap-preview-count">×${k.count}</span>` : "";
+    return `<li><span class="chip ${escapeHtml(k.device)}">${escapeHtml(label)}</span>${count}${arrow}</li>`;
+  }).join("");
+  // The raw binding count is the scary, useless headline ("1178 bindings"); demote
+  // it to a muted footnote — the user is changing a key, not editing N lines.
+  const foot = escapeHtml(t("remapPreviewSummary", { count: preview.total, sections: preview.sectionCount }));
+  els.remapPreview.innerHTML = `<ul class="remap-preview-list">${rows}</ul><p class="remap-preview-foot">${foot}</p>`;
 }
 
 // KeyboardEvent.code -> Witcher IK_ token. Keyboard only on purpose: a browser

@@ -482,23 +482,29 @@ ok("remapInputSettingsText: session remap respects action and oldKey", () => {
   assert.ok(result.content.includes("IK_E=(Action=Jump,State=Duration)"));
 });
 
-ok("buildRemapPreview: total equals binding count (incl. IK_None), grouped by section, key validated", () => {
+ok("buildRemapPreview: total counts every binding, but collapses to distinct keys", () => {
   const command = {
     id: "SpecialAttackLight",
     bindings: [
-      { section: "Combat", key: "IK_LeftMouse" },
+      { section: "Combat", key: "IK_LeftMouse", keyLabel: "LMB", device: "mouse" },
+      { section: "Exploration", key: "IK_LeftMouse", keyLabel: "LMB", device: "mouse" },
       { section: "Combat", key: "IK_None" },
-      { section: "Exploration", key: "IK_Pad_X_SQUARE" }
+      { section: "Exploration", key: "IK_Pad_X_SQUARE", keyLabel: "X", device: "gamepad" }
     ]
   };
-  // remap() matches by action across all sections incl. IK_None, so the preview
-  // must count every binding (the trust check that preview == server `changed`).
+  // remap() matches by action across all sections incl. IK_None, so `total` must
+  // count every binding (the trust check that preview.total == server `changed`).
   const valid = buildRemapPreview(command, "IK_NumPad3");
-  assert.strictEqual(valid.total, 3);
+  assert.strictEqual(valid.total, 4);
   assert.strictEqual(valid.sectionCount, 2);
   assert.strictEqual(valid.newKey, "IK_NumPad3");
-  const combat = valid.sections.find((s) => s.section === "Combat");
-  assert.deepStrictEqual(combat.keys, ["IK_LeftMouse", "IK_None"]);
+  // But the display collapses 4 bindings to 3 distinct current keys, sorted by
+  // count desc, so a 1178-binding command renders ~7 rows instead of a wall.
+  assert.strictEqual(valid.keys.length, 3);
+  assert.deepStrictEqual(
+    [valid.keys[0].key, valid.keys[0].count, valid.keys[0].device],
+    ["IK_LeftMouse", 2, "mouse"]
+  );
   // Invalid/partial target key is not echoed as a destination.
   assert.strictEqual(buildRemapPreview(command, "Num3").newKey, "");
   // Missing bindings degrade gracefully.

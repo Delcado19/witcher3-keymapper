@@ -605,12 +605,32 @@ dialog input:focus {
 
 .remap-preview-list {
   margin: 0;
-  padding-left: 18px;
-  list-style: disc;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.remap-preview-section {
-  color: var(--gold);
+.remap-preview-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remap-preview-arrow {
+  color: var(--text-bright);
+}
+
+.remap-preview-count {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.remap-preview-foot {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 @media (max-width: 900px) {
