@@ -1186,6 +1186,27 @@ select:focus-visible,
 }
 .pop-actions .danger { border-color: var(--danger); color: var(--danger); }
 .pop-conflict { color: var(--conflict-medium); font-size: 15px; }
+.pop-conflict-cause { color: var(--text-bright); margin-top: 2px; }
+
+/* Conflict cause vs. context-only companion (key popover + conflict panel). The
+   non-vanilla offender is the actual cause; vanilla companions only share the key
+   in mutually-exclusive situations, so they stay dim. */
+.pop-row.cause { box-shadow: inset 3px 0 0 var(--conflict-medium); }
+.cause-tag {
+  font-size: 11px;
+  color: var(--conflict-medium);
+  border: 1px solid var(--conflict-medium);
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.compact-meta.context-only { color: var(--muted); font-style: italic; opacity: 0.8; }
+.compact-token.cause {
+  border-left-color: var(--conflict-medium);
+  color: var(--text-bright);
+  background: rgba(184, 121, 50, 0.12);
+}
 
 @media (max-width: 520px) {
   .pop-row {

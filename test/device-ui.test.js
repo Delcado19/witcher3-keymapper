@@ -604,6 +604,9 @@ ok("groupConflicts: context-section variants of one key overload collapse into a
   assert.strictEqual(grouped[0].sections.length, 3);
   // The merged row still lists every command seen sharing the key.
   assert.deepStrictEqual(grouped[0].commands.slice().sort(), ["Alternate", "AutoLootRadius", "Focus", "LockAndGuard"]);
+  // The cause is the non-vanilla offender only; the vanilla companions are not flagged,
+  // so the UI can highlight the real culprit and play down the context-only neighbours.
+  assert.deepStrictEqual([...grouped[0].offenders], ["AutoLootRadius"]);
 });
 ok("groupConflicts: same offender on different keys stays separate", () => {
   const raw = [

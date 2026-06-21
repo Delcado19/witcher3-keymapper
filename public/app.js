@@ -112,14 +112,16 @@ const I18N = {
     critical: "Critical",
     context: "Context",
     more: "more",
-    inContexts: "in {count} game situations",
+    inContexts: "in {count} separate game situations",
     vanilla: "Vanilla",
     hardwareUnavailable: "Hardware detection unavailable",
     projectLabel: "Project input.settings",
     change: "Change",
     clear: "Clear",
     confirmClear: "Confirm clear",
-    conflictIn: "Conflict in:",
+    conflictSituations: "Double-bound in {count} separate game situations",
+    conflictCause: "Cause",
+    contextHarmless: "context-only, normally fine",
     noKeyboardLayout: "No keyboard layout detected. Choose a layout.",
     noBindingsFor: "No bindings found for {device}.",
     profileLoadFailed: "Device profile could not be loaded.",
@@ -141,8 +143,8 @@ const I18N = {
     line: "line {line}",
     file: "file",
     invalidSettings: "invalid input.settings",
-    changeTitle: "Change {id}",
-    changeText: "Rebinds every key for: {actions}",
+    changeTitle: "Change {name}",
+    changeText: "Rebinds {name} to a new key.",
     remapPreviewSummary: "Changes {count} binding(s) across {sections} game situation(s)",
     remapPreviewEmpty: "No current bindings to change",
     hold: "hold",
@@ -220,14 +222,16 @@ const I18N = {
     critical: "Kritisch",
     context: "Kontext",
     more: "weitere",
-    inContexts: "in {count} Spielsituationen",
+    inContexts: "in {count} getrennten Spielsituationen",
     vanilla: "Spiel",
     hardwareUnavailable: "Hardware-Erkennung nicht verfügbar",
     projectLabel: "Projekt-input.settings",
     change: "Ändern",
     clear: "Löschen",
     confirmClear: "Löschen bestätigen",
-    conflictIn: "Konflikt in:",
+    conflictSituations: "In {count} getrennten Spielsituationen doppelt belegt",
+    conflictCause: "Ursache",
+    contextHarmless: "nur kontextabhängig, normalerweise unkritisch",
     noKeyboardLayout: "Kein Tastaturlayout erkannt. Layout wählen.",
     noBindingsFor: "Keine Belegungen für {device} gefunden.",
     profileLoadFailed: "Geräteprofil konnte nicht geladen werden.",
@@ -249,8 +253,8 @@ const I18N = {
     line: "Zeile {line}",
     file: "Datei",
     invalidSettings: "ungültige input.settings",
-    changeTitle: "{id} ändern",
-    changeText: "Legt jede Taste neu für: {actions}",
+    changeTitle: "{name} ändern",
+    changeText: "Belegt {name} auf eine neue Taste.",
     remapPreviewSummary: "Ändert {count} Belegung(en) in {sections} Spielsituation(en)",
     remapPreviewEmpty: "Keine aktuellen Belegungen zu ändern",
     hold: "halten",
@@ -492,6 +496,9 @@ function groupConflicts(conflicts) {
       map.set(sig, {
         key: c.key, keyLabel: c.keyLabel,
         commands: [...c.commands], sources: [...sources],
+        // The non-vanilla command(s) are the actual cause; carry them through so
+        // the row can highlight them and play down the vanilla companions.
+        offenders: new Set(offenders),
         severity: c.severity, sections: [c.section]
       });
     } else {
@@ -501,6 +508,7 @@ function groupConflicts(conflicts) {
           existing.sources.push(sources[i] || "unknown");
         }
       });
+      offenders.forEach((cmd) => existing.offenders.add(cmd));
       if (!existing.sections.includes(c.section)) existing.sections.push(c.section);
       if (c.severity === "high") existing.severity = "high";
     }
@@ -522,7 +530,10 @@ function renderConflicts() {
   els.conflicts.innerHTML = groups.slice(0, 120).map((grp) => {
     const commandList = grp.commands.map((name, i) => {
       const src = grp.sources[i] || "unknown";
-      return `<span class="compact-token" title="${escapeHtml(src)}">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
+      // Highlight the cause (non-vanilla command); the vanilla companions are only
+      // context-sensitive neighbours, so they stay dim.
+      const isCause = grp.offenders?.has(name);
+      return `<span class="compact-token${isCause ? " cause" : ""}" title="${escapeHtml(src)}">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
     // Show how many gameplay contexts share this overload instead of listing the
     // cryptic section names (Boat, *_Replacer_Ciri, …), which read as separate
@@ -634,8 +645,12 @@ function keyChip(key) {
 function openRemap(commandId) {
   activeCommand = scan.commands.find((command) => command.id === commandId);
   if (!activeCommand) return;
-  els.remapTitle.textContent = t("changeTitle", { id: activeCommand.id });
-  els.remapText.textContent = t("changeText", { actions: activeCommand.actions.join(", ") });
+  // Show the readable command name ("Schwerer Angriff"), not the raw bundled
+  // action ids (AttackWithAlternateHeavy, CiriSpecialAttackHeavy, …) which read
+  // as noise to players.
+  const name = commandTitleText(activeCommand);
+  els.remapTitle.textContent = t("changeTitle", { name });
+  els.remapText.textContent = t("changeText", { name });
   els.newKey.value = "";
   stopKeyCapture();
   renderRemapPreview();
@@ -1446,29 +1461,55 @@ function openPopover(ik, anchorEl) {
   const conflicts = scan.conflicts.filter((cf) => cf.key === ik);
   const label = anchorEl.querySelector(".key-label")?.textContent || ik;
 
+  // A conflict's real cause is its non-vanilla command(s); the vanilla companions
+  // (Focus/LockAndGuard/…) only share the key in mutually-exclusive situations and
+  // are harmless. Collect the offender ids so the popover can mark the cause and
+  // play down the context-only companions instead of listing them all the same.
+  const offenderIds = new Set();
+  conflicts.forEach((cf) =>
+    (cf.commands || []).forEach((cmd, i) => {
+      if ((cf.sources || [])[i] !== "game/input.xml") offenderIds.add(cmd);
+    }));
+  const hasConflict = conflicts.length > 0;
+
   const pop = document.createElement("div");
   pop.className = "popover";
   pop.setAttribute("role", "dialog");
   const body = cmds.length
-    ? cmds.map((c) => `
-        <div class="pop-row">
+    ? cmds.map((c) => {
+        const isCause = offenderIds.has(c.id);
+        const isCompanion = hasConflict && !isCause && c.source === "game/input.xml";
+        return `
+        <div class="pop-row${isCause ? " cause" : ""}">
           <div>
-            <div class="commandTitle">${escapeHtml(commandTitleText(c))}</div>
+            <div class="commandTitle">${escapeHtml(commandTitleText(c))}${isCause ? ` <span class="cause-tag">${escapeHtml(t("conflictCause"))}</span>` : ""}</div>
             <span class="source">${escapeHtml(commandSourceLine(c))}</span>
-            ${commandActionsLine(c) ? `<div class="compact-meta">${escapeHtml(commandActionsLine(c))}</div>` : ""}
+            ${isCompanion ? `<div class="compact-meta context-only">${escapeHtml(t("contextHarmless"))}</div>` : commandActionsLine(c) ? `<div class="compact-meta">${escapeHtml(commandActionsLine(c))}</div>` : ""}
           </div>
           <div class="pop-actions">
             <button data-act="remap" data-cmd="${escapeHtml(c.id)}">${escapeHtml(t("change"))}</button>
             <button data-act="clear" data-cmd="${escapeHtml(c.id)}" class="danger">${escapeHtml(t("clear"))}</button>
           </div>
-        </div>`).join("")
+        </div>`;
+      }).join("")
     : `<div class="assign">
          <p class="muted">${escapeHtml(t("unbound"))}</p>
          <input class="assign-search" type="search" placeholder="${escapeHtml(t("assignSearch"))}" aria-label="${escapeHtml(t("assignSearch"))}">
          <div class="assign-list" role="listbox"></div>
        </div>`;
+  // Say "same key, N separate situations" + name the cause, instead of listing the
+  // raw section names (Boat, *_Replacer_Ciri, …), which read as one cross-context
+  // mess even though each situation is a mutually-exclusive game state.
+  const situations = new Set(conflicts.map((c) => c.section)).size;
+  const causeNames = [...offenderIds].map((id) => {
+    const c = scan.commands.find((x) => x.id === id);
+    return c ? commandTitleText(c) : id;
+  });
   const conflictNote = conflicts.length
-    ? `<div class="pop-conflict">${escapeHtml(t("conflictIn"))} ${escapeHtml([...new Set(conflicts.map((c) => c.section))].join(", "))}</div>`
+    ? `<div class="pop-conflict">
+         <div>${escapeHtml(t("conflictSituations", { count: situations }))}</div>
+         ${causeNames.length ? `<div class="pop-conflict-cause">${escapeHtml(t("conflictCause"))}: ${escapeHtml(causeNames.join(", "))}</div>` : ""}
+       </div>`
     : "";
   pop.innerHTML = `<div class="pop-head"><strong>${escapeHtml(label)}</strong><span class="muted">${escapeHtml(ik)}</span></div>${body}${conflictNote}`;
   document.body.appendChild(pop);
