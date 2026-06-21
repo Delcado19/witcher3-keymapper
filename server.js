@@ -1130,7 +1130,12 @@ const CURATED_DISPLAY_NAMES = {
   MeditationAbort: { de: "Meditation abbrechen", en: "Cancel Meditation" },
   UserMarkersToggle: { de: "Benutzermarkierung umschalten", en: "Toggle User Marker" },
   DrinkPotionUpperHold: { de: "Trank (oben) trinken", en: "Drink Potion (upper)" },
-  DrinkPotionLowerHold: { de: "Trank (unten) trinken", en: "Drink Potion (lower)" }
+  DrinkPotionLowerHold: { de: "Trank (unten) trinken", en: "Drink Potion (lower)" },
+  // SCAAR ("Stay Calm And ...") combat mod actions — no localization key in the game
+  // files, so they would otherwise stay humanized. The "(SCAAR)" suffix marks the mod
+  // origin while keeping the readable verb up front.
+  SCAARDodge: { de: "Ausweichen (SCAAR)", en: "Dodge (SCAAR)" },
+  SCAARTaunt: { de: "Verhöhnen (SCAAR)", en: "Taunt (SCAAR)" }
 };
 
 // Looks up a curated display name for a command id in the active UI language
