@@ -32,7 +32,7 @@
   <div id="loadingBar" class="loading-bar" hidden></div>
 
   <main>
-    <section class="stats" id="stats"></section>
+    <section class="summary" id="stats" aria-label="Overview"></section>
 
     <section class="panel device-view">
       <div class="panelHead device-head">
@@ -64,6 +64,11 @@
       <div id="legend" class="legend" aria-label="Color legend"></div>
     </section>
 
+    <details class="panel conflicts-panel" id="conflictsPanel" open>
+      <summary id="conflictCount">Conflicts</summary>
+      <div id="conflicts" class="conflicts"></div>
+    </details>
+
     <section class="toolbar">
         <input id="search" type="search" placeholder="Search action, key, mod, or context">
       <select id="sourceFilter">
@@ -76,38 +81,30 @@
         <option value="gamepad">Gamepad</option>
         <option value="unbound">Unbound</option>
       </select>
+      <label class="engine-toggle"><input id="engineToggle" type="checkbox"> <span>Show engine bindings</span></label>
     </section>
 
-    <div class="workbench-grid">
-      <section class="panel compact-panel">
-        <div class="panelHead">
-          <h2 id="conflictCount">Conflicts</h2>
-        </div>
-        <div id="conflicts" class="conflicts"></div>
-      </section>
-
-      <section class="panel compact-panel">
-        <div class="panelHead">
-          <h2>Mappings</h2>
-          <span id="resultCount"></span>
-        </div>
-        <div id="commands" class="commands"></div>
-      </section>
-    </div>
+    <section class="panel mappings-panel">
+      <div class="panelHead">
+        <h2 id="mappingsTitle">Mappings</h2>
+        <span id="resultCount"></span>
+      </div>
+      <div id="commands" class="commands"></div>
+    </section>
   </main>
 
   <dialog id="remapDialog">
     <form method="dialog" id="remapForm">
       <h2 id="remapTitle">Change mapping</h2>
-      <label id="remapScopeLabel">
-        Which actions
-        <select id="remapScope"></select>
-      </label>
       <p id="remapText"></p>
       <label>
-        New key in Witcher format
-        <input id="newKey" required pattern="IK_[A-Za-z0-9_]+" placeholder="e.g. IK_NumPad3">
+        New key
+        <span class="key-field">
+          <input id="newKey" required pattern="IK_[A-Za-z0-9_]+" placeholder="e.g. IK_NumPad3">
+          <button type="button" id="captureKey">Press a key</button>
+        </span>
       </label>
+      <p id="captureHint" class="muted capture-hint"></p>
       <div id="remapPreview" class="remap-preview" aria-live="polite"></div>
       <div class="dialogActions">
         <button value="cancel" formnovalidate>Cancel</button>

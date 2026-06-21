@@ -13,6 +13,9 @@ const els = (typeof document !== "undefined") ? {
   commands: document.querySelector("#commands"),
   conflicts: document.querySelector("#conflicts"),
   conflictCount: document.querySelector("#conflictCount"),
+  conflictsPanel: document.querySelector("#conflictsPanel"),
+  mappingsTitle: document.querySelector("#mappingsTitle"),
+  engineToggle: document.querySelector("#engineToggle"),
   resultCount: document.querySelector("#resultCount"),
   refresh: document.querySelector("#refresh"),
   languageSelect: document.querySelector("#languageSelect"),
@@ -29,6 +32,8 @@ const els = (typeof document !== "undefined") ? {
   remapText: document.querySelector("#remapText"),
   newKey: document.querySelector("#newKey"),
   remapPreview: document.querySelector("#remapPreview"),
+  captureKey: document.querySelector("#captureKey"),
+  captureHint: document.querySelector("#captureHint"),
   remapForm: document.querySelector("#remapForm"),
   deviceTabs: document.querySelector("#deviceTabs"),
   deviceSvg: document.querySelector("#deviceSvg"),
@@ -65,7 +70,7 @@ const I18N = {
     editLayoutDone: "Done editing",
     editorSave: "Save",
     editorReset: "Reset",
-    editorHint: "Drag the PNG, anchors, or labels. Double-click a label to rename. Shift bypasses snap. “Done” applies.",
+    editorHint: "Drag the image, anchors, or labels. Double-click a label to rename. Hold Shift to bypass snap.",
     editorDirty: "{count} unsaved",
     editLabelPrompt: "Button caption for {ik}:",
     assignSearch: "Bind a command to this key…",
@@ -78,11 +83,15 @@ const I18N = {
     allSources: "All sources",
     allInputs: "All inputs",
     unbound: "Unbound",
+    showEngineBindings: "Show engine bindings",
     conflicts: "Conflicts",
     mappings: "Mappings",
     changeMapping: "Change mapping",
-    newKey: "New key in Witcher format",
+    newKey: "New key",
     newKeyPlaceholder: "e.g. IK_NumPad3",
+    pressKey: "Press a key",
+    pressKeyWaiting: "Listening…",
+    captureHint: "Keyboard only — for mouse or gamepad, type the IK_ name.",
     cancel: "Cancel",
     createBackupApply: "Create backup & apply",
     saveInputSettings: "Save input.settings",
@@ -103,7 +112,7 @@ const I18N = {
     critical: "Critical",
     context: "Context",
     more: "more",
-    inContexts: "in {count} gameplay contexts",
+    inContexts: "in {count} game situations",
     vanilla: "Vanilla",
     hardwareUnavailable: "Hardware detection unavailable",
     projectLabel: "Project input.settings",
@@ -133,8 +142,8 @@ const I18N = {
     file: "file",
     invalidSettings: "invalid input.settings",
     changeTitle: "Change {id}",
-    changeText: "Changes all bindings for actions: {actions}",
-    remapPreviewSummary: "Affects {count} binding(s) in {sections} context(s)",
+    changeText: "Rebinds every key for: {actions}",
+    remapPreviewSummary: "Changes {count} binding(s) across {sections} game situation(s)",
     remapPreviewEmpty: "No current bindings to change",
     hold: "hold",
     clearFailed: "Clear failed",
@@ -169,7 +178,7 @@ const I18N = {
     editLayoutDone: "Fertig",
     editorSave: "Speichern",
     editorReset: "Zurücksetzen",
-    editorHint: "PNG, Anker oder Beschriftungen ziehen. Doppelklick auf eine Beschriftung zum Umbenennen. Shift umgeht das Raster. Fertig übernimmt.",
+    editorHint: "Bild, Anker oder Beschriftungen ziehen. Doppelklick auf eine Beschriftung zum Umbenennen. Shift umgeht das Raster.",
     editorDirty: "{count} ungespeichert",
     editLabelPrompt: "Tastenbeschriftung für {ik}:",
     assignSearch: "Befehl auf diese Taste legen…",
@@ -182,11 +191,15 @@ const I18N = {
     allSources: "Alle Quellen",
     allInputs: "Alle Eingaben",
     unbound: "Unbelegt",
+    showEngineBindings: "Engine-Bindungen anzeigen",
     conflicts: "Konflikte",
     mappings: "Belegungen",
     changeMapping: "Belegung ändern",
-    newKey: "Neue Taste im Witcher-Format",
+    newKey: "Neue Taste",
     newKeyPlaceholder: "z. B. IK_NumPad3",
+    pressKey: "Taste drücken",
+    pressKeyWaiting: "Warte…",
+    captureHint: "Nur Tastatur — für Maus oder Gamepad den IK_-Namen eintippen.",
     cancel: "Abbrechen",
     createBackupApply: "Backup erstellen & anwenden",
     saveInputSettings: "input.settings speichern",
@@ -207,7 +220,7 @@ const I18N = {
     critical: "Kritisch",
     context: "Kontext",
     more: "weitere",
-    inContexts: "in {count} Spielkontexten",
+    inContexts: "in {count} Spielsituationen",
     vanilla: "Spiel",
     hardwareUnavailable: "Hardware-Erkennung nicht verfügbar",
     projectLabel: "Projekt-input.settings",
@@ -237,8 +250,8 @@ const I18N = {
     file: "Datei",
     invalidSettings: "ungültige input.settings",
     changeTitle: "{id} ändern",
-    changeText: "Ändert alle Belegungen für Aktionen: {actions}",
-    remapPreviewSummary: "Betrifft {count} Belegung(en) in {sections} Kontext(en)",
+    changeText: "Legt jede Taste neu für: {actions}",
+    remapPreviewSummary: "Ändert {count} Belegung(en) in {sections} Spielsituation(en)",
     remapPreviewEmpty: "Keine aktuellen Belegungen zu ändern",
     hold: "halten",
     clearFailed: "Löschen fehlgeschlagen",
@@ -319,18 +332,22 @@ function applyStaticTexts() {
     deviceOptions[3].textContent = t("gamepad");
     deviceOptions[4].textContent = t("unbound");
   }
-  const panelHeads = document.querySelectorAll(".compact-panel .panelHead h2");
-  if (panelHeads[0] && !scan) panelHeads[0].textContent = t("conflicts");
-  if (panelHeads[1]) panelHeads[1].textContent = t("mappings");
+  const engineToggleLabel = els.engineToggle?.parentElement?.querySelector("span");
+  if (engineToggleLabel) engineToggleLabel.textContent = t("showEngineBindings");
+  if (els.conflictCount && !scan) els.conflictCount.textContent = t("conflicts");
+  if (els.mappingsTitle) els.mappingsTitle.textContent = t("mappings");
   els.remapTitle && (els.remapTitle.textContent = t("changeMapping"));
-  const remapLabel = els.dialog?.querySelector("label");
+  const remapLabel = els.newKey?.closest("label");
   if (remapLabel?.firstChild) remapLabel.firstChild.textContent = `${t("newKey")} `;
   if (els.newKey) els.newKey.placeholder = t("newKeyPlaceholder");
-  const dialogButtons = els.dialog?.querySelectorAll("button");
-  if (dialogButtons?.length) {
-    dialogButtons[0].textContent = t("cancel");
-    dialogButtons[1].textContent = t("createBackupApply");
-  }
+  if (els.captureKey) els.captureKey.textContent = t("pressKey");
+  if (els.captureHint) els.captureHint.textContent = t("captureHint");
+  // Dialog now has three buttons (capture, cancel, apply); target by id/value so
+  // the labels stay correct regardless of order.
+  const cancelButton = els.dialog?.querySelector('button[value="cancel"]');
+  if (cancelButton) cancelButton.textContent = t("cancel");
+  const applyButton = els.dialog?.querySelector("#applyRemap");
+  if (applyButton) applyButton.textContent = t("createBackupApply");
   const saveTitle = els.saveDialog?.querySelector("h2");
   if (saveTitle) saveTitle.textContent = t("saveInputSettings");
   if (els.saveText && !els.saveDialog?.open) els.saveText.textContent = t("saveHelp");
@@ -423,15 +440,22 @@ function showLoading(on) {
 }
 
 function render() {
-  els.stats.innerHTML = [
-    [t("bindings"), scan.stats.bindings],
-    [t("actions"), scan.stats.actions],
-    [t("commands"), scan.stats.commands],
-    [t("sections"), scan.stats.sections],
-    [t("keys"), scan.stats.keys],
-    [t("modActions"), scan.stats.modActions],
-    [t("syntax"), scan.syntax?.valid ? "OK" : t("syntaxError")]
-  ].map(([label, value]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join("");
+  // Slim one-line overview replaces the old 7-card grid. Conflicts use the
+  // grouped count (what renderConflicts shows), and the command count is the
+  // player-facing total (engine internals are tagged + hidden by default).
+  const conflictGroups = groupConflicts(scan.conflicts);
+  const playerCommands = scan.commands.filter((command) => !command.engineInternal).length;
+  const syntaxOk = scan.syntax?.valid;
+  const items = [
+    [scan.stats.bindings, t("bindings"), ""],
+    [conflictGroups.length, t("conflicts"), conflictGroups.length ? "warn" : ""],
+    [playerCommands, t("commands"), ""],
+    [scan.stats.modActions, t("modActions"), ""],
+    [syntaxOk ? "OK" : t("syntaxError"), t("syntax"), syntaxOk ? "" : "warn"]
+  ];
+  els.stats.innerHTML = items.map(([value, label, cls]) =>
+    `<span class="summary-item ${cls}"><strong>${escapeHtml(String(value))}</strong> ${escapeHtml(label)}</span>`
+  ).join('<span class="summary-sep" aria-hidden="true">·</span>');
 
   const currentSource = els.sourceFilter.value;
   const sources = [...new Set(scan.commands.map((item) => item.source))].sort();
@@ -525,8 +549,12 @@ function renderCommands() {
   const q = els.search.value.trim().toLowerCase();
   const source = els.sourceFilter.value;
   const device = els.deviceFilter.value;
+  // Engine internals (GI_* sticks, ComboDigit*, radial-menu internals) are tagged
+  // server-side and hidden unless the user opts in via the toolbar toggle.
+  const showEngine = els.engineToggle?.checked;
 
   const filtered = scan.commands.filter((command) => {
+    if (command.engineInternal && !showEngine) return false;
     if (source && command.source !== source) return false;
     if (device && !command.keys.some((key) => key.device === device)) return false;
     if (!q) return true;
@@ -605,6 +633,7 @@ function openRemap(commandId) {
   els.remapTitle.textContent = t("changeTitle", { id: activeCommand.id });
   els.remapText.textContent = t("changeText", { actions: activeCommand.actions.join(", ") });
   els.newKey.value = "";
+  stopKeyCapture();
   renderRemapPreview();
   els.dialog.showModal();
 }
@@ -649,6 +678,61 @@ function renderRemapPreview() {
   els.remapPreview.innerHTML = `<p class="remap-preview-summary">${summary}${arrow}</p><ul class="remap-preview-list">${rows}</ul>`;
 }
 
+// KeyboardEvent.code -> Witcher IK_ token. Keyboard only on purpose: a browser
+// cannot reliably report mouse buttons or gamepad inputs from a keydown, so the
+// "Press a key" capture covers the keyboard and mouse/gamepad keep manual entry.
+// IK_ spellings verified against the real input.settings (IK_NumPad0, IK_LControl,
+// IK_Tilde, IK_NumMinus, IK_NumPeriod).
+const KEYCODE_TO_IK = (() => {
+  const map = {
+    Space: "IK_Space", Enter: "IK_Enter", NumpadEnter: "IK_Enter",
+    Tab: "IK_Tab", Backspace: "IK_Backspace", Escape: "IK_Escape",
+    ShiftLeft: "IK_LShift", ShiftRight: "IK_RShift",
+    ControlLeft: "IK_LControl", ControlRight: "IK_RControl",
+    AltLeft: "IK_Alt", AltRight: "IK_Alt",
+    ArrowUp: "IK_Up", ArrowDown: "IK_Down", ArrowLeft: "IK_Left", ArrowRight: "IK_Right",
+    Minus: "IK_Minus", Equal: "IK_Equals", Backquote: "IK_Tilde",
+    BracketLeft: "IK_LeftBracket", BracketRight: "IK_RightBracket",
+    Backslash: "IK_Backslash", Semicolon: "IK_Semicolon", Quote: "IK_Apostrophe",
+    Comma: "IK_Comma", Period: "IK_Period", Slash: "IK_Slash",
+    Home: "IK_Home", End: "IK_End", Insert: "IK_Insert", Delete: "IK_Delete",
+    PageUp: "IK_PageUp", PageDown: "IK_PageDown", CapsLock: "IK_CapsLock",
+    NumpadDecimal: "IK_NumPeriod", NumpadSubtract: "IK_NumMinus",
+    NumpadAdd: "IK_NumPlus", NumpadMultiply: "IK_NumStar", NumpadDivide: "IK_NumSlash"
+  };
+  for (let i = 0; i < 26; i++) { const c = String.fromCharCode(65 + i); map[`Key${c}`] = `IK_${c}`; }
+  for (let i = 0; i <= 9; i++) { map[`Digit${i}`] = `IK_${i}`; map[`Numpad${i}`] = `IK_NumPad${i}`; }
+  for (let i = 1; i <= 12; i++) { map[`F${i}`] = `IK_F${i}`; }
+  return map;
+})();
+
+function ikForKeyboardEvent(event) {
+  return KEYCODE_TO_IK[event?.code] || null;
+}
+
+// One-shot keyboard capture: the next mapped keypress fills the New key field.
+// Escape cancels; unmapped keys are ignored so the listener keeps waiting.
+let captureListener = null;
+function startKeyCapture() {
+  if (!els.newKey || captureListener) return;
+  const restore = els.captureKey?.textContent || t("pressKey");
+  if (els.captureKey) { els.captureKey.textContent = t("pressKeyWaiting"); els.captureKey.classList.add("listening"); }
+  captureListener = (event) => {
+    if (event.key === "Escape") { event.preventDefault(); stopKeyCapture(restore); return; }
+    const ik = ikForKeyboardEvent(event);
+    if (!ik) return;
+    event.preventDefault();
+    els.newKey.value = ik;
+    renderRemapPreview();
+    stopKeyCapture(restore);
+  };
+  document.addEventListener("keydown", captureListener, true);
+}
+function stopKeyCapture(restoreLabel) {
+  if (captureListener) { document.removeEventListener("keydown", captureListener, true); captureListener = null; }
+  if (els.captureKey) { els.captureKey.textContent = restoreLabel || t("pressKey"); els.captureKey.classList.remove("listening"); }
+}
+
 if (typeof document !== "undefined") {
   els.remapForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -683,6 +767,8 @@ if (typeof document !== "undefined") {
   els.search.addEventListener("input", renderCommands);
   els.sourceFilter.addEventListener("change", renderCommands);
   els.deviceFilter.addEventListener("change", renderCommands);
+  els.engineToggle?.addEventListener("change", renderCommands);
+  els.captureKey?.addEventListener("click", startKeyCapture);
   els.refresh.addEventListener("click", load);
   els.loadFile?.addEventListener("click", () => els.loadInput?.click());
   els.loadInput?.addEventListener("change", handleLoadFile);
@@ -2237,6 +2323,7 @@ if (typeof module !== "undefined" && module.exports) {
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
     renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg, renderLeaderDevice, computeLeaderLayout, drawEditHandles,
-    applyColoring, applyConflicts, applyLeaderLabels, boundActionNames, remapInputSettingsText, groupConflicts, buildRemapPreview
+    applyColoring, applyConflicts, applyLeaderLabels, boundActionNames, remapInputSettingsText, groupConflicts, buildRemapPreview,
+    ikForKeyboardEvent, KEYCODE_TO_IK
   };
 }

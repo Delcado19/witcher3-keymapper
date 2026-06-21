@@ -214,64 +214,51 @@ button:active {
   transform: translateY(0);
 }
 
-/* Compact stat cards. */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.stat,
 .panel {
   background: linear-gradient(135deg, var(--panel) 0%, var(--parchment) 100%);
   border: 1px solid var(--panel-border);
   border-radius: 4px;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 rgba(212,175,55,0.05),
     0 2px 6px rgba(0,0,0,0.5);
 }
 
-.stat {
-  padding: 6px 8px;
-  position: relative;
+/* Slim one-line overview (replaces the old 7-card stat grid). */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  margin-bottom: 8px;
+  padding: 4px 2px;
+  font-size: 15px;
+  color: var(--muted);
 }
 
-/* Ornamental corners. */
-.stat::before,
-.stat::after {
-  content: "";
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border: 1px solid var(--ornament);
-  opacity: 0.3;
+.summary-item {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.stat::before {
-  top: 2px;
-  left: 2px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.stat::after {
-  bottom: 2px;
-  right: 2px;
-  border-left: none;
-  border-top: none;
-}
-
-.stat strong {
-  display: block;
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--gold);
+.summary-item strong {
   font-family: 'Cinzel', serif;
-  text-shadow: 0 0 8px rgba(212,175,55,0.4);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(212,175,55,0.35);
+  margin-right: 2px;
 }
 
-.stat span,
+.summary-item.warn strong {
+  color: var(--danger, #c0563a);
+  text-shadow: 0 0 8px rgba(192,86,58,0.4);
+}
+
+.summary-sep {
+  color: var(--ornament);
+  opacity: 0.5;
+}
+
 .muted {
   color: var(--muted);
   font-size: 15px;
@@ -279,12 +266,35 @@ button:active {
   letter-spacing: 0.08em;
 }
 
+/* Plain helper text (not uppercased like the ornamental .muted labels). */
+.capture-hint {
+  text-transform: none;
+  letter-spacing: normal;
+  font-style: italic;
+  margin: 2px 0 0;
+}
+
 /* Compact search/filter toolbar. */
 .toolbar {
   display: grid;
-  grid-template-columns: minmax(200px, 1fr) 160px 130px;
-  gap: 6px;
+  grid-template-columns: minmax(200px, 1fr) 160px 130px auto;
+  align-items: center;
+  gap: 6px 10px;
   margin-bottom: 8px;
+}
+
+.engine-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.engine-toggle input {
+  accent-color: var(--gold);
 }
 
 .toolbar input,
@@ -529,6 +539,29 @@ dialog input {
 dialog input:focus {
   border-color: var(--gold);
   box-shadow: 0 0 8px rgba(212,175,55,0.25);
+}
+
+/* New-key field: text input plus a keyboard-capture button on the same row. */
+.key-field {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.key-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#captureKey {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+#captureKey.listening {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 8px rgba(212,175,55,0.3);
 }
 
 #saveText {
@@ -1428,19 +1461,27 @@ main {
   font-size: 16px;
 }
 
-.workbench-grid {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.82fr) minmax(520px, 1.45fr);
-  gap: 10px;
-  align-items: start;
+/* Conflicts are a native collapsible panel: the diagram already glows the
+   conflicted keys and the summary line shows the count, so the list itself can
+   start open but be tucked away once reviewed. */
+.conflicts-panel {
+  padding: 0;
 }
 
-.compact-panel {
-  margin-bottom: 0;
+.conflicts-panel > summary {
+  cursor: pointer;
+  padding: 8px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  color: var(--gold);
 }
 
-.compact-panel .panelHead {
-  min-height: 30px;
+.conflicts-panel[open] > summary {
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.conflicts-panel .conflicts {
+  padding: 6px;
 }
 
 .command,
@@ -1459,10 +1500,6 @@ main {
 }
 
 @media (max-width: 900px) {
-  .workbench-grid {
-    grid-template-columns: 1fr;
-  }
-
   .controller-layouts {
     grid-template-columns: 1fr;
   }

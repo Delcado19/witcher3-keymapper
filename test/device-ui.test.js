@@ -7,14 +7,15 @@ const os = require("node:os");
 const path = require("node:path");
 
 const {
-  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts, buildRemapPreview, computeLeaderLayout
+  validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts, buildRemapPreview, computeLeaderLayout,
+  ikForKeyboardEvent, KEYCODE_TO_IK
 } = require("../public/app.js");
 const {
   findConflicts, isVanillaAction, vanillaDefaultFileForLanguage,
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
-  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, mergeAliasCommands, ALIAS_COMMAND_CANONICAL, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, handleSave,
+  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, mergeAliasCommands, ALIAS_COMMAND_CANONICAL, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, isEngineInternalCommand, handleSave,
   assertValidProfilePayload,
   isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile, resolveGamePaths
 } = require("../server.js");
@@ -206,6 +207,33 @@ ok("resolveDisplayName: prefers localization and humanizes raw display keys", ()
   assert.strictEqual(resolveDisplayName("ControlLayout_RunSprint", localized), "Run Sprint");
   assert.strictEqual(resolveDisplayName("panel_groupname_fast_attack", localized), "Fast Attack");
   assert.strictEqual(humanizeDisplayName("move_forward"), "Move Forward");
+  // Letter->digit split so arbitrary mod ids read cleanly (generic, no curation).
+  assert.strictEqual(humanizeDisplayName("UseItem1"), "Use Item 1");
+  assert.strictEqual(humanizeDisplayName("UseItem10"), "Use Item 10");
+});
+ok("isEngineInternalCommand: tags vanilla engine plumbing, leaves player/mod actions visible", () => {
+  // Stick/axis proxies, combo multiplexers and radial-menu internals are hidden
+  // behind the toggle; real player and mod actions stay in the default list.
+  for (const id of ["GI_AxisLeftX", "GI_MouseDampY", "ComboDigitLeft", "ConfirmRadialMenuSelection", "CloseRadialMenu", "ChangeChoiceAxis", "PanelFakeHud"]) {
+    assert.strictEqual(isEngineInternalCommand(id), true, id);
+  }
+  for (const id of ["RadialMenu", "MoveFwd", "UseItem1", "ItemsPadUp", "ShowPotionsHelper", "SCAARDodge"]) {
+    assert.strictEqual(isEngineInternalCommand(id), false, id);
+  }
+});
+ok("ikForKeyboardEvent: maps KeyboardEvent.code to the real IK_ spelling used in input.settings", () => {
+  // Spellings verified against the live scan (IK_NumPad3, IK_LControl, IK_Tilde, …).
+  assert.strictEqual(ikForKeyboardEvent({ code: "KeyA" }), "IK_A");
+  assert.strictEqual(ikForKeyboardEvent({ code: "Digit3" }), "IK_3");
+  assert.strictEqual(ikForKeyboardEvent({ code: "Numpad3" }), "IK_NumPad3");
+  assert.strictEqual(ikForKeyboardEvent({ code: "F11" }), "IK_F11");
+  assert.strictEqual(ikForKeyboardEvent({ code: "ControlLeft" }), "IK_LControl");
+  assert.strictEqual(ikForKeyboardEvent({ code: "Backquote" }), "IK_Tilde");
+  assert.strictEqual(ikForKeyboardEvent({ code: "NumpadDecimal" }), "IK_NumPeriod");
+  // Every mapped value must be a valid IK_ token (matches the dialog's pattern).
+  for (const ik of Object.values(KEYCODE_TO_IK)) assert.ok(/^IK_[A-Za-z0-9_]+$/.test(ik), ik);
+  // Unmapped codes return null so capture keeps waiting instead of binding junk.
+  assert.strictEqual(ikForKeyboardEvent({ code: "MediaPlayPause" }), null);
 });
 ok("curatedDisplayName: returns language-specific official/community names, '' for unknown ids", () => {
   // Step 2.2: official in-game labels (verbatim, including the hyphen spacing).

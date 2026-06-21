@@ -766,6 +766,11 @@ function humanizeDisplayName(value) {
     .replace(/^(ControlLayout|panel_input_action|panel_groupname|panel_button_common|panel_common|input)_/i, "")
     .replace(/^panel_/i, "")
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    // Split a trailing/embedded digit from its word so arbitrary mod ids read
+    // cleanly (UseItem1 -> "Use Item 1", ItemsPad10 -> "Items Pad 10"). Generic
+    // by design — we cannot curate every mod's command ids, so the fallback must
+    // be readable on its own (see "generic mod support").
+    .replace(/([A-Za-z])([0-9])/g, "$1 $2")
     .replace(/[_-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -856,6 +861,10 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
         displayName: curated || display.displayName,
         displayNameSource: curated ? "curated" : display.displayNameSource,
         displayNameKey: known?.displayName || entry.action,
+        // Display-only tag; the client hides these from the default list behind
+        // the "engine bindings" toggle. Kept in the scan so the conflict scanner
+        // is unaffected.
+        engineInternal: isEngineInternalCommand(id),
         tags: known?.tags || "",
         source: modSources.get(entry.action) || (isVanillaAction(entry.action, knownActions) ? "game/input.xml" : "unknown"),
         actions: known?.actions || [entry.action],
@@ -1053,6 +1062,23 @@ function isDebugCommand(command) {
   return /^Debug(Input)?$/.test(command) ||
     /^Debug_/.test(command) ||
     /^SCN_DBG_/.test(command);
+}
+
+// Vanilla engine plumbing that players never rebind: gamepad stick/mouse axis
+// proxies (GI_*), combat combo multiplexers (ComboDigit*), and radial-menu
+// selection internals, plus a few clearly-internal vanilla ids. These are
+// stable vanilla ids (safe to match generically, unlike mod ids) but their
+// names are cryptic. Tagged so the UI hides them from the default mappings list
+// behind an opt-in "engine bindings" toggle — NOT removed from the scan, so the
+// conflict scanner stays byte-stable. Display-only.
+const ENGINE_INTERNAL_IDS = new Set([
+  "ChangeChoiceAxis", "OnShowControlsHelp", "PanelFakeHud", "ShowEntryInPanel"
+]);
+function isEngineInternalCommand(command) {
+  return /^GI_/.test(command) ||
+    /^ComboDigit/.test(command) ||
+    /^(Confirm|Close|Select)RadialMenu/.test(command) ||
+    ENGINE_INTERNAL_IDS.has(command);
 }
 
 // Witcher 3 uses duplicate key rows for contextual aliases: keyboard movement
@@ -1660,6 +1686,7 @@ module.exports = {
   uiLanguageForTag,
   preferredLocalizationCodes,
   humanizeDisplayName,
+  isEngineInternalCommand,
   handleSave,
   handleSaveProfile,
   assertValidProfilePayload,
