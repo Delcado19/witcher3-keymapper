@@ -15,7 +15,7 @@ const {
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
-  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, mergeAliasCommands, ALIAS_COMMAND_CANONICAL, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, isEngineInternalCommand, handleSave,
+  resolveDisplayName, curatedDisplayName, CURATED_DISPLAY_NAMES, mergeAliasCommands, ALIAS_COMMAND_CANONICAL, cleanLocalizedDisplayName, uiLanguageForTag, preferredLocalizationCodes, humanizeDisplayName, isEngineInternalCommand, CIRI_TWIN_ACTION, expandActionsWithCiriTwins, handleSave,
   assertValidProfilePayload,
   isAllowedHost, isAllowedOrigin, resolvePublicPath, extractMultipartFile, resolveGamePaths
 } = require("../server.js");
@@ -217,9 +217,24 @@ ok("isEngineInternalCommand: tags vanilla engine plumbing, leaves player/mod act
   for (const id of ["GI_AxisLeftX", "GI_MouseDampY", "ComboDigitLeft", "ConfirmRadialMenuSelection", "CloseRadialMenu", "ChangeChoiceAxis", "PanelFakeHud"]) {
     assert.strictEqual(isEngineInternalCommand(id), true, id);
   }
+  // Ciri-only mirrors and the vanilla abort/modifier helpers are hidden too.
+  for (const id of ["CiriDodge", "CiriHolsterWeapon", "Alternate", "ThrowCastAbort", "VehicleItemActionAbort"]) {
+    assert.strictEqual(isEngineInternalCommand(id), true, id);
+  }
   for (const id of ["RadialMenu", "MoveFwd", "UseItem1", "ItemsPadUp", "ShowPotionsHelper", "SCAARDodge"]) {
     assert.strictEqual(isEngineInternalCommand(id), false, id);
   }
+});
+ok("expandActionsWithCiriTwins: a Geralt remap drags its Ciri twin along, others untouched", () => {
+  // Forward sync only: remapping Dodge must also move CiriDodge so playing as
+  // Ciri keeps the same key. Every twin's Geralt side must trigger the expansion.
+  assert.deepStrictEqual(expandActionsWithCiriTwins(["Dodge"]).sort(), ["CiriDodge", "Dodge"]);
+  for (const [ciri, geralt] of Object.entries(CIRI_TWIN_ACTION)) {
+    assert.ok(expandActionsWithCiriTwins([geralt]).includes(ciri), `${geralt} -> ${ciri}`);
+  }
+  // No twin, no change; remapping a Ciri action itself does not pull in Geralt.
+  assert.deepStrictEqual(expandActionsWithCiriTwins(["MoveFwd"]), ["MoveFwd"]);
+  assert.deepStrictEqual(expandActionsWithCiriTwins(["CiriDodge"]), ["CiriDodge"]);
 });
 ok("ikForKeyboardEvent: maps KeyboardEvent.code to the real IK_ spelling used in input.settings", () => {
   // Spellings verified against the live scan (IK_NumPad3, IK_LControl, IK_Tilde, …).

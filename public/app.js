@@ -93,12 +93,12 @@ const I18N = {
     pressKeyWaiting: "Listening…",
     captureHint: "Keyboard only — for mouse or gamepad, type the IK_ name.",
     cancel: "Cancel",
-    createBackupApply: "Create backup & apply",
+    createBackupApply: "Apply change",
     saveInputSettings: "Save input.settings",
     saveHelp: "Enter a target path. Existing files are backed up server-side.",
     targetPath: "Target path",
     targetPathPlaceholder: "C:\\Path\\to\\input.settings",
-    createBackupSave: "Create backup & save",
+    createBackupSave: "Save to file",
     bindings: "Bindings",
     actions: "Actions",
     commands: "Commands",
@@ -201,12 +201,12 @@ const I18N = {
     pressKeyWaiting: "Warte…",
     captureHint: "Nur Tastatur — für Maus oder Gamepad den IK_-Namen eintippen.",
     cancel: "Abbrechen",
-    createBackupApply: "Backup erstellen & anwenden",
+    createBackupApply: "Änderung übernehmen",
     saveInputSettings: "input.settings speichern",
     saveHelp: "Zielpfad eingeben. Bestehende Dateien werden serverseitig gesichert.",
     targetPath: "Zielpfad",
     targetPathPlaceholder: "C:\\Pfad\\zu\\input.settings",
-    createBackupSave: "Backup erstellen & speichern",
+    createBackupSave: "In Datei speichern",
     bindings: "Bindungen",
     actions: "Aktionen",
     commands: "Befehle",
@@ -623,8 +623,12 @@ function uniqueInformativeActions(command) {
 }
 
 function keyChip(key) {
-  const hold = key.state === "Duration" ? ` ${t("hold")} ${key.idleTime || ""}s` : "";
-  return `<span class="chip ${key.device}" title="${escapeHtml(key.key || "")}">${escapeHtml(key.label)}${escapeHtml(hold)}</span>`;
+  // "Duration" bindings fire on hold-to-trigger rather than tap. That detail
+  // confused users on the chip itself, so keep the chip to just the key label and
+  // move the hold note into the tooltip for whoever needs to tell tap from hold.
+  const hold = key.state === "Duration" ? ` (${t("hold")} ${key.idleTime || ""}s)` : "";
+  const title = `${key.key || ""}${hold}`;
+  return `<span class="chip ${key.device}" title="${escapeHtml(title)}">${escapeHtml(key.label)}</span>`;
 }
 
 function openRemap(commandId) {

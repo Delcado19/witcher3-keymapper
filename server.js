@@ -1072,13 +1072,53 @@ function isDebugCommand(command) {
 // behind an opt-in "engine bindings" toggle — NOT removed from the scan, so the
 // conflict scanner stays byte-stable. Display-only.
 const ENGINE_INTERNAL_IDS = new Set([
-  "ChangeChoiceAxis", "OnShowControlsHelp", "PanelFakeHud", "ShowEntryInPanel"
+  "ChangeChoiceAxis", "OnShowControlsHelp", "PanelFakeHud", "ShowEntryInPanel",
+  // Vanilla abort/modifier helpers, not player-facing keybinds the user rebinds.
+  "Alternate", "ThrowCastAbort", "VehicleItemActionAbort"
 ]);
+// Display-only "hidden behind the toggle" predicate. Includes Ciri-only actions
+// (Ciri*): those mirror a Geralt action and are kept in sync automatically (see
+// CIRI_TWIN_ACTION), so showing them as separate rows would just clutter the list.
 function isEngineInternalCommand(command) {
   return /^GI_/.test(command) ||
     /^ComboDigit/.test(command) ||
     /^(Confirm|Close|Select)RadialMenu/.test(command) ||
+    /^Ciri/.test(command) ||
     ENGINE_INTERNAL_IDS.has(command);
+}
+
+// Ciri-only action variants mirror a Geralt action on the same physical key (the
+// *_Replacer_Ciri sections from the controls setup). Shared basics (MoveFwd, …)
+// already remap across all sections, but these special actions carry their own
+// ids, so a Geralt remap would otherwise leave Ciri's twin behind on the old key.
+// Mapping confirmed against input.settings by key co-location (e.g. IK_Alt=Dodge /
+// IK_Alt=CiriDodge, IK_Q=CastSign / IK_Q=CiriSpecialAttack) and by the user.
+const CIRI_TWIN_ACTION = {
+  CiriDodge: "Dodge",
+  CiriDash: "Roll",
+  CiriAttackHeavy: "AttackHeavy",
+  CiriSpecialAttackHeavy: "SpecialAttackHeavy",
+  CiriSpecialAttack: "CastSign",
+  CiriDrawWeapon: "SteelSword",
+  CiriDrawWeaponAlternative: "SilverSword",
+  CiriHolsterWeapon: "SwordSheathe"
+};
+const CIRI_TWINS_BY_GERALT = Object.entries(CIRI_TWIN_ACTION).reduce((map, [ciri, geralt]) => {
+  (map[geralt] = map[geralt] || []).push(ciri);
+  return map;
+}, {});
+
+// Forward sync: remapping a Geralt action also drags along its Ciri twin so the
+// playable-as-Ciri sections keep matching keys. One-directional by design — the
+// Ciri commands are hidden from the list, so a reverse sync is never triggered.
+function expandActionsWithCiriTwins(actions) {
+  const out = [...actions];
+  for (const action of actions) {
+    for (const twin of CIRI_TWINS_BY_GERALT[action] || []) {
+      if (!out.includes(twin)) out.push(twin);
+    }
+  }
+  return out;
 }
 
 // Witcher 3 uses duplicate key rows for contextual aliases: keyboard movement
@@ -1254,7 +1294,8 @@ function remap(body) {
 
   const parsed = parseInputSettings(defaults.inputSettings);
   assertValidInputSettings(parsed.syntax);
-  const actionSet = new Set(actions);
+  // Drag Ciri twins along so playing as Ciri keeps the same keys (forward sync).
+  const actionSet = new Set(expandActionsWithCiriTwins(actions));
   let changed = 0;
   const nextLines = parsed.lines.map((line) => {
     const trimmed = line.trim();
@@ -1272,7 +1313,10 @@ function remap(body) {
 
   if (!changed) throw new Error("No matching bindings were changed.");
 
-  const backup = `${defaults.inputSettings}.${timestamp()}.bak`;
+  // Single rolling backup (overwritten each change) instead of one timestamped
+  // file per remap — otherwise a session of edits litters the folder with dozens
+  // of .bak files. Trade-off: only one undo step (the state before this change).
+  const backup = `${defaults.inputSettings}.bak`;
   fs.copyFileSync(defaults.inputSettings, backup);
   fs.writeFileSync(defaults.inputSettings, sortInputSettingsText(nextLines.join("\n")), "utf8");
   return { changed, backup };
@@ -1341,7 +1385,8 @@ function handleSave(body) {
   const content = body.sort === false ? rawContent : sortInputSettingsText(rawContent);
   let backup = null;
   if (fs.existsSync(targetPath)) {
-    backup = `${targetPath}.${timestamp()}.bak`;
+    // Single rolling backup per target (see remap): avoids piling up .bak files.
+    backup = `${targetPath}.bak`;
     try {
       fs.copyFileSync(targetPath, backup);
     } catch (cause) {
@@ -1687,6 +1732,8 @@ module.exports = {
   preferredLocalizationCodes,
   humanizeDisplayName,
   isEngineInternalCommand,
+  CIRI_TWIN_ACTION,
+  expandActionsWithCiriTwins,
   handleSave,
   handleSaveProfile,
   assertValidProfilePayload,

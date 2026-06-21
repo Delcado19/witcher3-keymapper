@@ -50,7 +50,9 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 20px/1.6 'Crimson Text', Georgia, serif;
+  /* Readable system sans (ships ß/umlauts, no web-font download). The previous
+     'Crimson Text'/'Cinzel' families were never loaded and fell back to serif. */
+  font: 20px/1.6 system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   
   /* Base texture; the final artwork layer is applied in the style pass below. */
   background-image:
@@ -62,7 +64,12 @@ body {
 
 /* Medieval typography. */
 h1, h2, h3, .device-tab, button {
-  font-family: 'Cinzel', serif;
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+}
+/* Theme accent stays on headings only. Buttons/tabs keep their normal case +
+   no letter-spacing: more readable, and it removes the trailing-letter-spacing
+   that pushed labels past the right edge of fixed-width buttons (.compact-action). */
+h1, h2, h3 {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -241,7 +248,7 @@ button:active {
 }
 
 .summary-item strong {
-  font-family: 'Cinzel', serif;
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   font-weight: 700;
   font-size: 19px;
   color: var(--gold);
@@ -1471,7 +1478,7 @@ main {
 .conflicts-panel > summary {
   cursor: pointer;
   padding: 8px 12px;
-  font-family: 'Cinzel', serif;
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 17px;
   color: var(--gold);
 }

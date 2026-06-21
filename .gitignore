@@ -2,10 +2,11 @@
 /node_modules
 
 # Witcher 3 user data — local working copy of the keybinding file, NOT source code.
-# Treat input.settings as user data (see AGENTS.md). Backups are written next to it
-# as input.settings.<timestamp>.bak by server.js (createBackup).
+# Treat input.settings as user data (see AGENTS.md). A single rolling backup is
+# written next to it as input.settings.bak by server.js (older builds used a
+# per-change input.settings.<timestamp>.bak; the glob still covers those).
 /input.settings
-/input.settings.*.bak
+/input.settings*.bak
 
 # local AI/tool handoff state
 /AI_JOURNAL.md
