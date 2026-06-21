@@ -2,7 +2,9 @@
  * Witcher 3 Keymapper - compact medieval style.
  * ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+/* No web-font import: this is an offline local tool and all text now uses a
+   readable system sans stack (ships ß/umlauts). The old Cinzel/Crimson import
+   only added a network request and a serif FOUT when offline. */
 
 :root {
   color-scheme: dark;
@@ -51,7 +53,8 @@ body {
   background: var(--bg);
   color: var(--text);
   /* Readable system sans (ships ß/umlauts, no web-font download). The previous
-     'Crimson Text'/'Cinzel' families were never loaded and fell back to serif. */
+     'Crimson Text'/'Cinzel' came from a Google Fonts @import (now removed) and
+     fell back to serif whenever this offline-first tool ran without a network. */
   font: 20px/1.6 system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   
   /* Base texture; the final artwork layer is applied in the style pass below. */
@@ -1128,9 +1131,9 @@ select:focus-visible,
   border-radius: 5px;
 }
 .assign-list { display: flex; flex-direction: column; gap: 2px; max-height: 240px; overflow-y: auto; }
-/* These are <button>s, so they inherit the global button styling (Cinzel/uppercase,
-   overflow:hidden, 17px). Override it: command names must read normally, and the row
-   must size to its text instead of collapsing and clipping it. */
+/* These are <button>s, so they inherit the global button styling (system sans,
+   overflow:hidden). Override it: command names must size to their text instead of
+   collapsing and clipping it. */
 .assign-item {
   display: flex;
   justify-content: space-between;
@@ -1146,7 +1149,7 @@ select:focus-visible,
   cursor: pointer;
   border-radius: 5px;
   overflow: visible;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   text-transform: none;
   letter-spacing: normal;
   font-size: 15px;
@@ -1418,7 +1421,7 @@ main {
   stroke: var(--conflict-medium);
 }
 .leader-svg .leader-label {
-  font: 600 23px/1.15 'Crimson Text', serif;
+  font: 600 23px/1.15 system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   fill: #e9e2d4;
   pointer-events: none;
   paint-order: stroke;
@@ -1728,7 +1731,7 @@ select option {
   align-items: center;
   gap: 6px;
   color: var(--muted);
-  font: 600 12px/1 "Cinzel", serif;
+  font: 600 12px/1 system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1736,7 +1739,7 @@ select option {
 .language-select select {
   min-height: 36px;
   min-width: 128px;
-  font: 600 14px/1 "Cinzel", serif;
+  font: 600 14px/1 system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   text-transform: uppercase;
 }
 
@@ -1835,7 +1838,7 @@ dialog::after {
 
 .key-label {
   fill: #eee8dc;
-  font-family: "Cinzel", Georgia, serif;
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 .toast-error,
