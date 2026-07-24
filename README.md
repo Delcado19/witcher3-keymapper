@@ -96,3 +96,7 @@ New devices can be added by adding a profile plus an `index.json` entry. Current
 ## Project Docs And AI Workflow
 
 `AGENTS.md` is the entrypoint for AI coding tools. The feature specification is under `docs/specs/device-centric-ui/`. `AI_JOURNAL.md`, `CLAUDE.md`, and `.claude/` are local and gitignored.
+
+## License
+
+[MIT](./LICENSE).
