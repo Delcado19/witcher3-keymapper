@@ -1,0 +1,141 @@
+/* CSS für semantische Bindings UI-Verbesserungen */
+
+/* Semantische Gruppen Styles */
+.action-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 0.8em;
+  transition: all 160ms ease-out;
+  cursor: default;
+}
+
+/* Konflikt Styles */
+.conflict {
+  border-radius: 4px;
+  padding: 8px;
+  margin: 4px 0;
+  transition: all 200ms ease-out;
+}
+
+.conflict:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Button Feedback */
+.chip {
+  transition: all 160ms ease-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chip:hover {
+  transform: scale(1.05);
+}
+
+/* Leere Zustände */
+.empty {
+  text-align: center;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+/* Kommandos */
+.command {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 12px;
+  margin: 8px 0;
+  transition: all 200ms ease-out;
+}
+
+.command:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-color: #ccc;
+}
+
+/* Kommandoaktionen */
+.command-actions {
+  margin: 8px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Compact Tokens */
+.compact-token {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  transition: all 120ms ease-out;
+}
+
+/* Hover Effekte */
+.compact-token:hover {
+  transform: scale(1.05);
+}
+
+/* Popover Styles */
+.popover {
+  transition: all 200ms ease-out;
+  transform-origin: top left;
+}
+
+.popover:hover {
+  transform: scale(1.01);
+}
+
+/* Tooltip Styles */
+.tooltip {
+  transition: all 160ms ease-out;
+}
+
+/* Animationen */
+.fade-in {
+  animation: fadeIn 200ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .command-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-tag {
+    margin: 1px;
+    padding: 1px 4px;
+    font-size: 0.75em;
+  }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

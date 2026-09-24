@@ -522,7 +522,8 @@ function renderConflicts() {
   const groups = groupConflicts(scan.conflicts);
   els.conflictCount.textContent = `${t("conflicts")} (${groups.length})`;
   if (!groups.length) {
-    els.conflicts.innerHTML = `<div class="empty muted">${escapeHtml(t("noConflicts"))}</div>`;
+    const emptyStyle = getEmptyStateStyle('no-conflicts');
+    els.conflicts.innerHTML = `<div class="empty muted" style="${Object.entries(emptyStyle).map(([k, v]) => `${k}: ${v}`).join('; ')}">${escapeHtml(t("noConflicts"))}</div>`;
     return;
   }
   // data-conflict-key lets the SVG popover scroll to & highlight the entry
@@ -533,15 +534,34 @@ function renderConflicts() {
       // Highlight the cause (non-vanilla command); the vanilla companions are only
       // context-sensitive neighbours, so they stay dim.
       const isCause = grp.offenders?.has(name);
-      return `<span class="compact-token${isCause ? " cause" : ""}" title="${escapeHtml(src)}">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
+
+      // Bestimme die semantische Gruppe für die Aktion
+      const group = getSemanticGroupForAction(name);
+      const style = getSemanticGroupStyle(group);
+
+      return `<span class="compact-token${isCause ? " cause" : ""}" title="${escapeHtml(src)}" style="color: ${style.color}; background-color: ${style.backgroundColor}; border-color: ${style.borderColor};">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
+
+    // Bestimme die semantische Gruppe für die Konflikte
+    const conflictGroups = new Set();
+    grp.commands.forEach(cmd => {
+      const group = getSemanticGroupForAction(cmd);
+      if (group !== 'UNDEFINED') {
+        conflictGroups.add(group);
+      }
+    });
+
+    // Erstelle visuelle Darstellung für Konflikte
+    const conflictStyle = getConflictStyle(grp);
+
     // Show how many gameplay contexts share this overload instead of listing the
     // cryptic section names (Boat, *_Replacer_Ciri, …), which read as separate
     // problems even though it is one physical key overload.
     const contextNote = grp.sections.length > 1 ? t("inContexts", { count: grp.sections.length }) : "";
     const severity = grp.severity === "high" ? t("critical") : t("context");
+
     return `
-    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
+    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0" style="${Object.entries(conflictStyle).map(([k, v]) => `${k}: ${v}`).join('; ')}">
       <div class="compact-key">
         <strong>${escapeHtml(grp.keyLabel)}</strong>
         <span>${escapeHtml(severity)}</span>
@@ -586,6 +606,23 @@ function renderCommands() {
     const title = commandTitleText(command);
     const sourceLine = commandSourceLine(command);
     const actions = commandActionsLine(command);
+
+    // Bestimme die semantische Gruppe für die Aktionen
+    const actionGroups = new Set();
+    command.actions.forEach(action => {
+      const group = getSemanticGroupForAction(action);
+      if (group !== 'UNDEFINED') {
+        actionGroups.add(group);
+      }
+    });
+
+    // Erstelle visuelle Darstellung für Aktionen
+    const actionElements = command.actions.map(action => {
+      const group = getSemanticGroupForAction(action);
+      const style = getSemanticGroupStyle(group);
+      return `<span class="action-tag" style="color: ${style.color}; background-color: ${style.backgroundColor}; border-color: ${style.borderColor};">${escapeHtml(action)}</span>`;
+    }).join(" ");
+
     return `
       <article class="command">
         <div class="compact-main">
@@ -594,6 +631,7 @@ function renderCommands() {
           ${actions ? `<div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>` : ""}
         </div>
         <div class="compact-keys">${keys.map((key) => keyChip(key)).join("")}</div>
+        <div class="command-actions">${actionElements}</div>
         <button class="compact-action" data-remap="${escapeHtml(command.id)}">${escapeHtml(t("change"))}</button>
       </article>
     `;
@@ -639,7 +677,9 @@ function keyChip(key) {
   // move the hold note into the tooltip for whoever needs to tell tap from hold.
   const hold = key.state === "Duration" ? ` (${t("hold")} ${key.idleTime || ""}s)` : "";
   const title = `${key.key || ""}${hold}`;
-  return `<span class="chip ${key.device}" title="${escapeHtml(title)}">${escapeHtml(key.label)}</span>`;
+
+  // Füge visuelles Feedback für Tasten hinzu
+  return `<span class="chip ${key.device}" title="${escapeHtml(title)}" onmousedown="applyButtonFeedback(this, 'press')" onmouseup="applyButtonFeedback(this, 'release')" onmouseenter="applyButtonFeedback(this, 'hover')">${escapeHtml(key.label)}</span>`;
 }
 
 function openRemap(commandId) {
@@ -654,6 +694,16 @@ function openRemap(commandId) {
   els.newKey.value = "";
   stopKeyCapture();
   renderRemapPreview();
+
+  // Füge visuelles Feedback für den Dialog hinzu
+  if (els.dialog) {
+    els.dialog.style.transition = 'all 200ms ease-out';
+    els.dialog.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      if (els.dialog) els.dialog.style.transform = 'scale(1)';
+    }, 10);
+  }
+
   els.dialog.showModal();
 }
 
@@ -1072,6 +1122,141 @@ function escapeHtml(value) {
     "\"": "&quot;",
     "'": "&#039;"
   }[char]));
+}
+
+/**
+ * UI-Verbesserungen für semantische Gruppen
+ */
+function getSemanticGroupStyle(groupKey) {
+  const styles = {
+    INTERACTION: {
+      color: '#4CAF50',
+      backgroundColor: '#E8F5E9',
+      borderColor: '#4CAF50',
+      icon: '🔍',
+      hoverColor: '#45a049'
+    },
+    COMBAT: {
+      color: '#F44336',
+      backgroundColor: '#FFEBEE',
+      borderColor: '#F44336',
+      icon: '⚔️',
+      hoverColor: '#d32f2f'
+    },
+    MOVEMENT: {
+      color: '#2196F3',
+      backgroundColor: '#E3F2FD',
+      borderColor: '#2196F3',
+      icon: '🏃',
+      hoverColor: '#1976D2'
+    },
+    SIGNS: {
+      color: '#9C27B0',
+      backgroundColor: '#F3E5F5',
+      borderColor: '#9C27B0',
+      icon: '✨',
+      hoverColor: '#7B1FA2'
+    },
+    ITEMS: {
+      color: '#FF9800',
+      backgroundColor: '#FFF3E0',
+      borderColor: '#FF9800',
+      icon: '📦',
+      hoverColor: '#F57C00'
+    },
+    MENUS: {
+      color: '#3F51B5',
+      backgroundColor: '#E8EAF6',
+      borderColor: '#3F51B5',
+      icon: '📋',
+      hoverColor: '#303F9F'
+    },
+    NAVIGATION: {
+      color: '#607D8B',
+      backgroundColor: '#F5F5F5',
+      borderColor: '#607D8B',
+      icon: '🗺️',
+      hoverColor: '#455A64'
+    },
+    EXPLORATION: {
+      color: '#8BC34A',
+      backgroundColor: '#F1F8E9',
+      borderColor: '#8BC34A',
+      icon: '🧭',
+      hoverColor: '#689F38'
+    },
+    HORSE: {
+      color: '#FF5722',
+      backgroundColor: '#FFF3E0',
+      borderColor: '#FF5722',
+      icon: '🐴',
+      hoverColor: '#E64A19'
+    },
+    UNDEFINED: {
+      color: '#9E9E9E',
+      backgroundColor: '#FAFAFA',
+      borderColor: '#9E9E9E',
+      icon: '❓',
+      hoverColor: '#616161'
+    }
+  };
+
+  return styles[groupKey] || styles.UNDEFINED;
+}
+
+function getConflictStyle(conflict) {
+  return {
+    color: '#F44336',
+    backgroundColor: '#FFEBEE',
+    borderColor: '#F44336',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    boxShadow: '0 2px 4px rgba(244, 67, 54, 0.2)'
+  };
+}
+
+function applyButtonFeedback(element, eventType) {
+  const styles = {
+    press: {
+      transform: 'scale(0.97)',
+      transition: 'transform 100ms ease-out'
+    },
+    release: {
+      transform: 'scale(1)',
+      transition: 'transform 160ms ease-out'
+    },
+    hover: {
+      transform: 'scale(1.02)',
+      transition: 'transform 120ms ease-out'
+    }
+  };
+
+  if (element && styles[eventType]) {
+    Object.assign(element.style, styles[eventType]);
+  }
+}
+
+function getEmptyStateStyle(type) {
+  const styles = {
+    'no-conflicts': {
+      color: '#9E9E9E',
+      backgroundColor: '#FAFAFA',
+      border: '1px dashed #E0E0E0',
+      textAlign: 'center',
+      padding: '20px',
+      borderRadius: '4px'
+    },
+    'no-bindings': {
+      color: '#9E9E9E',
+      backgroundColor: '#FAFAFA',
+      border: '1px solid #E0E0E0',
+      textAlign: 'center',
+      padding: '30px',
+      borderRadius: '4px'
+    }
+  };
+
+  return styles[type] || styles['no-conflicts'];
 }
 
 /* =====================================================================
