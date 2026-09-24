@@ -1,0 +1,86 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1790086937.3296316,
+    "seen": 1790252984.9135993,
+    "ast_hash": "5ebef3dd159986e465ab65e4014107ec",
+    "semantic_hash": "5ebef3dd159986e465ab65e4014107ec"
+  },
+  "package.json": {
+    "mtime": 1780339120.0,
+    "seen": 1790252984.9136028,
+    "ast_hash": "2998c441f21f9debe891e5104a154fe4",
+    "semantic_hash": "2998c441f21f9debe891e5104a154fe4"
+  },
+  "public/app.js": {
+    "mtime": 1782055499.0,
+    "seen": 1790252984.913604,
+    "ast_hash": "3a06010d115f5b84b232e9d835703c49",
+    "semantic_hash": "3a06010d115f5b84b232e9d835703c49"
+  },
+  "public/devices/ansi-us-104/profile.json": {
+    "mtime": 1781276448.0,
+    "seen": 1790252984.913605,
+    "ast_hash": "b86389a57663fdb3c8159016d1714956",
+    "semantic_hash": "b86389a57663fdb3c8159016d1714956"
+  },
+  "public/devices/ansi-us-87/profile.json": {
+    "mtime": 1780325366.0,
+    "seen": 1790252984.9136055,
+    "ast_hash": "5fbb93ed5e8f07f8ab6cd280ce2f6a86",
+    "semantic_hash": "5fbb93ed5e8f07f8ab6cd280ce2f6a86"
+  },
+  "public/devices/index.json": {
+    "mtime": 1780330053.0,
+    "seen": 1790252984.913606,
+    "ast_hash": "880c01dc5fd2b29f7beff742f269a2b0",
+    "semantic_hash": "880c01dc5fd2b29f7beff742f269a2b0"
+  },
+  "public/devices/iso-de-105/profile.json": {
+    "mtime": 1781276438.0,
+    "seen": 1790252984.9136066,
+    "ast_hash": "e66b97367526a44de099ca4cd97fc530",
+    "semantic_hash": "e66b97367526a44de099ca4cd97fc530"
+  },
+  "public/devices/iso-de-87/profile.json": {
+    "mtime": 1780325170.0,
+    "seen": 1790252984.9136071,
+    "ast_hash": "ea7ae23a6047dad9c9ff922a0902b35a",
+    "semantic_hash": "ea7ae23a6047dad9c9ff922a0902b35a"
+  },
+  "public/devices/mouse-5btn/profile.json": {
+    "mtime": 1781263860.0,
+    "seen": 1790252984.9136076,
+    "ast_hash": "dd02b736566b3934ce7637e0860e46e7",
+    "semantic_hash": "dd02b736566b3934ce7637e0860e46e7"
+  },
+  "public/devices/xbox-ctrl/profile.json": {
+    "mtime": 1781263992.0,
+    "seen": 1790252984.913608,
+    "ast_hash": "e10a72fb686e00436d43b66f297e5718",
+    "semantic_hash": "e10a72fb686e00436d43b66f297e5718"
+  },
+  "scripts/seed-leader-layout.js": {
+    "mtime": 1781196092.0,
+    "seen": 1790252984.913609,
+    "ast_hash": "f41036a9a85250ff62cb1face3f51369",
+    "semantic_hash": "f41036a9a85250ff62cb1face3f51369"
+  },
+  "server.js": {
+    "mtime": 1782037336.0,
+    "seen": 1790252984.9136095,
+    "ast_hash": "3808071e7627a8d1492b3fdbdc78a487",
+    "semantic_hash": "3808071e7627a8d1492b3fdbdc78a487"
+  },
+  "test/device-ui.test.js": {
+    "mtime": 1782055536.0,
+    "seen": 1790252984.91361,
+    "ast_hash": "acfb813fb03d640aaa9461233cf0805c",
+    "semantic_hash": "acfb813fb03d640aaa9461233cf0805c"
+  },
+  "test/render-smoke.test.js": {
+    "mtime": 1781207495.0,
+    "seen": 1790252984.9136107,
+    "ast_hash": "2db04f9bbafafe2a787d6e212b025e25",
+    "semantic_hash": "2db04f9bbafafe2a787d6e212b025e25"
+  }
+}
