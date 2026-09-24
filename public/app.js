@@ -536,7 +536,12 @@ function renderConflicts() {
       const isCause = grp.offenders?.has(name);
 
       // Bestimme die semantische Gruppe für die Aktion
-      const group = getSemanticGroupForAction(name);
+      let group = 'UNDEFINED';
+      try {
+        group = getSemanticGroupForAction(name);
+      } catch (e) {
+        console.log(`Fehler bei getSemanticGroupForAction für Konflikt-Aktion: ${name}`, e);
+      }
       const style = getSemanticGroupStyle(group);
 
       return `<span class="compact-token${isCause ? " cause" : ""}" title="${escapeHtml(src)}" style="color: ${style.color}; background-color: ${style.backgroundColor}; border-color: ${style.borderColor};">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
@@ -545,7 +550,12 @@ function renderConflicts() {
     // Bestimme die semantische Gruppe für die Konflikte
     const conflictGroups = new Set();
     grp.commands.forEach(cmd => {
-      const group = getSemanticGroupForAction(cmd);
+      let group = 'UNDEFINED';
+      try {
+        group = getSemanticGroupForAction(cmd);
+      } catch (e) {
+        console.log(`Fehler bei getSemanticGroupForAction für Konflikt-Gruppe: ${cmd}`, e);
+      }
       if (group !== 'UNDEFINED') {
         conflictGroups.add(group);
       }
@@ -618,7 +628,13 @@ function renderCommands() {
 
     // Erstelle visuelle Darstellung für Aktionen
     const actionElements = command.actions.map(action => {
-      const group = getSemanticGroupForAction(action);
+      // Fallback für Fehlerhandling
+      let group = 'UNDEFINED';
+      try {
+        group = getSemanticGroupForAction(action);
+      } catch (e) {
+        console.log(`Fehler bei getSemanticGroupForAction für Aktion: ${action}`, e);
+      }
       const style = getSemanticGroupStyle(group);
       return `<span class="action-tag" style="color: ${style.color}; background-color: ${style.backgroundColor}; border-color: ${style.borderColor};">${escapeHtml(action)}</span>`;
     }).join(" ");
