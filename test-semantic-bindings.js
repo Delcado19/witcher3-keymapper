@@ -10,7 +10,7 @@ import {
   findConflicts,
   SEMANTIC_GROUPS,
   CONFLICT_GROUPS
-} from './src/semantic-bindings.js';
+} from './public/semantic-bindings.js';
 
 // Testdaten für die Tests
 const testBindings = {

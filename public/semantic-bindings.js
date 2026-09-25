@@ -339,7 +339,12 @@ function findConflicts(bindings) {
   return conflicts;
 }
 
-export {
+// Loaded as a classic <script> before app.js (public/ is the only served dir), so the
+// functions become browser globals; app.js calls getSemanticGroupForAction directly.
+// A top-level `export` would be a SyntaxError there, hence the Node-only guard
+// (same pattern as app.js).
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
   SEMANTIC_GROUPS,
   CONTEXT_FUNCTIONS,
   TECHNICAL_ACTIONS,
@@ -349,4 +354,5 @@ export {
   checkConflict,
   getActionsForContext,
   findConflicts
-};
+  };
+}

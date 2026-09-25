@@ -1,10 +1,4 @@
 {
-  ".codex/hooks.json": {
-    "mtime": 1790086937.3296316,
-    "seen": 1790252984.9135993,
-    "ast_hash": "5ebef3dd159986e465ab65e4014107ec",
-    "semantic_hash": "5ebef3dd159986e465ab65e4014107ec"
-  },
   "package.json": {
     "mtime": 1780339120.0,
     "seen": 1790252984.9136028,
@@ -12,10 +6,10 @@
     "semantic_hash": "2998c441f21f9debe891e5104a154fe4"
   },
   "public/app.js": {
-    "mtime": 1782055499.0,
-    "seen": 1790252984.913604,
-    "ast_hash": "3a06010d115f5b84b232e9d835703c49",
-    "semantic_hash": "3a06010d115f5b84b232e9d835703c49"
+    "mtime": 1790282334.6449256,
+    "seen": 1790311743.1258132,
+    "ast_hash": "97361fb642f46387d7116aa7a9b75efe",
+    "semantic_hash": ""
   },
   "public/devices/ansi-us-104/profile.json": {
     "mtime": 1781276448.0,
@@ -95,60 +89,6 @@
     "ast_hash": "130777455ca5b80f2399b237decb3a3b",
     "semantic_hash": ""
   },
-  ".codex/skills/graphify/SKILL.md": {
-    "mtime": 1790086937.326689,
-    "seen": 1790262237.0626771,
-    "ast_hash": "212b55d95333d84e14262f8ec83faa2b",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/add-watch.md": {
-    "mtime": 1790086820.352585,
-    "seen": 1790262237.062678,
-    "ast_hash": "d59d027fe449f06aa03905a01184e779",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/exports.md": {
-    "mtime": 1790086820.3536677,
-    "seen": 1790262237.0626786,
-    "ast_hash": "9da2a2152e60a22f07f05fed5158f287",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/extraction-spec.md": {
-    "mtime": 1790086820.3541977,
-    "seen": 1790262237.0626793,
-    "ast_hash": "bf895ec4d4e40f5f66f7d31c2a9bd4a7",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/github-and-merge.md": {
-    "mtime": 1790086820.3547153,
-    "seen": 1790262237.0626798,
-    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/hooks.md": {
-    "mtime": 1790086820.355228,
-    "seen": 1790262237.0626802,
-    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/query.md": {
-    "mtime": 1790086820.355228,
-    "seen": 1790262237.0626812,
-    "ast_hash": "3c46f8ad006874260614ed8657d02307",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/transcribe.md": {
-    "mtime": 1790086820.3562336,
-    "seen": 1790262237.0626817,
-    "ast_hash": "67b6a5fa6c0974e18f60db9f8932fbd8",
-    "semantic_hash": ""
-  },
-  ".codex/skills/graphify/references/update.md": {
-    "mtime": 1790086820.3567405,
-    "seen": 1790262237.0626822,
-    "ast_hash": "9378bd03d56baaf78bd738ab3848f142",
-    "semantic_hash": ""
-  },
   ".github/workflows/ci.yml": {
     "mtime": 1780688764.0,
     "seen": 1790262237.0626826,
@@ -209,52 +149,22 @@
     "ast_hash": "ab77968bf44a2ac8192e76c9b56f6855",
     "semantic_hash": ""
   },
-  "public/assets/gamepad.png": {
-    "mtime": 1780902273.0,
-    "seen": 1790262237.0626884,
-    "ast_hash": "6581f78230a478566aaaba721136673f",
-    "semantic_hash": ""
-  },
-  "public/assets/keymapper-background.png": {
-    "mtime": 1780851249.0,
-    "seen": 1790262237.0626888,
-    "ast_hash": "654b98213f1c5a68c2fb38b4861358c7",
-    "semantic_hash": ""
-  },
-  "public/assets/keymapper-header.png": {
-    "mtime": 1780851122.0,
-    "seen": 1790262237.0626893,
-    "ast_hash": "7c1b13d5994a627b72bd47811dd907ca",
-    "semantic_hash": ""
-  },
-  "public/assets/mouse.png": {
-    "mtime": 1780902268.0,
-    "seen": 1790262237.0626898,
-    "ast_hash": "57817818196dfe3c22e814e6edeb3c7e",
-    "semantic_hash": ""
-  },
-  "public/devices/mouse-5btn/device.png": {
-    "mtime": 1780903155.0,
-    "seen": 1790262237.0626903,
-    "ast_hash": "aaa42d7a4c1a888ce8fa196db6859d52",
-    "semantic_hash": ""
-  },
   "public/devices/mouse-5btn/device.svg": {
     "mtime": 1780399464.0,
     "seen": 1790262237.0626907,
     "ast_hash": "1ddb00193e8eaf77fdbc0d703fbb0aaa",
     "semantic_hash": ""
   },
-  "public/devices/xbox-ctrl/device.png": {
-    "mtime": 1780903155.0,
-    "seen": 1790262237.0626912,
-    "ast_hash": "1a336ae866e7b114bca5e3fed68e2b72",
-    "semantic_hash": ""
-  },
   "public/devices/xbox-ctrl/device.svg": {
     "mtime": 1780401251.0,
     "seen": 1790262237.062692,
     "ast_hash": "17a61288fc8ff7f61b94564a6a690cac",
+    "semantic_hash": ""
+  },
+  "src/semantic-ui-enhancements.js": {
+    "mtime": 1790272822.6858108,
+    "seen": 1790311743.1258252,
+    "ast_hash": "fcc38e86ba71bcbd8e57f6e026b2a030",
     "semantic_hash": ""
   }
 }
