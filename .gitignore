@@ -1,23 +1,62 @@
-# dependencies
-/node_modules
 
-# Witcher 3 user data — local working copy of the keybinding file, NOT source code.
-# Treat input.settings as user data (see AGENTS.md). A single rolling backup is
-# written next to it as input.settings.bak by server.js (older builds used a
-# per-change input.settings.<timestamp>.bak; the glob still covers those).
+# ============================================================
+# Witcher 3 Keymapper - .gitignore
+# ============================================================
+
+# Node.js dependencies
+/node_modules/
+
+# Witcher 3 user data
+# Local working copy - never commit personal game settings.
 /input.settings
 /input.settings*.bak
 
-# local AI/tool handoff state
+# Local AI context and handoff files
 /AI_JOURNAL.md
 /CLAUDE.md
 /.claude/
 
-# local reference material (in-game controls screenshots used to source curated
-# display names) — kept locally, never committed (large binary, not source).
+# Local reference screenshots
 /screenshots/
 
-# misc
+# Graphify - keep graph and reports versioned,
+# but exclude locally generated caches.
+/graphify-out/cache/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Test and coverage output
+/coverage/
+
+# Local caches
 .cache/
-.DS_Store
+
+# Graphify: generated local cache
+/graphify-out/cache/
+
+# Logs
+*.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# IDE and editor settings
+.vscode/
+.idea/
