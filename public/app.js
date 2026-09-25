@@ -571,7 +571,7 @@ function renderConflicts() {
     const severity = grp.severity === "high" ? t("critical") : t("context");
 
     return `
-    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0" style="${Object.entries(conflictStyle).map(([k, v]) => `${k}: ${v}`).join('; ')}">
+    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
       <div class="compact-key">
         <strong>${escapeHtml(grp.keyLabel)}</strong>
         <span>${escapeHtml(severity)}</span>

@@ -98,11 +98,13 @@ function getSemanticGroupStyle(groupKey) {
 function getConflictStyle(conflict) {
   return {
     color: '#F44336',
-    backgroundColor: '#FFEBEE',
+    backgroundColor: 'rgba(255, 235, 238, 0.1)', // Light red with transparency
     borderColor: '#F44336',
     borderWidth: '2px',
     borderStyle: 'solid',
-    boxShadow: '0 2px 4px rgba(244, 67, 54, 0.2)'
+    boxShadow: '0 2px 4px rgba(244, 67, 54, 0.2)',
+    borderRadius: '4px',
+    padding: '4px 6px'
   };
 }
 

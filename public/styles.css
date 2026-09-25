@@ -387,6 +387,7 @@ button:active {
 .conflicts {
   display: grid;
   font-size: 17px;
+  width: 100%;
 }
 
 .command,
@@ -399,6 +400,8 @@ button:active {
   padding: 3px 6px;
   border-bottom: 1px solid rgba(61, 52, 38, 0.35);
   transition: background 0.12s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .command:hover,
@@ -408,6 +411,11 @@ button:active {
 
 .conflict {
   grid-template-columns: 90px minmax(200px, 1fr) minmax(140px, 0.7fr);
+  background-color: var(--panel);
+  border-radius: 4px;
+  margin-bottom: 2px;
+  min-height: 36px;
+  padding: 6px 8px;
 }
 
 .command:last-child,
@@ -472,6 +480,146 @@ button:active {
 .medium {
   border-left: 3px solid var(--conflict-medium);
   background: rgba(245, 124, 0, 0.06);
+}
+
+/* Ensure conflicts have proper background colors to prevent white backgrounds */
+.conflict {
+  background-color: var(--panel);
+  border-radius: 4px;
+  margin-bottom: 2px;
+  min-height: 36px;
+  padding: 6px 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix for clipped content in conflict lists */
+.conflicts {
+  overflow-x: visible;
+  padding: 2px 0;
+  width: 100%;
+}
+
+/* Ensure command and conflict items don't overflow their containers */
+.command,
+.conflict {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; /* Important for flex/grid layouts to prevent overflow */
+  flex-shrink: 1; /* Allow items to shrink when needed */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Better handling of long content in conflict displays */
+.compact-main {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto; /* Allow the main content area to grow/shrink properly */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Ensure compact tokens don't overflow */
+.compact-token {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Ensure conflicts have proper background colors to prevent white backgrounds */
+.conflict {
+  background-color: var(--panel);
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+/* Fix for clipped content in conflict lists */
+.conflicts {
+  overflow-x: visible;
+  padding: 2px 0;
+}
+
+/* Ensure command and conflict items don't overflow their containers */
+.command,
+.conflict {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; /* Important for flex/grid layouts to prevent overflow */
+  flex-shrink: 1; /* Allow items to shrink when needed */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Better handling of long content in conflict displays */
+.compact-main {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto; /* Allow the main content area to grow/shrink properly */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Ensure compact tokens don't overflow */
+.compact-token {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* Ensure conflict items have proper spacing */
+.conflict {
+  padding: 6px 8px;
+  margin: 2px 0;
+}
+
+/* Ensure the conflict list container properly handles its children */
+.conflicts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Ensure conflicts have proper background colors to prevent white backgrounds */
+.conflict {
+  background-color: var(--panel);
+}
+
+/* Fix for clipped content in conflict lists */
+.conflicts {
+  overflow-x: visible;
+}
+
+/* Ensure command and conflict items don't overflow their containers */
+.command,
+.conflict {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Better handling of long content in conflict displays */
+.compact-main {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Medieval dialogs with a parchment-and-seal treatment. */
@@ -638,6 +786,10 @@ dialog input:focus {
   .command,
   .conflict {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "key"
+      "main"
+      "meta";
   }
 
   .topbar {
@@ -647,6 +799,23 @@ dialog input:focus {
 
   .top-actions {
     justify-content: flex-start;
+  }
+
+  /* Ensure conflicts are properly displayed on mobile */
+  .conflict {
+    padding: 8px;
+  }
+
+  .compact-key {
+    grid-area: key;
+  }
+
+  .compact-main {
+    grid-area: main;
+  }
+
+  .compact-meta {
+    grid-area: meta;
   }
 }
 
