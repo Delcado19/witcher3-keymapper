@@ -17,16 +17,100 @@
       "source_location": "L31"
     },
     {
+      "id": "public_app_activeprofileid",
+      "label": "activeProfileId()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "activeprofileid()",
+      "source_file": "public/app.js",
+      "source_location": "L1163"
+    },
+    {
+      "id": "public_app_activeprofileids",
+      "label": "activeProfileIds()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "activeprofileids()",
+      "source_file": "public/app.js",
+      "source_location": "L1169"
+    },
+    {
+      "id": "public_app_applycoloring",
+      "label": "applyColoring()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "applycoloring()",
+      "source_file": "public/app.js",
+      "source_location": "L2390"
+    },
+    {
       "id": "public_app_applystatictexts",
       "label": "applyStaticTexts()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "applystatictexts()",
       "source_file": "public/app.js",
       "source_location": "L304"
+    },
+    {
+      "id": "public_app_assignkeytocommand",
+      "label": "assignKeyToCommand()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "assignkeytocommand()",
+      "source_file": "public/app.js",
+      "source_location": "L1639"
+    },
+    {
+      "id": "public_app_attachkeyinteractions",
+      "label": "attachKeyInteractions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "attachkeyinteractions()",
+      "source_file": "public/app.js",
+      "source_location": "L1295"
+    },
+    {
+      "id": "public_app_buildcolormap",
+      "label": "buildColorMap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "buildcolormap()",
+      "source_file": "public/app.js",
+      "source_location": "L1876"
+    },
+    {
+      "id": "public_app_buildlegend",
+      "label": "buildLegend()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "buildlegend()",
+      "source_file": "public/app.js",
+      "source_location": "L1925"
     },
     {
       "id": "public_app_clearbinding",
@@ -34,11 +118,71 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "clearbinding()",
       "source_file": "public/app.js",
-      "source_location": "L1799"
+      "source_location": "L1667"
+    },
+    {
+      "id": "public_app_closepopover",
+      "label": "closePopover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "closepopover()",
+      "source_file": "public/app.js",
+      "source_location": "L1528"
+    },
+    {
+      "id": "public_app_commandactionsline",
+      "label": "commandActionsLine()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "commandactionsline()",
+      "source_file": "public/app.js",
+      "source_location": "L679"
+    },
+    {
+      "id": "public_app_commandsourceline",
+      "label": "commandSourceLine()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "commandsourceline()",
+      "source_file": "public/app.js",
+      "source_location": "L672"
+    },
+    {
+      "id": "public_app_commandtitletext",
+      "label": "commandTitleText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "commandtitletext()",
+      "source_file": "public/app.js",
+      "source_location": "L668"
+    },
+    {
+      "id": "public_app_computetopmods",
+      "label": "computeTopMods()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "computetopmods()",
+      "source_file": "public/app.js",
+      "source_location": "L1826"
     },
     {
       "id": "public_app_confirmclear",
@@ -46,11 +190,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "confirmclear()",
       "source_file": "public/app.js",
-      "source_location": "L1790"
+      "source_location": "L1658"
     },
     {
       "id": "public_app_currentlanguage",
@@ -58,7 +202,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "currentlanguage()",
       "source_file": "public/app.js",
@@ -70,11 +214,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "decodeinputsettingsbuffer()",
       "source_file": "public/app.js",
       "source_location": "L1019"
+    },
+    {
+      "id": "public_app_detectbrowserlanguage",
+      "label": "detectBrowserLanguage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "detectbrowserlanguage()",
+      "source_file": "public/app.js",
+      "source_location": "L277"
     },
     {
       "id": "public_app_devicehasbindings",
@@ -82,11 +238,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "devicehasbindings()",
       "source_file": "public/app.js",
-      "source_location": "L1290"
+      "source_location": "L1158"
     },
     {
       "id": "public_app_devicelabel",
@@ -94,11 +250,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "devicelabel()",
       "source_file": "public/app.js",
-      "source_location": "L1284"
+      "source_location": "L1152"
+    },
+    {
+      "id": "public_app_dominantvanillacategory",
+      "label": "dominantVanillaCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "dominantvanillacategory()",
+      "source_file": "public/app.js",
+      "source_location": "L1868"
+    },
+    {
+      "id": "public_app_escapehtml",
+      "label": "escapeHtml()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "escapehtml()",
+      "source_file": "public/app.js",
+      "source_location": "L1133"
     },
     {
       "id": "public_app_getlanguagechoice",
@@ -106,7 +286,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "getlanguagechoice()",
       "source_file": "public/app.js",
@@ -118,11 +298,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "getprofile()",
       "source_file": "public/app.js",
-      "source_location": "L1306"
+      "source_location": "L1174"
+    },
+    {
+      "id": "public_app_groupconflicts",
+      "label": "groupConflicts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "groupconflicts()",
+      "source_file": "public/app.js",
+      "source_location": "L480"
     },
     {
       "id": "public_app_handleloadfile",
@@ -130,7 +322,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "handleloadfile()",
       "source_file": "public/app.js",
@@ -142,11 +334,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "handlesavefile()",
       "source_file": "public/app.js",
       "source_location": "L1046"
+    },
+    {
+      "id": "public_app_hasresolvedname",
+      "label": "hasResolvedName()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "hasresolvedname()",
+      "source_file": "public/app.js",
+      "source_location": "L664"
+    },
+    {
+      "id": "public_app_highlightconflicts",
+      "label": "highlightConflicts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "highlightconflicts()",
+      "source_file": "public/app.js",
+      "source_location": "L1693"
+    },
+    {
+      "id": "public_app_keychip",
+      "label": "keyChip()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "keychip()",
+      "source_file": "public/app.js",
+      "source_location": "L690"
     },
     {
       "id": "public_app_languagequery",
@@ -154,7 +382,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "languagequery()",
       "source_file": "public/app.js",
@@ -166,11 +394,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "load()",
       "source_file": "public/app.js",
       "source_location": "L390"
+    },
+    {
+      "id": "public_app_loadprofile",
+      "label": "loadProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "loadprofile()",
+      "source_file": "public/app.js",
+      "source_location": "L1783"
+    },
+    {
+      "id": "public_app_loadregistry",
+      "label": "loadRegistry()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "loadregistry()",
+      "source_file": "public/app.js",
+      "source_location": "L1776"
+    },
+    {
+      "id": "public_app_localizelegendlabel",
+      "label": "localizeLegendLabel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "localizelegendlabel()",
+      "source_file": "public/app.js",
+      "source_location": "L1282"
     },
     {
       "id": "public_app_markprofiledirty",
@@ -178,11 +442,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "markprofiledirty()",
       "source_file": "public/app.js",
-      "source_location": "L1640"
+      "source_location": "L1508"
     },
     {
       "id": "public_app_matchdevice",
@@ -190,11 +454,59 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "matchdevice()",
       "source_file": "public/app.js",
-      "source_location": "L1931"
+      "source_location": "L1799"
+    },
+    {
+      "id": "public_app_onoutsideclick",
+      "label": "onOutsideClick()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "onoutsideclick()",
+      "source_file": "public/app.js",
+      "source_location": "L1535"
+    },
+    {
+      "id": "public_app_onpopoverkeydown",
+      "label": "onPopoverKeydown()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "onpopoverkeydown()",
+      "source_file": "public/app.js",
+      "source_location": "L1534"
+    },
+    {
+      "id": "public_app_openpopover",
+      "label": "openPopover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "openpopover()",
+      "source_file": "public/app.js",
+      "source_location": "L1539"
+    },
+    {
+      "id": "public_app_openremap",
+      "label": "openRemap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "openremap()",
+      "source_file": "public/app.js",
+      "source_location": "L701"
     },
     {
       "id": "public_app_opensavedialog",
@@ -202,11 +514,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "opensavedialog()",
       "source_file": "public/app.js",
       "source_location": "L1032"
+    },
+    {
+      "id": "public_app_positionpopover",
+      "label": "positionPopover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "positionpopover()",
+      "source_file": "public/app.js",
+      "source_location": "L1645"
     },
     {
       "id": "public_app_promptlabeltext",
@@ -214,23 +538,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "promptlabeltext()",
       "source_file": "public/app.js",
-      "source_location": "L1647"
+      "source_location": "L1515"
     },
     {
-      "id": "public_app_remapinputsettingstext",
-      "label": "remapInputSettingsText()",
+      "id": "public_app_rebuildcolormap",
+      "label": "rebuildColorMap()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
-      "norm_label": "remapinputsettingstext()",
+      "norm_label": "rebuildcolormap()",
       "source_file": "public/app.js",
-      "source_location": "L1101"
+      "source_location": "L1187"
     },
     {
       "id": "public_app_remapsessioncontent",
@@ -238,23 +562,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "remapsessioncontent()",
       "source_file": "public/app.js",
       "source_location": "L1074"
     },
     {
-      "id": "public_app_renderdevicesvg",
-      "label": "renderDeviceSvg()",
+      "id": "public_app_render",
+      "label": "render()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
-      "norm_label": "renderdevicesvg()",
+      "norm_label": "render()",
       "source_file": "public/app.js",
-      "source_location": "L2500"
+      "source_location": "L446"
+    },
+    {
+      "id": "public_app_rendercommands",
+      "label": "renderCommands()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "rendercommands()",
+      "source_file": "public/app.js",
+      "source_location": "L589"
+    },
+    {
+      "id": "public_app_renderconflicts",
+      "label": "renderConflicts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "renderconflicts()",
+      "source_file": "public/app.js",
+      "source_location": "L521"
     },
     {
       "id": "public_app_renderdeviceview",
@@ -262,11 +610,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "renderdeviceview()",
       "source_file": "public/app.js",
-      "source_location": "L1327"
+      "source_location": "L1195"
+    },
+    {
+      "id": "public_app_renderlegend",
+      "label": "renderLegend()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "renderlegend()",
+      "source_file": "public/app.js",
+      "source_location": "L1275"
+    },
+    {
+      "id": "public_app_renderremappreview",
+      "label": "renderRemapPreview()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "renderremappreview()",
+      "source_file": "public/app.js",
+      "source_location": "L755"
     },
     {
       "id": "public_app_resetleaderlayouts",
@@ -274,7 +646,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "resetleaderlayouts()",
       "source_file": "public/app.js",
@@ -286,7 +658,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "resolvekeyboardprofile()",
       "source_file": "public/app.js",
@@ -298,11 +670,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "saveleaderlayouts()",
       "source_file": "public/app.js",
       "source_location": "L952"
+    },
+    {
+      "id": "public_app_shortsource",
+      "label": "shortSource()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "shortsource()",
+      "source_file": "public/app.js",
+      "source_location": "L585"
+    },
+    {
+      "id": "public_app_showdeviceempty",
+      "label": "showDeviceEmpty()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "showdeviceempty()",
+      "source_file": "public/app.js",
+      "source_location": "L1256"
     },
     {
       "id": "public_app_showloading",
@@ -310,7 +706,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "showloading()",
       "source_file": "public/app.js",
@@ -322,7 +718,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "showsyntaxstatus()",
       "source_file": "public/app.js",
@@ -334,11 +730,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "showtoast()",
       "source_file": "public/app.js",
-      "source_location": "L2551"
+      "source_location": "L2419"
+    },
+    {
+      "id": "public_app_startkeycapture",
+      "label": "startKeyCapture()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "startkeycapture()",
+      "source_file": "public/app.js",
+      "source_location": "L813"
+    },
+    {
+      "id": "public_app_stopkeycapture",
+      "label": "stopKeyCapture()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "stopkeycapture()",
+      "source_file": "public/app.js",
+      "source_location": "L828"
+    },
+    {
+      "id": "public_app_summarizekey",
+      "label": "summarizeKey()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "summarizekey()",
+      "source_file": "public/app.js",
+      "source_location": "L2379"
     },
     {
       "id": "public_app_t",
@@ -346,11 +778,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "t()",
       "source_file": "public/app.js",
       "source_location": "L292"
+    },
+    {
+      "id": "public_app_uniqueinformativeactions",
+      "label": "uniqueInformativeActions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "uniqueinformativeactions()",
+      "source_file": "public/app.js",
+      "source_location": "L685"
     },
     {
       "id": "public_app_updateeditorbar",
@@ -358,7 +802,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "updateeditorbar()",
       "source_file": "public/app.js",
@@ -370,23 +814,59 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "code",
       "norm_label": "updatetabstate()",
       "source_file": "public/app.js",
-      "source_location": "L1395"
+      "source_location": "L1263"
     },
     {
-      "id": "server_activationbucket",
-      "label": "activationBucket()",
+      "id": "public_app_validateprofile",
+      "label": "validateProfile()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
+      "community": 0,
+      "community_name": "app.js",
       "file_type": "code",
-      "norm_label": "activationbucket()",
-      "source_file": "server.js",
-      "source_location": "L1048"
+      "norm_label": "validateprofile()",
+      "source_file": "public/app.js",
+      "source_location": "L1768"
+    },
+    {
+      "id": "public_app_vanillacategoryforaction",
+      "label": "vanillaCategoryForAction()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanillacategoryforaction()",
+      "source_file": "public/app.js",
+      "source_location": "L1839"
+    },
+    {
+      "id": "public_app_vanillacategoryforcommand",
+      "label": "vanillaCategoryForCommand()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanillacategoryforcommand()",
+      "source_file": "public/app.js",
+      "source_location": "L1855"
+    },
+    {
+      "id": "public_app_wireassignpicker",
+      "label": "wireAssignPicker()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "wireassignpicker()",
+      "source_file": "public/app.js",
+      "source_location": "L1617"
     },
     {
       "id": "server_assertvalidprofilepayload",
@@ -401,18 +881,6 @@
       "source_location": "L1405"
     },
     {
-      "id": "server_collectwitcherscriptfiles",
-      "label": "collectWitcherScriptFiles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "collectwitcherscriptfiles()",
-      "source_file": "server.js",
-      "source_location": "L571"
-    },
-    {
       "id": "server_compareinputkeys",
       "label": "compareInputKeys()",
       "_callable": true,
@@ -425,16 +893,16 @@
       "source_location": "L245"
     },
     {
-      "id": "server_conflictrelevantitems",
-      "label": "conflictRelevantItems()",
+      "id": "server_decodew3stringstocachedcsv",
+      "label": "decodeW3StringsToCachedCsv()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "server.js",
       "file_type": "code",
-      "norm_label": "conflictrelevantitems()",
+      "norm_label": "decodew3stringstocachedcsv()",
       "source_file": "server.js",
-      "source_location": "L1025"
+      "source_location": "L672"
     },
     {
       "id": "server_detectlayoutlanguagewin32sync",
@@ -461,54 +929,6 @@
       "source_location": "L1520"
     },
     {
-      "id": "server_findconflicts",
-      "label": "findConflicts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "findconflicts()",
-      "source_file": "server.js",
-      "source_location": "L975"
-    },
-    {
-      "id": "server_findexecutableonpath",
-      "label": "findExecutableOnPath()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "findexecutableonpath()",
-      "source_file": "server.js",
-      "source_location": "L637"
-    },
-    {
-      "id": "server_findw3stringsexe",
-      "label": "findW3StringsExe()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "findw3stringsexe()",
-      "source_file": "server.js",
-      "source_location": "L610"
-    },
-    {
-      "id": "server_findwitcherscriptfiles",
-      "label": "findWitcherScriptFiles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "findwitcherscriptfiles()",
-      "source_file": "server.js",
-      "source_location": "L564"
-    },
-    {
       "id": "server_handlesaveprofile",
       "label": "handleSaveProfile()",
       "_callable": true,
@@ -521,40 +941,16 @@
       "source_location": "L1428"
     },
     {
-      "id": "server_isbenigncommandset",
-      "label": "isBenignCommandSet()",
+      "id": "server_hashw3stringsdictionarykeys",
+      "label": "hashW3StringsDictionaryKeys()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "server.js",
       "file_type": "code",
-      "norm_label": "isbenigncommandset()",
+      "norm_label": "hashw3stringsdictionarykeys()",
       "source_file": "server.js",
-      "source_location": "L1053"
-    },
-    {
-      "id": "server_isdebugcommand",
-      "label": "isDebugCommand()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "isdebugcommand()",
-      "source_file": "server.js",
-      "source_location": "L1061"
-    },
-    {
-      "id": "server_isvanillaonlyconflict",
-      "label": "isVanillaOnlyConflict()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "isvanillaonlyconflict()",
-      "source_file": "server.js",
-      "source_location": "L1272"
+      "source_location": "L712"
     },
     {
       "id": "server_keysorttuple",
@@ -569,16 +965,16 @@
       "source_location": "L229"
     },
     {
-      "id": "server_riskykey",
-      "label": "riskyKey()",
+      "id": "server_sortedw3stringsdictionarykeys",
+      "label": "sortedW3StringsDictionaryKeys()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "server.js",
       "file_type": "code",
-      "norm_label": "riskykey()",
+      "norm_label": "sortedw3stringsdictionarykeys()",
       "source_file": "server.js",
-      "source_location": "L1278"
+      "source_location": "L720"
     },
     {
       "id": "server_sortsectionbody",
@@ -603,6 +999,30 @@
       "norm_label": "timestamp()",
       "source_file": "server.js",
       "source_location": "L1336"
+    },
+    {
+      "id": "server_w3stringstoolkind",
+      "label": "w3StringsToolKind()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "w3stringstoolkind()",
+      "source_file": "server.js",
+      "source_location": "L633"
+    },
+    {
+      "id": "server_writew3stringsdictionary",
+      "label": "writeW3StringsDictionary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "writew3stringsdictionary()",
+      "source_file": "server.js",
+      "source_location": "L716"
     },
     {
       "id": "server_detectdeviceswin32",
@@ -677,64 +1097,88 @@
       "source_location": "L756"
     },
     {
-      "id": "server_decodew3stringstocachedcsv",
-      "label": "decodeW3StringsToCachedCsv()",
+      "id": "server_activationbucket",
+      "label": "activationBucket()",
       "_callable": true,
       "_origin": "ast",
       "community": 15,
-      "community_name": "decodeW3StringsToCachedCsv",
+      "community_name": "findConflicts",
       "file_type": "code",
-      "norm_label": "decodew3stringstocachedcsv()",
+      "norm_label": "activationbucket()",
       "source_file": "server.js",
-      "source_location": "L672"
+      "source_location": "L1048"
     },
     {
-      "id": "server_hashw3stringsdictionarykeys",
-      "label": "hashW3StringsDictionaryKeys()",
+      "id": "server_conflictrelevantitems",
+      "label": "conflictRelevantItems()",
       "_callable": true,
       "_origin": "ast",
       "community": 15,
-      "community_name": "decodeW3StringsToCachedCsv",
+      "community_name": "findConflicts",
       "file_type": "code",
-      "norm_label": "hashw3stringsdictionarykeys()",
+      "norm_label": "conflictrelevantitems()",
       "source_file": "server.js",
-      "source_location": "L712"
+      "source_location": "L1025"
     },
     {
-      "id": "server_sortedw3stringsdictionarykeys",
-      "label": "sortedW3StringsDictionaryKeys()",
+      "id": "server_findconflicts",
+      "label": "findConflicts()",
       "_callable": true,
       "_origin": "ast",
       "community": 15,
-      "community_name": "decodeW3StringsToCachedCsv",
+      "community_name": "findConflicts",
       "file_type": "code",
-      "norm_label": "sortedw3stringsdictionarykeys()",
+      "norm_label": "findconflicts()",
       "source_file": "server.js",
-      "source_location": "L720"
+      "source_location": "L975"
     },
     {
-      "id": "server_w3stringstoolkind",
-      "label": "w3StringsToolKind()",
+      "id": "server_isbenigncommandset",
+      "label": "isBenignCommandSet()",
       "_callable": true,
       "_origin": "ast",
       "community": 15,
-      "community_name": "decodeW3StringsToCachedCsv",
+      "community_name": "findConflicts",
       "file_type": "code",
-      "norm_label": "w3stringstoolkind()",
+      "norm_label": "isbenigncommandset()",
       "source_file": "server.js",
-      "source_location": "L633"
+      "source_location": "L1053"
     },
     {
-      "id": "server_writew3stringsdictionary",
-      "label": "writeW3StringsDictionary()",
+      "id": "server_isdebugcommand",
+      "label": "isDebugCommand()",
       "_callable": true,
       "_origin": "ast",
       "community": 15,
-      "community_name": "decodeW3StringsToCachedCsv",
+      "community_name": "findConflicts",
       "file_type": "code",
-      "norm_label": "writew3stringsdictionary()",
+      "norm_label": "isdebugcommand()",
       "source_file": "server.js",
-      "source_location": "L716"
+      "source_location": "L1061"
+    },
+    {
+      "id": "server_isvanillaonlyconflict",
+      "label": "isVanillaOnlyConflict()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "findConflicts",
+      "file_type": "code",
+      "norm_label": "isvanillaonlyconflict()",
+      "source_file": "server.js",
+      "source_location": "L1272"
+    },
+    {
+      "id": "server_riskykey",
+      "label": "riskyKey()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "findConflicts",
+      "file_type": "code",
+      "norm_label": "riskykey()",
+      "source_file": "server.js",
+      "source_location": "L1278"
     },
     {
       "id": "server_addsyntaxdiagnostic",
@@ -797,100 +1241,64 @@
       "source_location": "L138"
     },
     {
-      "id": "src_semantic_ui_enhancements_applyanimation",
-      "label": "applyAnimation()",
+      "id": "server_collectlocalizationcsvfiles",
+      "label": "collectLocalizationCsvFiles()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
+      "community_name": "collectLocalizationCsvFiles",
       "file_type": "code",
-      "norm_label": "applyanimation()",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L168"
+      "norm_label": "collectlocalizationcsvfiles()",
+      "source_file": "server.js",
+      "source_location": "L481"
     },
     {
-      "id": "src_semantic_ui_enhancements_applybuttonfeedback",
-      "label": "applyButtonFeedback()",
+      "id": "server_collectw3stringsfiles",
+      "label": "collectW3StringsFiles()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
+      "community_name": "collectLocalizationCsvFiles",
       "file_type": "code",
-      "norm_label": "applybuttonfeedback()",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L109"
+      "norm_label": "collectw3stringsfiles()",
+      "source_file": "server.js",
+      "source_location": "L659"
     },
     {
-      "id": "src_semantic_ui_enhancements_getactiontypestyle",
-      "label": "getActionTypeStyle()",
+      "id": "server_detectlocalizationlanguage",
+      "label": "detectLocalizationLanguage()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
+      "community_name": "collectLocalizationCsvFiles",
       "file_type": "code",
-      "norm_label": "getactiontypestyle()",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L135"
+      "norm_label": "detectlocalizationlanguage()",
+      "source_file": "server.js",
+      "source_location": "L502"
     },
     {
-      "id": "src_semantic_ui_enhancements_getconflictstyle",
-      "label": "getConflictStyle()",
+      "id": "server_findw3stringsfiles",
+      "label": "findW3StringsFiles()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
+      "community_name": "collectLocalizationCsvFiles",
       "file_type": "code",
-      "norm_label": "getconflictstyle()",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L93"
+      "norm_label": "findw3stringsfiles()",
+      "source_file": "server.js",
+      "source_location": "L651"
     },
     {
-      "id": "src_semantic_ui_enhancements_getemptystatestyle",
-      "label": "getEmptyStateStyle()",
+      "id": "server_safereadlanguagemeta",
+      "label": "safeReadLanguageMeta()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
+      "community_name": "collectLocalizationCsvFiles",
       "file_type": "code",
-      "norm_label": "getemptystatestyle()",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L194"
-    },
-    {
-      "id": "src_semantic_ui_enhancements_getsemanticgroupstyle",
-      "label": "getSemanticGroupStyle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
-      "file_type": "code",
-      "norm_label": "getsemanticgroupstyle()",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "public_app_activeprofileid",
-      "label": "activeProfileId()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "activeprofileid()",
-      "source_file": "public/app.js",
-      "source_location": "L1295"
-    },
-    {
-      "id": "public_app_activeprofileids",
-      "label": "activeProfileIds()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "activeprofileids()",
-      "source_file": "public/app.js",
-      "source_location": "L1301"
+      "norm_label": "safereadlanguagemeta()",
+      "source_file": "server.js",
+      "source_location": "L494"
     },
     {
       "id": "public_app_adjusteditorfont",
@@ -898,35 +1306,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "adjusteditorfont()",
       "source_file": "public/app.js",
       "source_location": "L929"
-    },
-    {
-      "id": "public_app_applybuttonfeedback",
-      "label": "applyButtonFeedback()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "applybuttonfeedback()",
-      "source_file": "public/app.js",
-      "source_location": "L1234"
-    },
-    {
-      "id": "public_app_applycoloring",
-      "label": "applyColoring()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "applycoloring()",
-      "source_file": "public/app.js",
-      "source_location": "L2522"
     },
     {
       "id": "public_app_applyconflicts",
@@ -934,11 +1318,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "applyconflicts()",
       "source_file": "public/app.js",
-      "source_location": "L2535"
+      "source_location": "L2403"
     },
     {
       "id": "public_app_applyleaderlabels",
@@ -946,11 +1330,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "applyleaderlabels()",
       "source_file": "public/app.js",
-      "source_location": "L2448"
+      "source_location": "L2316"
     },
     {
       "id": "public_app_attachleadereditor",
@@ -958,11 +1342,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "attachleadereditor()",
       "source_file": "public/app.js",
-      "source_location": "L1472"
+      "source_location": "L1340"
     },
     {
       "id": "public_app_boundactionnames",
@@ -970,23 +1354,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "boundactionnames()",
       "source_file": "public/app.js",
-      "source_location": "L2417"
-    },
-    {
-      "id": "public_app_buildcolormap",
-      "label": "buildColorMap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "buildcolormap()",
-      "source_file": "public/app.js",
-      "source_location": "L2008"
+      "source_location": "L2285"
     },
     {
       "id": "public_app_builddebuggrid",
@@ -994,11 +1366,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "builddebuggrid()",
       "source_file": "public/app.js",
-      "source_location": "L2171"
+      "source_location": "L2039"
     },
     {
       "id": "public_app_builddevicesvg",
@@ -1006,11 +1378,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "builddevicesvg()",
       "source_file": "public/app.js",
-      "source_location": "L2143"
+      "source_location": "L2011"
     },
     {
       "id": "public_app_buildkeyel",
@@ -1018,11 +1390,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "buildkeyel()",
       "source_file": "public/app.js",
-      "source_location": "L2083"
+      "source_location": "L1951"
     },
     {
       "id": "public_app_buildleadersceneinto",
@@ -1030,23 +1402,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "buildleadersceneinto()",
       "source_file": "public/app.js",
-      "source_location": "L2370"
-    },
-    {
-      "id": "public_app_buildlegend",
-      "label": "buildLegend()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "buildlegend()",
-      "source_file": "public/app.js",
-      "source_location": "L2057"
+      "source_location": "L2238"
     },
     {
       "id": "public_app_clamp",
@@ -1054,11 +1414,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "clamp()",
       "source_file": "public/app.js",
-      "source_location": "L1638"
+      "source_location": "L1506"
     },
     {
       "id": "public_app_collectsnaptargets",
@@ -1066,11 +1426,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "collectsnaptargets()",
       "source_file": "public/app.js",
-      "source_location": "L1550"
+      "source_location": "L1418"
     },
     {
       "id": "public_app_computeleaderlayout",
@@ -1078,35 +1438,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "computeleaderlayout()",
       "source_file": "public/app.js",
-      "source_location": "L2301"
-    },
-    {
-      "id": "public_app_computetopmods",
-      "label": "computeTopMods()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "computetopmods()",
-      "source_file": "public/app.js",
-      "source_location": "L1958"
-    },
-    {
-      "id": "public_app_detectbrowserlanguage",
-      "label": "detectBrowserLanguage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "detectbrowserlanguage()",
-      "source_file": "public/app.js",
-      "source_location": "L277"
+      "source_location": "L2169"
     },
     {
       "id": "public_app_deviceextent",
@@ -1114,23 +1450,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "deviceextent()",
       "source_file": "public/app.js",
-      "source_location": "L2133"
-    },
-    {
-      "id": "public_app_dominantvanillacategory",
-      "label": "dominantVanillaCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "dominantvanillacategory()",
-      "source_file": "public/app.js",
-      "source_location": "L2000"
+      "source_location": "L2001"
     },
     {
       "id": "public_app_drawedithandles",
@@ -1138,11 +1462,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "drawedithandles()",
       "source_file": "public/app.js",
-      "source_location": "L1481"
+      "source_location": "L1349"
     },
     {
       "id": "public_app_drawguides",
@@ -1150,11 +1474,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "drawguides()",
       "source_file": "public/app.js",
-      "source_location": "L1616"
+      "source_location": "L1484"
     },
     {
       "id": "public_app_endleaderdrag",
@@ -1162,23 +1486,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "endleaderdrag()",
       "source_file": "public/app.js",
-      "source_location": "L1627"
-    },
-    {
-      "id": "public_app_hasresolvedname",
-      "label": "hasResolvedName()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "hasresolvedname()",
-      "source_file": "public/app.js",
-      "source_location": "L664"
+      "source_location": "L1495"
     },
     {
       "id": "public_app_iseditableprofile",
@@ -1186,11 +1498,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "iseditableprofile()",
       "source_file": "public/app.js",
-      "source_location": "L1468"
+      "source_location": "L1336"
     },
     {
       "id": "public_app_layoutlabelcolumn",
@@ -1198,11 +1510,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "layoutlabelcolumn()",
       "source_file": "public/app.js",
-      "source_location": "L2270"
+      "source_location": "L2138"
     },
     {
       "id": "public_app_leaderopt",
@@ -1210,47 +1522,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "leaderopt()",
       "source_file": "public/app.js",
-      "source_location": "L2260"
-    },
-    {
-      "id": "public_app_loadprofile",
-      "label": "loadProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "loadprofile()",
-      "source_file": "public/app.js",
-      "source_location": "L1915"
-    },
-    {
-      "id": "public_app_loadregistry",
-      "label": "loadRegistry()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "loadregistry()",
-      "source_file": "public/app.js",
-      "source_location": "L1908"
-    },
-    {
-      "id": "public_app_localizelegendlabel",
-      "label": "localizeLegendLabel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "localizelegendlabel()",
-      "source_file": "public/app.js",
-      "source_location": "L1414"
+      "source_location": "L2128"
     },
     {
       "id": "public_app_nearestsnap",
@@ -1258,11 +1534,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "nearestsnap()",
       "source_file": "public/app.js",
-      "source_location": "L1563"
+      "source_location": "L1431"
     },
     {
       "id": "public_app_onleaderdrag",
@@ -1270,11 +1546,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "onleaderdrag()",
       "source_file": "public/app.js",
-      "source_location": "L1572"
+      "source_location": "L1440"
     },
     {
       "id": "public_app_readableondark",
@@ -1282,23 +1558,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "readableondark()",
       "source_file": "public/app.js",
-      "source_location": "L2435"
-    },
-    {
-      "id": "public_app_rebuildcolormap",
-      "label": "rebuildColorMap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "rebuildcolormap()",
-      "source_file": "public/app.js",
-      "source_location": "L1319"
+      "source_location": "L2303"
     },
     {
       "id": "public_app_redrawediting",
@@ -1306,11 +1570,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "redrawediting()",
       "source_file": "public/app.js",
-      "source_location": "L1511"
+      "source_location": "L1379"
+    },
+    {
+      "id": "public_app_renderdevicesvg",
+      "label": "renderDeviceSvg()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "onLeaderDrag",
+      "file_type": "code",
+      "norm_label": "renderdevicesvg()",
+      "source_file": "public/app.js",
+      "source_location": "L2368"
     },
     {
       "id": "public_app_rendergamepadsvg",
@@ -1318,11 +1594,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "rendergamepadsvg()",
       "source_file": "public/app.js",
-      "source_location": "L2206"
+      "source_location": "L2074"
     },
     {
       "id": "public_app_renderkeyboardsvg",
@@ -1330,11 +1606,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "renderkeyboardsvg()",
       "source_file": "public/app.js",
-      "source_location": "L2188"
+      "source_location": "L2056"
     },
     {
       "id": "public_app_renderleaderdevice",
@@ -1342,23 +1618,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "renderleaderdevice()",
       "source_file": "public/app.js",
-      "source_location": "L2399"
-    },
-    {
-      "id": "public_app_renderlegend",
-      "label": "renderLegend()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "renderlegend()",
-      "source_file": "public/app.js",
-      "source_location": "L1407"
+      "source_location": "L2267"
     },
     {
       "id": "public_app_rendermousesvg",
@@ -1366,11 +1630,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "rendermousesvg()",
       "source_file": "public/app.js",
-      "source_location": "L2192"
+      "source_location": "L2060"
     },
     {
       "id": "public_app_round2",
@@ -1378,23 +1642,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "round2()",
       "source_file": "public/app.js",
-      "source_location": "L1637"
-    },
-    {
-      "id": "public_app_showdeviceempty",
-      "label": "showDeviceEmpty()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "showdeviceempty()",
-      "source_file": "public/app.js",
-      "source_location": "L1388"
+      "source_location": "L1505"
     },
     {
       "id": "public_app_snap",
@@ -1402,11 +1654,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "snap()",
       "source_file": "public/app.js",
-      "source_location": "L1544"
+      "source_location": "L1412"
     },
     {
       "id": "public_app_startleaderdrag",
@@ -1414,23 +1666,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "startleaderdrag()",
       "source_file": "public/app.js",
-      "source_location": "L1523"
-    },
-    {
-      "id": "public_app_summarizekey",
-      "label": "summarizeKey()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "summarizekey()",
-      "source_file": "public/app.js",
-      "source_location": "L2511"
+      "source_location": "L1391"
     },
     {
       "id": "public_app_svgnode",
@@ -1438,11 +1678,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "svgnode()",
       "source_file": "public/app.js",
-      "source_location": "L2075"
+      "source_location": "L1943"
     },
     {
       "id": "public_app_svgpoint",
@@ -1450,47 +1690,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "svgpoint()",
       "source_file": "public/app.js",
-      "source_location": "L1448"
-    },
-    {
-      "id": "public_app_validateprofile",
-      "label": "validateProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "validateprofile()",
-      "source_file": "public/app.js",
-      "source_location": "L1900"
-    },
-    {
-      "id": "public_app_vanillacategoryforaction",
-      "label": "vanillaCategoryForAction()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanillacategoryforaction()",
-      "source_file": "public/app.js",
-      "source_location": "L1971"
-    },
-    {
-      "id": "public_app_vanillacategoryforcommand",
-      "label": "vanillaCategoryForCommand()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanillacategoryforcommand()",
-      "source_file": "public/app.js",
-      "source_location": "L1987"
+      "source_location": "L1316"
     },
     {
       "id": "scripts_seed_leader_layout_round",
@@ -1498,7 +1702,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "round()",
       "source_file": "scripts/seed-leader-layout.js",
@@ -1510,7 +1714,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "seedprofile()",
       "source_file": "scripts/seed-leader-layout.js",
@@ -1685,6 +1889,42 @@
       "source_location": "L30"
     },
     {
+      "id": "public_app_buildremappreview",
+      "label": "buildRemapPreview()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "device-ui.test.js",
+      "file_type": "code",
+      "norm_label": "buildremappreview()",
+      "source_file": "public/app.js",
+      "source_location": "L736"
+    },
+    {
+      "id": "public_app_ikforkeyboardevent",
+      "label": "ikForKeyboardEvent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "device-ui.test.js",
+      "file_type": "code",
+      "norm_label": "ikforkeyboardevent()",
+      "source_file": "public/app.js",
+      "source_location": "L806"
+    },
+    {
+      "id": "public_app_remapinputsettingstext",
+      "label": "remapInputSettingsText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "device-ui.test.js",
+      "file_type": "code",
+      "norm_label": "remapinputsettingstext()",
+      "source_file": "public/app.js",
+      "source_location": "L1101"
+    },
+    {
       "id": "server_cleanlocalizeddisplayname",
       "label": "cleanLocalizedDisplayName()",
       "_callable": true,
@@ -1781,18 +2021,6 @@
       "source_location": "L445"
     },
     {
-      "id": "server_collectlocalizationcsvfiles",
-      "label": "collectLocalizationCsvFiles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "buildLocalizationMap",
-      "file_type": "code",
-      "norm_label": "collectlocalizationcsvfiles()",
-      "source_file": "server.js",
-      "source_location": "L481"
-    },
-    {
       "id": "server_collectlocalizationdictionarykeys",
       "label": "collectLocalizationDictionaryKeys()",
       "_callable": true,
@@ -1805,28 +2033,28 @@
       "source_location": "L536"
     },
     {
-      "id": "server_collectw3stringsfiles",
-      "label": "collectW3StringsFiles()",
+      "id": "server_collectwitcherscriptfiles",
+      "label": "collectWitcherScriptFiles()",
       "_callable": true,
       "_origin": "ast",
       "community": 5,
       "community_name": "buildLocalizationMap",
       "file_type": "code",
-      "norm_label": "collectw3stringsfiles()",
+      "norm_label": "collectwitcherscriptfiles()",
       "source_file": "server.js",
-      "source_location": "L659"
+      "source_location": "L571"
     },
     {
-      "id": "server_detectlocalizationlanguage",
-      "label": "detectLocalizationLanguage()",
+      "id": "server_findexecutableonpath",
+      "label": "findExecutableOnPath()",
       "_callable": true,
       "_origin": "ast",
       "community": 5,
       "community_name": "buildLocalizationMap",
       "file_type": "code",
-      "norm_label": "detectlocalizationlanguage()",
+      "norm_label": "findexecutableonpath()",
       "source_file": "server.js",
-      "source_location": "L502"
+      "source_location": "L637"
     },
     {
       "id": "server_findlocalizationcsvfiles",
@@ -1841,16 +2069,28 @@
       "source_location": "L470"
     },
     {
-      "id": "server_findw3stringsfiles",
-      "label": "findW3StringsFiles()",
+      "id": "server_findw3stringsexe",
+      "label": "findW3StringsExe()",
       "_callable": true,
       "_origin": "ast",
       "community": 5,
       "community_name": "buildLocalizationMap",
       "file_type": "code",
-      "norm_label": "findw3stringsfiles()",
+      "norm_label": "findw3stringsexe()",
       "source_file": "server.js",
-      "source_location": "L651"
+      "source_location": "L610"
+    },
+    {
+      "id": "server_findwitcherscriptfiles",
+      "label": "findWitcherScriptFiles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "buildLocalizationMap",
+      "file_type": "code",
+      "norm_label": "findwitcherscriptfiles()",
+      "source_file": "server.js",
+      "source_location": "L564"
     },
     {
       "id": "server_loadw3stringslocalizationmap",
@@ -1961,364 +2201,76 @@
       "source_location": "L81"
     },
     {
-      "id": "server_safereadlanguagemeta",
-      "label": "safeReadLanguageMeta()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "buildLocalizationMap",
-      "file_type": "code",
-      "norm_label": "safereadlanguagemeta()",
-      "source_file": "server.js",
-      "source_location": "L494"
-    },
-    {
-      "id": "public_app_assignkeytocommand",
-      "label": "assignKeyToCommand()",
+      "id": "public_semantic_ui_enhancements_applyanimation",
+      "label": "applyAnimation()",
       "_callable": true,
       "_origin": "ast",
       "community": 6,
-      "community_name": "openPopover",
+      "community_name": "semantic-ui-enhancements.js",
       "file_type": "code",
-      "norm_label": "assignkeytocommand()",
-      "source_file": "public/app.js",
-      "source_location": "L1771"
+      "norm_label": "applyanimation()",
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L173"
     },
     {
-      "id": "public_app_attachkeyinteractions",
-      "label": "attachKeyInteractions()",
+      "id": "public_semantic_ui_enhancements_applybuttonfeedback",
+      "label": "applyButtonFeedback()",
       "_callable": true,
       "_origin": "ast",
       "community": 6,
-      "community_name": "openPopover",
+      "community_name": "semantic-ui-enhancements.js",
       "file_type": "code",
-      "norm_label": "attachkeyinteractions()",
-      "source_file": "public/app.js",
-      "source_location": "L1427"
+      "norm_label": "applybuttonfeedback()",
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L114"
     },
     {
-      "id": "public_app_buildremappreview",
-      "label": "buildRemapPreview()",
+      "id": "public_semantic_ui_enhancements_getactiontypestyle",
+      "label": "getActionTypeStyle()",
       "_callable": true,
       "_origin": "ast",
       "community": 6,
-      "community_name": "openPopover",
+      "community_name": "semantic-ui-enhancements.js",
       "file_type": "code",
-      "norm_label": "buildremappreview()",
-      "source_file": "public/app.js",
-      "source_location": "L736"
+      "norm_label": "getactiontypestyle()",
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L140"
     },
     {
-      "id": "public_app_closepopover",
-      "label": "closePopover()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "closepopover()",
-      "source_file": "public/app.js",
-      "source_location": "L1660"
-    },
-    {
-      "id": "public_app_commandactionsline",
-      "label": "commandActionsLine()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "commandactionsline()",
-      "source_file": "public/app.js",
-      "source_location": "L679"
-    },
-    {
-      "id": "public_app_commandsourceline",
-      "label": "commandSourceLine()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "commandsourceline()",
-      "source_file": "public/app.js",
-      "source_location": "L672"
-    },
-    {
-      "id": "public_app_commandtitletext",
-      "label": "commandTitleText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "commandtitletext()",
-      "source_file": "public/app.js",
-      "source_location": "L668"
-    },
-    {
-      "id": "public_app_escapehtml",
-      "label": "escapeHtml()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "escapehtml()",
-      "source_file": "public/app.js",
-      "source_location": "L1133"
-    },
-    {
-      "id": "public_app_getconflictstyle",
+      "id": "public_semantic_ui_enhancements_getconflictstyle",
       "label": "getConflictStyle()",
       "_callable": true,
       "_origin": "ast",
       "community": 6,
-      "community_name": "openPopover",
+      "community_name": "semantic-ui-enhancements.js",
       "file_type": "code",
       "norm_label": "getconflictstyle()",
-      "source_file": "public/app.js",
-      "source_location": "L1223"
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L98"
     },
     {
-      "id": "public_app_getemptystatestyle",
+      "id": "public_semantic_ui_enhancements_getemptystatestyle",
       "label": "getEmptyStateStyle()",
       "_callable": true,
       "_origin": "ast",
       "community": 6,
-      "community_name": "openPopover",
+      "community_name": "semantic-ui-enhancements.js",
       "file_type": "code",
       "norm_label": "getemptystatestyle()",
-      "source_file": "public/app.js",
-      "source_location": "L1255"
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L199"
     },
     {
-      "id": "public_app_getsemanticgroupstyle",
+      "id": "public_semantic_ui_enhancements_getsemanticgroupstyle",
       "label": "getSemanticGroupStyle()",
       "_callable": true,
       "_origin": "ast",
       "community": 6,
-      "community_name": "openPopover",
+      "community_name": "semantic-ui-enhancements.js",
       "file_type": "code",
       "norm_label": "getsemanticgroupstyle()",
-      "source_file": "public/app.js",
-      "source_location": "L1146"
-    },
-    {
-      "id": "public_app_groupconflicts",
-      "label": "groupConflicts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "groupconflicts()",
-      "source_file": "public/app.js",
-      "source_location": "L480"
-    },
-    {
-      "id": "public_app_highlightconflicts",
-      "label": "highlightConflicts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "highlightconflicts()",
-      "source_file": "public/app.js",
-      "source_location": "L1825"
-    },
-    {
-      "id": "public_app_ikforkeyboardevent",
-      "label": "ikForKeyboardEvent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "ikforkeyboardevent()",
-      "source_file": "public/app.js",
-      "source_location": "L806"
-    },
-    {
-      "id": "public_app_keychip",
-      "label": "keyChip()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "keychip()",
-      "source_file": "public/app.js",
-      "source_location": "L690"
-    },
-    {
-      "id": "public_app_onoutsideclick",
-      "label": "onOutsideClick()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "onoutsideclick()",
-      "source_file": "public/app.js",
-      "source_location": "L1667"
-    },
-    {
-      "id": "public_app_onpopoverkeydown",
-      "label": "onPopoverKeydown()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "onpopoverkeydown()",
-      "source_file": "public/app.js",
-      "source_location": "L1666"
-    },
-    {
-      "id": "public_app_openpopover",
-      "label": "openPopover()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "openpopover()",
-      "source_file": "public/app.js",
-      "source_location": "L1671"
-    },
-    {
-      "id": "public_app_openremap",
-      "label": "openRemap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "openremap()",
-      "source_file": "public/app.js",
-      "source_location": "L701"
-    },
-    {
-      "id": "public_app_positionpopover",
-      "label": "positionPopover()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "positionpopover()",
-      "source_file": "public/app.js",
-      "source_location": "L1777"
-    },
-    {
-      "id": "public_app_render",
-      "label": "render()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "render()",
-      "source_file": "public/app.js",
-      "source_location": "L446"
-    },
-    {
-      "id": "public_app_rendercommands",
-      "label": "renderCommands()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "rendercommands()",
-      "source_file": "public/app.js",
-      "source_location": "L589"
-    },
-    {
-      "id": "public_app_renderconflicts",
-      "label": "renderConflicts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "renderconflicts()",
-      "source_file": "public/app.js",
-      "source_location": "L521"
-    },
-    {
-      "id": "public_app_renderremappreview",
-      "label": "renderRemapPreview()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "renderremappreview()",
-      "source_file": "public/app.js",
-      "source_location": "L755"
-    },
-    {
-      "id": "public_app_shortsource",
-      "label": "shortSource()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "shortsource()",
-      "source_file": "public/app.js",
-      "source_location": "L585"
-    },
-    {
-      "id": "public_app_startkeycapture",
-      "label": "startKeyCapture()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "startkeycapture()",
-      "source_file": "public/app.js",
-      "source_location": "L813"
-    },
-    {
-      "id": "public_app_stopkeycapture",
-      "label": "stopKeyCapture()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "stopkeycapture()",
-      "source_file": "public/app.js",
-      "source_location": "L828"
-    },
-    {
-      "id": "public_app_uniqueinformativeactions",
-      "label": "uniqueInformativeActions()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "uniqueinformativeactions()",
-      "source_file": "public/app.js",
-      "source_location": "L685"
-    },
-    {
-      "id": "public_app_wireassignpicker",
-      "label": "wireAssignPicker()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "wireassignpicker()",
-      "source_file": "public/app.js",
-      "source_location": "L1749"
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L16"
     },
     {
       "id": "server_buildscan",
@@ -2705,11 +2657,132 @@
       "source_location": "L256"
     },
     {
+      "id": "public_app",
+      "label": "app.js",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "app.js",
+      "source_file": "public/app.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "public_app_i18n",
+      "label": "I18N",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "i18n",
+      "source_file": "public/app.js",
+      "source_location": "L54"
+    },
+    {
+      "id": "public_app_leader",
+      "label": "LEADER",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "leader",
+      "source_file": "public/app.js",
+      "source_location": "L2119"
+    },
+    {
+      "id": "public_app_mod_palette",
+      "label": "MOD_PALETTE",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "mod_palette",
+      "source_file": "public/app.js",
+      "source_location": "L1720"
+    },
+    {
+      "id": "public_app_required_profile_fields",
+      "label": "REQUIRED_PROFILE_FIELDS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "required_profile_fields",
+      "source_file": "public/app.js",
+      "source_location": "L1764"
+    },
+    {
+      "id": "public_app_state",
+      "label": "state",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "state",
+      "source_file": "public/app.js",
+      "source_location": "L369"
+    },
+    {
+      "id": "public_app_vanilla_action_actions",
+      "label": "VANILLA_ACTION_ACTIONS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanilla_action_actions",
+      "source_file": "public/app.js",
+      "source_location": "L1744"
+    },
+    {
+      "id": "public_app_vanilla_category_meta",
+      "label": "VANILLA_CATEGORY_META",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanilla_category_meta",
+      "source_file": "public/app.js",
+      "source_location": "L1721"
+    },
+    {
+      "id": "public_app_vanilla_category_priority",
+      "label": "VANILLA_CATEGORY_PRIORITY",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanilla_category_priority",
+      "source_file": "public/app.js",
+      "source_location": "L1726"
+    },
+    {
+      "id": "public_app_vanilla_menu_actions",
+      "label": "VANILLA_MENU_ACTIONS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanilla_menu_actions",
+      "source_file": "public/app.js",
+      "source_location": "L1727"
+    },
+    {
+      "id": "public_app_vanilla_movement_actions",
+      "label": "VANILLA_MOVEMENT_ACTIONS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "vanilla_movement_actions",
+      "source_file": "public/app.js",
+      "source_location": "L1736"
+    },
+    {
       "id": "docs_specs_device_centric_ui_design_client_components",
       "label": "Client Components",
       "_origin": "ast",
       "community": 0,
-      "community_name": "t",
+      "community_name": "app.js",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "client components",
@@ -3602,17 +3675,6 @@
       "source_location": "L26"
     },
     {
-      "id": "src_semantic_ui_enhancements",
-      "label": "semantic-ui-enhancements.js",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "semantic-ui-enhancements.js",
-      "file_type": "code",
-      "norm_label": "semantic-ui-enhancements.js",
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L1"
-    },
-    {
       "id": "docs_specs_device_centric_ui_tasks",
       "label": "tasks.md",
       "_origin": "ast",
@@ -3685,132 +3747,11 @@
       "source_location": "L1"
     },
     {
-      "id": "public_app",
-      "label": "app.js",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "app.js",
-      "source_file": "public/app.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "public_app_i18n",
-      "label": "I18N",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "i18n",
-      "source_file": "public/app.js",
-      "source_location": "L54"
-    },
-    {
-      "id": "public_app_leader",
-      "label": "LEADER",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "leader",
-      "source_file": "public/app.js",
-      "source_location": "L2251"
-    },
-    {
-      "id": "public_app_mod_palette",
-      "label": "MOD_PALETTE",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "mod_palette",
-      "source_file": "public/app.js",
-      "source_location": "L1852"
-    },
-    {
-      "id": "public_app_required_profile_fields",
-      "label": "REQUIRED_PROFILE_FIELDS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "required_profile_fields",
-      "source_file": "public/app.js",
-      "source_location": "L1896"
-    },
-    {
-      "id": "public_app_state",
-      "label": "state",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "state",
-      "source_file": "public/app.js",
-      "source_location": "L369"
-    },
-    {
-      "id": "public_app_vanilla_action_actions",
-      "label": "VANILLA_ACTION_ACTIONS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanilla_action_actions",
-      "source_file": "public/app.js",
-      "source_location": "L1876"
-    },
-    {
-      "id": "public_app_vanilla_category_meta",
-      "label": "VANILLA_CATEGORY_META",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanilla_category_meta",
-      "source_file": "public/app.js",
-      "source_location": "L1853"
-    },
-    {
-      "id": "public_app_vanilla_category_priority",
-      "label": "VANILLA_CATEGORY_PRIORITY",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanilla_category_priority",
-      "source_file": "public/app.js",
-      "source_location": "L1858"
-    },
-    {
-      "id": "public_app_vanilla_menu_actions",
-      "label": "VANILLA_MENU_ACTIONS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanilla_menu_actions",
-      "source_file": "public/app.js",
-      "source_location": "L1859"
-    },
-    {
-      "id": "public_app_vanilla_movement_actions",
-      "label": "VANILLA_MOVEMENT_ACTIONS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "vanilla_movement_actions",
-      "source_file": "public/app.js",
-      "source_location": "L1868"
-    },
-    {
       "id": "scripts_seed_leader_layout",
       "label": "seed-leader-layout.js",
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "seed-leader-layout.js",
       "source_file": "scripts/seed-leader-layout.js",
@@ -3821,7 +3762,7 @@
       "label": "{ computeLeaderLayout }",
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "{ computeleaderlayout }",
       "source_file": "scripts/seed-leader-layout.js",
@@ -3832,7 +3773,7 @@
       "label": "fs",
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "fs",
       "source_file": "scripts/seed-leader-layout.js",
@@ -3843,7 +3784,7 @@
       "label": "path",
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "path",
       "source_file": "scripts/seed-leader-layout.js",
@@ -3854,7 +3795,7 @@
       "label": "PROFILES",
       "_origin": "ast",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "file_type": "code",
       "norm_label": "profiles",
       "source_file": "scripts/seed-leader-layout.js",
@@ -4005,7 +3946,7 @@
       "file_type": "code",
       "norm_label": "colors",
       "source_file": "public/app.js",
-      "source_location": "L1842"
+      "source_location": "L1710"
     },
     {
       "id": "public_app_keycode_to_ik",
@@ -4138,6 +4079,17 @@
       "norm_label": "{\n  validateprofile, matchdevice, computetopmods, buildcolormap, colors, remapinputsettingstext, groupconflicts, buildremappreview, computeleaderlayout,\n  ikforkeyboardevent, keycode_to_ik\n}",
       "source_file": "test/device-ui.test.js",
       "source_location": "L9"
+    },
+    {
+      "id": "public_semantic_ui_enhancements",
+      "label": "semantic-ui-enhancements.js",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "semantic-ui-enhancements.js",
+      "file_type": "code",
+      "norm_label": "semantic-ui-enhancements.js",
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L1"
     },
     {
       "id": "server_server",
@@ -4357,7 +4309,7 @@
       "label": "ref_fs",
       "_origin": "semantic",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_fs",
@@ -4369,7 +4321,7 @@
       "label": "ref_path",
       "_origin": "semantic",
       "community": 2,
-      "community_name": "app.js",
+      "community_name": "onLeaderDrag",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_path",
@@ -4435,7 +4387,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1668",
+      "source_location": "L1536",
       "weight": 1.0
     },
     {
@@ -4447,7 +4399,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1666",
+      "source_location": "L1534",
       "weight": 1.0
     },
     {
@@ -4459,7 +4411,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1303",
+      "source_location": "L1171",
       "weight": 1.0
     },
     {
@@ -4531,7 +4483,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2530",
+      "source_location": "L2398",
       "weight": 1.0
     },
     {
@@ -4543,7 +4495,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2450",
+      "source_location": "L2318",
       "weight": 1.0
     },
     {
@@ -4555,7 +4507,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2465",
+      "source_location": "L2333",
       "weight": 1.0
     },
     {
@@ -4567,7 +4519,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2481",
+      "source_location": "L2349",
       "weight": 1.0
     },
     {
@@ -4579,7 +4531,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2482",
+      "source_location": "L2350",
       "weight": 1.0
     },
     {
@@ -4591,7 +4543,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2486",
+      "source_location": "L2354",
       "weight": 1.0
     },
     {
@@ -4663,7 +4615,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1772",
+      "source_location": "L1640",
       "weight": 1.0
     },
     {
@@ -4675,7 +4627,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1773",
+      "source_location": "L1641",
       "weight": 1.0
     },
     {
@@ -4687,7 +4639,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1774",
+      "source_location": "L1642",
       "weight": 1.0
     },
     {
@@ -4699,7 +4651,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1438",
+      "source_location": "L1306",
       "weight": 1.0
     },
     {
@@ -4711,7 +4663,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1473",
+      "source_location": "L1341",
       "weight": 1.0
     },
     {
@@ -4723,7 +4675,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1475",
+      "source_location": "L1343",
       "weight": 1.0
     },
     {
@@ -4735,7 +4687,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1475",
+      "source_location": "L1343",
       "weight": 1.0
     },
     {
@@ -4747,7 +4699,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2420",
+      "source_location": "L2288",
       "weight": 1.0
     },
     {
@@ -4759,7 +4711,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2009",
+      "source_location": "L1877",
       "weight": 1.0
     },
     {
@@ -4771,7 +4723,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2015",
+      "source_location": "L1883",
       "weight": 1.0
     },
     {
@@ -4783,7 +4735,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2044",
+      "source_location": "L1912",
       "weight": 1.0
     },
     {
@@ -4795,7 +4747,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2172",
+      "source_location": "L2040",
       "weight": 1.0
     },
     {
@@ -4807,7 +4759,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2144",
+      "source_location": "L2012",
       "weight": 1.0
     },
     {
@@ -4819,7 +4771,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2145",
+      "source_location": "L2013",
       "weight": 1.0
     },
     {
@@ -4831,7 +4783,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2165",
+      "source_location": "L2033",
       "weight": 1.0
     },
     {
@@ -4843,7 +4795,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2167",
+      "source_location": "L2035",
       "weight": 1.0
     },
     {
@@ -4855,7 +4807,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2085",
+      "source_location": "L1953",
       "weight": 1.0
     },
     {
@@ -4867,7 +4819,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2091",
+      "source_location": "L1959",
       "weight": 1.0
     },
     {
@@ -4879,7 +4831,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2373",
+      "source_location": "L2241",
       "weight": 1.0
     },
     {
@@ -4891,7 +4843,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2380",
+      "source_location": "L2248",
       "weight": 1.0
     },
     {
@@ -4903,7 +4855,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1803",
+      "source_location": "L1671",
       "weight": 1.0
     },
     {
@@ -4915,7 +4867,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1804",
+      "source_location": "L1672",
       "weight": 1.0
     },
     {
@@ -4927,7 +4879,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1807",
+      "source_location": "L1675",
       "weight": 1.0
     },
     {
@@ -4939,7 +4891,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1815",
+      "source_location": "L1683",
       "weight": 1.0
     },
     {
@@ -4951,7 +4903,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1815",
+      "source_location": "L1683",
       "weight": 1.0
     },
     {
@@ -4963,7 +4915,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1818",
+      "source_location": "L1686",
       "weight": 1.0
     },
     {
@@ -5023,7 +4975,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2322",
+      "source_location": "L2190",
       "weight": 1.0
     },
     {
@@ -5035,7 +4987,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2338",
+      "source_location": "L2206",
       "weight": 1.0
     },
     {
@@ -5047,7 +4999,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1793",
+      "source_location": "L1661",
       "weight": 1.0
     },
     {
@@ -5059,7 +5011,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1796",
+      "source_location": "L1664",
       "weight": 1.0
     },
     {
@@ -5107,7 +5059,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1291",
+      "source_location": "L1159",
       "weight": 1.0
     },
     {
@@ -5119,7 +5071,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1285",
+      "source_location": "L1153",
       "weight": 1.0
     },
     {
@@ -5131,7 +5083,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1487",
+      "source_location": "L1355",
       "weight": 1.0
     },
     {
@@ -5143,7 +5095,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1490",
+      "source_location": "L1358",
       "weight": 1.0
     },
     {
@@ -5155,7 +5107,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1504",
+      "source_location": "L1372",
       "weight": 1.0
     },
     {
@@ -5167,7 +5119,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1622",
+      "source_location": "L1490",
       "weight": 1.0
     },
     {
@@ -5179,7 +5131,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1633",
+      "source_location": "L1501",
       "weight": 1.0
     },
     {
@@ -5191,7 +5143,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1634",
+      "source_location": "L1502",
       "weight": 1.0
     },
     {
@@ -5203,7 +5155,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1312",
+      "source_location": "L1180",
       "weight": 1.0
     },
     {
@@ -5515,7 +5467,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1919",
+      "source_location": "L1787",
       "weight": 1.0
     },
     {
@@ -5527,7 +5479,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1416",
+      "source_location": "L1284",
       "weight": 1.0
     },
     {
@@ -5539,7 +5491,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1642",
+      "source_location": "L1510",
       "weight": 1.0
     },
     {
@@ -5551,7 +5503,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1575",
+      "source_location": "L1443",
       "weight": 1.0
     },
     {
@@ -5563,7 +5515,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1584",
+      "source_location": "L1452",
       "weight": 1.0
     },
     {
@@ -5575,7 +5527,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1585",
+      "source_location": "L1453",
       "weight": 1.0
     },
     {
@@ -5587,7 +5539,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1588",
+      "source_location": "L1456",
       "weight": 1.0
     },
     {
@@ -5599,7 +5551,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1592",
+      "source_location": "L1460",
       "weight": 1.0
     },
     {
@@ -5611,7 +5563,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1596",
+      "source_location": "L1464",
       "weight": 1.0
     },
     {
@@ -5623,7 +5575,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1604",
+      "source_location": "L1472",
       "weight": 1.0
     },
     {
@@ -5635,7 +5587,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1611",
+      "source_location": "L1479",
       "weight": 1.0
     },
     {
@@ -5647,7 +5599,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1612",
+      "source_location": "L1480",
       "weight": 1.0
     },
     {
@@ -5659,7 +5611,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1672",
+      "source_location": "L1540",
       "weight": 1.0
     },
     {
@@ -5671,7 +5623,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1698",
+      "source_location": "L1566",
       "weight": 1.0
     },
     {
@@ -5683,7 +5635,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1698",
+      "source_location": "L1566",
       "weight": 1.0
     },
     {
@@ -5695,7 +5647,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1698",
+      "source_location": "L1566",
       "weight": 1.0
     },
     {
@@ -5707,7 +5659,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1699",
+      "source_location": "L1567",
       "weight": 1.0
     },
     {
@@ -5719,7 +5671,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1700",
+      "source_location": "L1568",
       "weight": 1.0
     },
     {
@@ -5731,7 +5683,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1729",
+      "source_location": "L1597",
       "weight": 1.0
     },
     {
@@ -5743,7 +5695,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1733",
+      "source_location": "L1601",
       "weight": 1.0
     },
     {
@@ -5755,7 +5707,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1735",
+      "source_location": "L1603",
       "weight": 1.0
     },
     {
@@ -5767,7 +5719,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1737",
+      "source_location": "L1605",
       "weight": 1.0
     },
     {
@@ -5779,7 +5731,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1739",
+      "source_location": "L1607",
       "weight": 1.0
     },
     {
@@ -5863,7 +5815,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1650",
+      "source_location": "L1518",
       "weight": 1.0
     },
     {
@@ -5875,7 +5827,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1653",
+      "source_location": "L1521",
       "weight": 1.0
     },
     {
@@ -5887,7 +5839,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1654",
+      "source_location": "L1522",
       "weight": 1.0
     },
     {
@@ -5899,7 +5851,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1320",
+      "source_location": "L1188",
       "weight": 1.0
     },
     {
@@ -5911,7 +5863,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1321",
+      "source_location": "L1189",
       "weight": 1.0
     },
     {
@@ -5923,7 +5875,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1515",
+      "source_location": "L1383",
       "weight": 1.0
     },
     {
@@ -5935,7 +5887,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1516",
+      "source_location": "L1384",
       "weight": 1.0
     },
     {
@@ -5947,7 +5899,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1517",
+      "source_location": "L1385",
       "weight": 1.0
     },
     {
@@ -5959,7 +5911,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1518",
+      "source_location": "L1386",
       "weight": 1.0
     },
     {
@@ -5971,7 +5923,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1519",
+      "source_location": "L1387",
       "weight": 1.0
     },
     {
@@ -5983,7 +5935,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1520",
+      "source_location": "L1388",
       "weight": 1.0
     },
     {
@@ -6192,18 +6144,6 @@
     },
     {
       "source": "public_app_rendercommands",
-      "target": "public_app_getsemanticgroupstyle",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "public/app.js",
-      "source_location": "L638",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app_rendercommands",
       "target": "public_app_escapehtml",
       "relation": "calls",
       "_origin": "ast",
@@ -6264,18 +6204,6 @@
     },
     {
       "source": "public_app_renderconflicts",
-      "target": "public_app_getemptystatestyle",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "public/app.js",
-      "source_location": "L525",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app_renderconflicts",
       "target": "public_app_escapehtml",
       "relation": "calls",
       "_origin": "ast",
@@ -6284,18 +6212,6 @@
       "context": "call",
       "source_file": "public/app.js",
       "source_location": "L526",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app_renderconflicts",
-      "target": "public_app_getsemanticgroupstyle",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "public/app.js",
-      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -6311,18 +6227,6 @@
       "weight": 1.0
     },
     {
-      "source": "public_app_renderconflicts",
-      "target": "public_app_getconflictstyle",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "public/app.js",
-      "source_location": "L565",
-      "weight": 1.0
-    },
-    {
       "source": "public_app_renderdevicesvg",
       "target": "public_app_rendermousesvg",
       "relation": "calls",
@@ -6331,7 +6235,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2502",
+      "source_location": "L2370",
       "weight": 1.0
     },
     {
@@ -6343,7 +6247,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2503",
+      "source_location": "L2371",
       "weight": 1.0
     },
     {
@@ -6355,7 +6259,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2504",
+      "source_location": "L2372",
       "weight": 1.0
     },
     {
@@ -6367,7 +6271,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2506",
+      "source_location": "L2374",
       "weight": 1.0
     },
     {
@@ -6379,7 +6283,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2506",
+      "source_location": "L2374",
       "weight": 1.0
     },
     {
@@ -6391,7 +6295,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1329",
+      "source_location": "L1197",
       "weight": 1.0
     },
     {
@@ -6403,7 +6307,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1330",
+      "source_location": "L1198",
       "weight": 1.0
     },
     {
@@ -6415,7 +6319,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1339",
+      "source_location": "L1207",
       "weight": 1.0
     },
     {
@@ -6427,7 +6331,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1341",
+      "source_location": "L1209",
       "weight": 1.0
     },
     {
@@ -6439,7 +6343,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1341",
+      "source_location": "L1209",
       "weight": 1.0
     },
     {
@@ -6451,7 +6355,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1344",
+      "source_location": "L1212",
       "weight": 1.0
     },
     {
@@ -6463,7 +6367,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1345",
+      "source_location": "L1213",
       "weight": 1.0
     },
     {
@@ -6475,7 +6379,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1349",
+      "source_location": "L1217",
       "weight": 1.0
     },
     {
@@ -6487,7 +6391,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1349",
+      "source_location": "L1217",
       "weight": 1.0
     },
     {
@@ -6499,7 +6403,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1352",
+      "source_location": "L1220",
       "weight": 1.0
     },
     {
@@ -6511,7 +6415,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1359",
+      "source_location": "L1227",
       "weight": 1.0
     },
     {
@@ -6523,7 +6427,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1360",
+      "source_location": "L1228",
       "weight": 1.0
     },
     {
@@ -6535,7 +6439,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1361",
+      "source_location": "L1229",
       "weight": 1.0
     },
     {
@@ -6547,7 +6451,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1362",
+      "source_location": "L1230",
       "weight": 1.0
     },
     {
@@ -6559,7 +6463,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1363",
+      "source_location": "L1231",
       "weight": 1.0
     },
     {
@@ -6571,7 +6475,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1385",
+      "source_location": "L1253",
       "weight": 1.0
     },
     {
@@ -6583,7 +6487,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2207",
+      "source_location": "L2075",
       "weight": 1.0
     },
     {
@@ -6595,7 +6499,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2209",
+      "source_location": "L2077",
       "weight": 1.0
     },
     {
@@ -6607,7 +6511,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2210",
+      "source_location": "L2078",
       "weight": 1.0
     },
     {
@@ -6619,7 +6523,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2214",
+      "source_location": "L2082",
       "weight": 1.0
     },
     {
@@ -6631,7 +6535,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2189",
+      "source_location": "L2057",
       "weight": 1.0
     },
     {
@@ -6643,7 +6547,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2400",
+      "source_location": "L2268",
       "weight": 1.0
     },
     {
@@ -6655,7 +6559,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2401",
+      "source_location": "L2269",
       "weight": 1.0
     },
     {
@@ -6667,7 +6571,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2405",
+      "source_location": "L2273",
       "weight": 1.0
     },
     {
@@ -6679,7 +6583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1408",
+      "source_location": "L1276",
       "weight": 1.0
     },
     {
@@ -6691,7 +6595,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1410",
+      "source_location": "L1278",
       "weight": 1.0
     },
     {
@@ -6703,7 +6607,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1410",
+      "source_location": "L1278",
       "weight": 1.0
     },
     {
@@ -6715,7 +6619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2193",
+      "source_location": "L2061",
       "weight": 1.0
     },
     {
@@ -6727,7 +6631,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2195",
+      "source_location": "L2063",
       "weight": 1.0
     },
     {
@@ -6739,7 +6643,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2196",
+      "source_location": "L2064",
       "weight": 1.0
     },
     {
@@ -6751,7 +6655,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2198",
+      "source_location": "L2066",
       "weight": 1.0
     },
     {
@@ -6979,7 +6883,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1528",
+      "source_location": "L1396",
       "weight": 1.0
     },
     {
@@ -7003,7 +6907,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2512",
+      "source_location": "L2380",
       "weight": 1.0
     },
     {
@@ -7039,7 +6943,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1398",
+      "source_location": "L1266",
       "weight": 1.0
     },
     {
@@ -7051,7 +6955,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1990",
+      "source_location": "L1858",
       "weight": 1.0
     },
     {
@@ -7063,7 +6967,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1753",
+      "source_location": "L1621",
       "weight": 1.0
     },
     {
@@ -7075,7 +6979,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1760",
+      "source_location": "L1628",
       "weight": 1.0
     },
     {
@@ -7087,7 +6991,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1763",
+      "source_location": "L1631",
       "weight": 1.0
     },
     {
@@ -7099,7 +7003,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1765",
+      "source_location": "L1633",
       "weight": 1.0
     },
     {
@@ -7111,7 +7015,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1767",
+      "source_location": "L1635",
       "weight": 1.0
     },
     {
@@ -8707,7 +8611,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1327",
+      "source_location": "L1195",
       "weight": 1.0
     },
     {
@@ -8719,7 +8623,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L1660",
+      "source_location": "L1528",
       "weight": 1.0
     },
     {
@@ -8731,7 +8635,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "public/app.js",
-      "source_location": "L2551",
+      "source_location": "L2419",
       "weight": 1.0
     },
     {
@@ -10210,57 +10114,13 @@
     },
     {
       "source": "public_app",
-      "target": "public_app_getsemanticgroupstyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L1146",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app",
-      "target": "public_app_getconflictstyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L1223",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app",
-      "target": "public_app_applybuttonfeedback",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L1234",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app",
-      "target": "public_app_getemptystatestyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L1255",
-      "weight": 1.0
-    },
-    {
-      "source": "public_app",
       "target": "public_app_devicelabel",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1284",
+      "source_location": "L1152",
       "weight": 1.0
     },
     {
@@ -10271,7 +10131,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1290",
+      "source_location": "L1158",
       "weight": 1.0
     },
     {
@@ -10282,7 +10142,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1295",
+      "source_location": "L1163",
       "weight": 1.0
     },
     {
@@ -10293,7 +10153,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1301",
+      "source_location": "L1169",
       "weight": 1.0
     },
     {
@@ -10304,7 +10164,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1306",
+      "source_location": "L1174",
       "weight": 1.0
     },
     {
@@ -10315,7 +10175,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1319",
+      "source_location": "L1187",
       "weight": 1.0
     },
     {
@@ -10326,7 +10186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1388",
+      "source_location": "L1256",
       "weight": 1.0
     },
     {
@@ -10337,7 +10197,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1395",
+      "source_location": "L1263",
       "weight": 1.0
     },
     {
@@ -10348,7 +10208,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1407",
+      "source_location": "L1275",
       "weight": 1.0
     },
     {
@@ -10359,7 +10219,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1414",
+      "source_location": "L1282",
       "weight": 1.0
     },
     {
@@ -10370,7 +10230,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1427",
+      "source_location": "L1295",
       "weight": 1.0
     },
     {
@@ -10381,7 +10241,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1448",
+      "source_location": "L1316",
       "weight": 1.0
     },
     {
@@ -10392,7 +10252,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1468",
+      "source_location": "L1336",
       "weight": 1.0
     },
     {
@@ -10403,7 +10263,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1472",
+      "source_location": "L1340",
       "weight": 1.0
     },
     {
@@ -10414,7 +10274,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1511",
+      "source_location": "L1379",
       "weight": 1.0
     },
     {
@@ -10425,7 +10285,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1523",
+      "source_location": "L1391",
       "weight": 1.0
     },
     {
@@ -10436,7 +10296,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1544",
+      "source_location": "L1412",
       "weight": 1.0
     },
     {
@@ -10447,7 +10307,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1550",
+      "source_location": "L1418",
       "weight": 1.0
     },
     {
@@ -10458,7 +10318,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1563",
+      "source_location": "L1431",
       "weight": 1.0
     },
     {
@@ -10469,7 +10329,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1572",
+      "source_location": "L1440",
       "weight": 1.0
     },
     {
@@ -10480,7 +10340,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1616",
+      "source_location": "L1484",
       "weight": 1.0
     },
     {
@@ -10491,7 +10351,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1627",
+      "source_location": "L1495",
       "weight": 1.0
     },
     {
@@ -10502,7 +10362,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1637",
+      "source_location": "L1505",
       "weight": 1.0
     },
     {
@@ -10513,7 +10373,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1638",
+      "source_location": "L1506",
       "weight": 1.0
     },
     {
@@ -10524,7 +10384,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1640",
+      "source_location": "L1508",
       "weight": 1.0
     },
     {
@@ -10535,7 +10395,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1647",
+      "source_location": "L1515",
       "weight": 1.0
     },
     {
@@ -10546,7 +10406,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1666",
+      "source_location": "L1534",
       "weight": 1.0
     },
     {
@@ -10557,7 +10417,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1667",
+      "source_location": "L1535",
       "weight": 1.0
     },
     {
@@ -10568,7 +10428,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1671",
+      "source_location": "L1539",
       "weight": 1.0
     },
     {
@@ -10579,7 +10439,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1749",
+      "source_location": "L1617",
       "weight": 1.0
     },
     {
@@ -10590,7 +10450,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1771",
+      "source_location": "L1639",
       "weight": 1.0
     },
     {
@@ -10601,7 +10461,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1777",
+      "source_location": "L1645",
       "weight": 1.0
     },
     {
@@ -10612,7 +10472,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1790",
+      "source_location": "L1658",
       "weight": 1.0
     },
     {
@@ -10623,7 +10483,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1799",
+      "source_location": "L1667",
       "weight": 1.0
     },
     {
@@ -10634,7 +10494,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1825",
+      "source_location": "L1693",
       "weight": 1.0
     },
     {
@@ -10645,7 +10505,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1842",
+      "source_location": "L1710",
       "weight": 1.0
     },
     {
@@ -10656,7 +10516,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1852",
+      "source_location": "L1720",
       "weight": 1.0
     },
     {
@@ -10667,7 +10527,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1853",
+      "source_location": "L1721",
       "weight": 1.0
     },
     {
@@ -10678,7 +10538,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1858",
+      "source_location": "L1726",
       "weight": 1.0
     },
     {
@@ -10689,7 +10549,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1859",
+      "source_location": "L1727",
       "weight": 1.0
     },
     {
@@ -10700,7 +10560,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1868",
+      "source_location": "L1736",
       "weight": 1.0
     },
     {
@@ -10711,7 +10571,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1876",
+      "source_location": "L1744",
       "weight": 1.0
     },
     {
@@ -10722,7 +10582,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1896",
+      "source_location": "L1764",
       "weight": 1.0
     },
     {
@@ -10733,7 +10593,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1971",
+      "source_location": "L1839",
       "weight": 1.0
     },
     {
@@ -10744,7 +10604,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L1987",
+      "source_location": "L1855",
       "weight": 1.0
     },
     {
@@ -10755,7 +10615,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2000",
+      "source_location": "L1868",
       "weight": 1.0
     },
     {
@@ -10766,7 +10626,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2075",
+      "source_location": "L1943",
       "weight": 1.0
     },
     {
@@ -10777,7 +10637,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2083",
+      "source_location": "L1951",
       "weight": 1.0
     },
     {
@@ -10788,7 +10648,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2133",
+      "source_location": "L2001",
       "weight": 1.0
     },
     {
@@ -10799,7 +10659,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2143",
+      "source_location": "L2011",
       "weight": 1.0
     },
     {
@@ -10810,7 +10670,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2171",
+      "source_location": "L2039",
       "weight": 1.0
     },
     {
@@ -10821,7 +10681,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2251",
+      "source_location": "L2119",
       "weight": 1.0
     },
     {
@@ -10832,7 +10692,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2260",
+      "source_location": "L2128",
       "weight": 1.0
     },
     {
@@ -10843,7 +10703,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2270",
+      "source_location": "L2138",
       "weight": 1.0
     },
     {
@@ -10854,7 +10714,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2370",
+      "source_location": "L2238",
       "weight": 1.0
     },
     {
@@ -10865,7 +10725,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2435",
+      "source_location": "L2303",
       "weight": 1.0
     },
     {
@@ -10876,7 +10736,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L2511",
+      "source_location": "L2379",
       "weight": 1.0
     },
     {
@@ -11163,6 +11023,72 @@
       "confidence_score": 1.0,
       "source_file": "public/semantic-bindings.js",
       "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_ui_enhancements",
+      "target": "public_semantic_ui_enhancements_applybuttonfeedback",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_ui_enhancements",
+      "target": "public_semantic_ui_enhancements_getactiontypestyle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_ui_enhancements",
+      "target": "public_semantic_ui_enhancements_getsemanticgroupstyle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_ui_enhancements",
+      "target": "public_semantic_ui_enhancements_applyanimation",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_ui_enhancements",
+      "target": "public_semantic_ui_enhancements_getemptystatestyle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_ui_enhancements",
+      "target": "public_semantic_ui_enhancements_getconflictstyle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-ui-enhancements.js",
+      "source_location": "L98",
       "weight": 1.0
     },
     {
@@ -12134,72 +12060,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_semantic_ui_enhancements",
-      "target": "src_semantic_ui_enhancements_applybuttonfeedback",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L109",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_ui_enhancements",
-      "target": "src_semantic_ui_enhancements_getsemanticgroupstyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_ui_enhancements",
-      "target": "src_semantic_ui_enhancements_getactiontypestyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L135",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_ui_enhancements",
-      "target": "src_semantic_ui_enhancements_applyanimation",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L168",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_ui_enhancements",
-      "target": "src_semantic_ui_enhancements_getemptystatestyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L194",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_ui_enhancements",
-      "target": "src_semantic_ui_enhancements_getconflictstyle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-ui-enhancements.js",
-      "source_location": "L93",
-      "weight": 1.0
-    },
-    {
       "source": "test_device_ui_test",
       "target": "test_device_ui_test_findconflicts_isvanillaaction_vanilladefaultfileforlanguage_validateinputsettingssyntax_parseinputsettingstext_sortinputsettingstext_compareinputkeys_parseinputxmltext_parselocalizationcsvtext_parsewitcherscriptlocalizationkeys_findw3stringsexe_w3stringstoolkind_decodew3stringstocachedcsv_resolvedisplayname_curateddisplayname_curated_display_names_mergealiascommands_alias_command_canonical_cleanlocalizeddisplayname_uilanguagefortag_preferredlocalizationcodes_humanizedisplayname_isengineinternalcommand_ciri_twin_action_expandactionswithciritwins_handlesave_assertvalidprofilepayload_isallowedhost_isallowedorigin_resolvepublicpath_extractmultipartfile_resolvegamepaths",
       "relation": "contains",
@@ -12711,7 +12571,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "public/app.js",
-      "source_location": "L1630",
+      "source_location": "L1498",
       "weight": 1.0
     },
     {
@@ -12723,7 +12583,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "public/app.js",
-      "source_location": "L1741",
+      "source_location": "L1609",
       "weight": 1.0
     },
     {
@@ -12735,7 +12595,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "public/app.js",
-      "source_location": "L1743",
+      "source_location": "L1611",
       "weight": 1.0
     },
     {
@@ -12747,7 +12607,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "public/app.js",
-      "source_location": "L1539",
+      "source_location": "L1407",
       "weight": 1.0
     },
     {
@@ -12759,7 +12619,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "public/app.js",
-      "source_location": "L1540",
+      "source_location": "L1408",
       "weight": 1.0
     },
     {
@@ -12783,7 +12643,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2581",
+      "source_location": "L2449",
       "weight": 1.0
     },
     {
@@ -12795,7 +12655,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2581",
+      "source_location": "L2449",
       "weight": 1.0
     },
     {
@@ -12807,7 +12667,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2581",
+      "source_location": "L2449",
       "weight": 1.0
     },
     {
@@ -12819,7 +12679,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2581",
+      "source_location": "L2449",
       "weight": 1.0
     },
     {
@@ -12831,7 +12691,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2582",
+      "source_location": "L2450",
       "weight": 1.0
     },
     {
@@ -12843,7 +12703,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2582",
+      "source_location": "L2450",
       "weight": 1.0
     },
     {
@@ -12855,7 +12715,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2582",
+      "source_location": "L2450",
       "weight": 1.0
     },
     {
@@ -12867,7 +12727,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12879,7 +12739,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12891,7 +12751,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12903,7 +12763,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12915,7 +12775,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12927,7 +12787,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12939,7 +12799,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2583",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -12951,7 +12811,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -12963,7 +12823,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -12975,7 +12835,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -12987,7 +12847,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -12999,7 +12859,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -13011,7 +12871,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -13023,7 +12883,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2584",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -13035,7 +12895,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "public/app.js",
-      "source_location": "L2585",
+      "source_location": "L2453",
       "weight": 1.0
     },
     {
@@ -13604,5 +13464,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "524f0109925f6998c65c1553cafc6e1c6c29660a"
+  "built_at_commit": "b6e342507115d552982e4391a5742b95d65c6903"
 }

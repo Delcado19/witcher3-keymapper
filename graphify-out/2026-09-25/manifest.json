@@ -77,16 +77,10 @@
     "ast_hash": "2db04f9bbafafe2a787d6e212b025e25",
     "semantic_hash": "2db04f9bbafafe2a787d6e212b025e25"
   },
-  "src/semantic-bindings.js": {
-    "mtime": 1790254778.857641,
-    "seen": 1790262237.0626724,
-    "ast_hash": "b92598637fd56b5a4458303767976be8",
-    "semantic_hash": ""
-  },
   "test-semantic-bindings.js": {
-    "mtime": 1790255358.682221,
-    "seen": 1790262237.0626736,
-    "ast_hash": "130777455ca5b80f2399b237decb3a3b",
+    "mtime": 1790313588.066674,
+    "seen": 1790313612.810208,
+    "ast_hash": "b0404d07bd3927bf9e4a8229a40fe486",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -132,9 +126,9 @@
     "semantic_hash": ""
   },
   "public/index.html": {
-    "mtime": 1782028737.0,
-    "seen": 1790262237.0626864,
-    "ast_hash": "89991b7d9c9586ea8bc19af3e64fccc8",
+    "mtime": 1790313588.0672488,
+    "seen": 1790313612.810216,
+    "ast_hash": "6709bd5d175a5b32c9cd599ff046c815",
     "semantic_hash": ""
   },
   "tools/w3strings-ng/LICENSE-GPL-3.0.txt": {
@@ -165,6 +159,12 @@
     "mtime": 1790272822.6858108,
     "seen": 1790311743.1258252,
     "ast_hash": "fcc38e86ba71bcbd8e57f6e026b2a030",
+    "semantic_hash": ""
+  },
+  "public/semantic-bindings.js": {
+    "mtime": 1790313588.0661662,
+    "seen": 1790313612.8102038,
+    "ast_hash": "6c25750c29aff7953b599cec71d77916",
     "semantic_hash": ""
   }
 }

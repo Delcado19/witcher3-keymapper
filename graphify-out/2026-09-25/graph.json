@@ -17,16 +17,376 @@
       "source_location": "L31"
     },
     {
-      "id": "scripts_seed_leader_layout_round",
-      "label": "round()",
+      "id": "public_app_applystatictexts",
+      "label": "applyStaticTexts()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "seed-leader-layout.js",
+      "community_name": "t",
       "file_type": "code",
-      "norm_label": "round()",
-      "source_file": "scripts/seed-leader-layout.js",
-      "source_location": "L19"
+      "norm_label": "applystatictexts()",
+      "source_file": "public/app.js",
+      "source_location": "L304"
+    },
+    {
+      "id": "public_app_clearbinding",
+      "label": "clearBinding()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "clearbinding()",
+      "source_file": "public/app.js",
+      "source_location": "L1799"
+    },
+    {
+      "id": "public_app_confirmclear",
+      "label": "confirmClear()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "confirmclear()",
+      "source_file": "public/app.js",
+      "source_location": "L1790"
+    },
+    {
+      "id": "public_app_currentlanguage",
+      "label": "currentLanguage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "currentlanguage()",
+      "source_file": "public/app.js",
+      "source_location": "L287"
+    },
+    {
+      "id": "public_app_decodeinputsettingsbuffer",
+      "label": "decodeInputSettingsBuffer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "decodeinputsettingsbuffer()",
+      "source_file": "public/app.js",
+      "source_location": "L1019"
+    },
+    {
+      "id": "public_app_devicehasbindings",
+      "label": "deviceHasBindings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "devicehasbindings()",
+      "source_file": "public/app.js",
+      "source_location": "L1290"
+    },
+    {
+      "id": "public_app_devicelabel",
+      "label": "deviceLabel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "devicelabel()",
+      "source_file": "public/app.js",
+      "source_location": "L1284"
+    },
+    {
+      "id": "public_app_getlanguagechoice",
+      "label": "getLanguageChoice()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "getlanguagechoice()",
+      "source_file": "public/app.js",
+      "source_location": "L282"
+    },
+    {
+      "id": "public_app_getprofile",
+      "label": "getProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "getprofile()",
+      "source_file": "public/app.js",
+      "source_location": "L1306"
+    },
+    {
+      "id": "public_app_handleloadfile",
+      "label": "handleLoadFile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "handleloadfile()",
+      "source_file": "public/app.js",
+      "source_location": "L976"
+    },
+    {
+      "id": "public_app_handlesavefile",
+      "label": "handleSaveFile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "handlesavefile()",
+      "source_file": "public/app.js",
+      "source_location": "L1046"
+    },
+    {
+      "id": "public_app_languagequery",
+      "label": "languageQuery()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "languagequery()",
+      "source_file": "public/app.js",
+      "source_location": "L300"
+    },
+    {
+      "id": "public_app_load",
+      "label": "load()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "load()",
+      "source_file": "public/app.js",
+      "source_location": "L390"
+    },
+    {
+      "id": "public_app_markprofiledirty",
+      "label": "markProfileDirty()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "markprofiledirty()",
+      "source_file": "public/app.js",
+      "source_location": "L1640"
+    },
+    {
+      "id": "public_app_matchdevice",
+      "label": "matchDevice()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "matchdevice()",
+      "source_file": "public/app.js",
+      "source_location": "L1931"
+    },
+    {
+      "id": "public_app_opensavedialog",
+      "label": "openSaveDialog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "opensavedialog()",
+      "source_file": "public/app.js",
+      "source_location": "L1032"
+    },
+    {
+      "id": "public_app_promptlabeltext",
+      "label": "promptLabelText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "promptlabeltext()",
+      "source_file": "public/app.js",
+      "source_location": "L1647"
+    },
+    {
+      "id": "public_app_remapinputsettingstext",
+      "label": "remapInputSettingsText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "remapinputsettingstext()",
+      "source_file": "public/app.js",
+      "source_location": "L1101"
+    },
+    {
+      "id": "public_app_remapsessioncontent",
+      "label": "remapSessionContent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "remapsessioncontent()",
+      "source_file": "public/app.js",
+      "source_location": "L1074"
+    },
+    {
+      "id": "public_app_renderdevicesvg",
+      "label": "renderDeviceSvg()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "renderdevicesvg()",
+      "source_file": "public/app.js",
+      "source_location": "L2500"
+    },
+    {
+      "id": "public_app_renderdeviceview",
+      "label": "renderDeviceView()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "renderdeviceview()",
+      "source_file": "public/app.js",
+      "source_location": "L1327"
+    },
+    {
+      "id": "public_app_resetleaderlayouts",
+      "label": "resetLeaderLayouts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "resetleaderlayouts()",
+      "source_file": "public/app.js",
+      "source_location": "L940"
+    },
+    {
+      "id": "public_app_resolvekeyboardprofile",
+      "label": "resolveKeyboardProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "resolvekeyboardprofile()",
+      "source_file": "public/app.js",
+      "source_location": "L425"
+    },
+    {
+      "id": "public_app_saveleaderlayouts",
+      "label": "saveLeaderLayouts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "saveleaderlayouts()",
+      "source_file": "public/app.js",
+      "source_location": "L952"
+    },
+    {
+      "id": "public_app_showloading",
+      "label": "showLoading()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "showloading()",
+      "source_file": "public/app.js",
+      "source_location": "L441"
+    },
+    {
+      "id": "public_app_showsyntaxstatus",
+      "label": "showSyntaxStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "showsyntaxstatus()",
+      "source_file": "public/app.js",
+      "source_location": "L1007"
+    },
+    {
+      "id": "public_app_showtoast",
+      "label": "showToast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "showtoast()",
+      "source_file": "public/app.js",
+      "source_location": "L2551"
+    },
+    {
+      "id": "public_app_t",
+      "label": "t()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "t()",
+      "source_file": "public/app.js",
+      "source_location": "L292"
+    },
+    {
+      "id": "public_app_updateeditorbar",
+      "label": "updateEditorBar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "updateeditorbar()",
+      "source_file": "public/app.js",
+      "source_location": "L916"
+    },
+    {
+      "id": "public_app_updatetabstate",
+      "label": "updateTabState()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "t",
+      "file_type": "code",
+      "norm_label": "updatetabstate()",
+      "source_file": "public/app.js",
+      "source_location": "L1395"
+    },
+    {
+      "id": "server_activationbucket",
+      "label": "activationBucket()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "activationbucket()",
+      "source_file": "server.js",
+      "source_location": "L1048"
     },
     {
       "id": "server_assertvalidprofilepayload",
@@ -41,6 +401,18 @@
       "source_location": "L1405"
     },
     {
+      "id": "server_collectwitcherscriptfiles",
+      "label": "collectWitcherScriptFiles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "collectwitcherscriptfiles()",
+      "source_file": "server.js",
+      "source_location": "L571"
+    },
+    {
       "id": "server_compareinputkeys",
       "label": "compareInputKeys()",
       "_callable": true,
@@ -53,16 +425,16 @@
       "source_location": "L245"
     },
     {
-      "id": "server_decodew3stringstocachedcsv",
-      "label": "decodeW3StringsToCachedCsv()",
+      "id": "server_conflictrelevantitems",
+      "label": "conflictRelevantItems()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "server.js",
       "file_type": "code",
-      "norm_label": "decodew3stringstocachedcsv()",
+      "norm_label": "conflictrelevantitems()",
       "source_file": "server.js",
-      "source_location": "L672"
+      "source_location": "L1025"
     },
     {
       "id": "server_detectlayoutlanguagewin32sync",
@@ -89,6 +461,54 @@
       "source_location": "L1520"
     },
     {
+      "id": "server_findconflicts",
+      "label": "findConflicts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "findconflicts()",
+      "source_file": "server.js",
+      "source_location": "L975"
+    },
+    {
+      "id": "server_findexecutableonpath",
+      "label": "findExecutableOnPath()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "findexecutableonpath()",
+      "source_file": "server.js",
+      "source_location": "L637"
+    },
+    {
+      "id": "server_findw3stringsexe",
+      "label": "findW3StringsExe()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "findw3stringsexe()",
+      "source_file": "server.js",
+      "source_location": "L610"
+    },
+    {
+      "id": "server_findwitcherscriptfiles",
+      "label": "findWitcherScriptFiles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "findwitcherscriptfiles()",
+      "source_file": "server.js",
+      "source_location": "L564"
+    },
+    {
       "id": "server_handlesaveprofile",
       "label": "handleSaveProfile()",
       "_callable": true,
@@ -101,16 +521,40 @@
       "source_location": "L1428"
     },
     {
-      "id": "server_hashw3stringsdictionarykeys",
-      "label": "hashW3StringsDictionaryKeys()",
+      "id": "server_isbenigncommandset",
+      "label": "isBenignCommandSet()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "server.js",
       "file_type": "code",
-      "norm_label": "hashw3stringsdictionarykeys()",
+      "norm_label": "isbenigncommandset()",
       "source_file": "server.js",
-      "source_location": "L712"
+      "source_location": "L1053"
+    },
+    {
+      "id": "server_isdebugcommand",
+      "label": "isDebugCommand()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "isdebugcommand()",
+      "source_file": "server.js",
+      "source_location": "L1061"
+    },
+    {
+      "id": "server_isvanillaonlyconflict",
+      "label": "isVanillaOnlyConflict()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "server.js",
+      "file_type": "code",
+      "norm_label": "isvanillaonlyconflict()",
+      "source_file": "server.js",
+      "source_location": "L1272"
     },
     {
       "id": "server_keysorttuple",
@@ -125,16 +569,16 @@
       "source_location": "L229"
     },
     {
-      "id": "server_sortedw3stringsdictionarykeys",
-      "label": "sortedW3StringsDictionaryKeys()",
+      "id": "server_riskykey",
+      "label": "riskyKey()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "server.js",
       "file_type": "code",
-      "norm_label": "sortedw3stringsdictionarykeys()",
+      "norm_label": "riskykey()",
       "source_file": "server.js",
-      "source_location": "L720"
+      "source_location": "L1278"
     },
     {
       "id": "server_sortsectionbody",
@@ -161,12 +605,120 @@
       "source_location": "L1336"
     },
     {
+      "id": "server_detectdeviceswin32",
+      "label": "detectDevicesWin32()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "handleDevices",
+      "file_type": "code",
+      "norm_label": "detectdeviceswin32()",
+      "source_file": "server.js",
+      "source_location": "L1469"
+    },
+    {
+      "id": "server_detectlayoutlanguagewin32",
+      "label": "detectLayoutLanguageWin32()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "handleDevices",
+      "file_type": "code",
+      "norm_label": "detectlayoutlanguagewin32()",
+      "source_file": "server.js",
+      "source_location": "L1496"
+    },
+    {
+      "id": "server_handledevices",
+      "label": "handleDevices()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "handleDevices",
+      "file_type": "code",
+      "norm_label": "handledevices()",
+      "source_file": "server.js",
+      "source_location": "L1536"
+    },
+    {
+      "id": "server_runpowershell",
+      "label": "runPowerShell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "handleDevices",
+      "file_type": "code",
+      "norm_label": "runpowershell()",
+      "source_file": "server.js",
+      "source_location": "L1458"
+    },
+    {
+      "id": "server_sendjson",
+      "label": "sendJson()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "handleDevices",
+      "file_type": "code",
+      "norm_label": "sendjson()",
+      "source_file": "server.js",
+      "source_location": "L1541"
+    },
+    {
+      "id": "server_uilanguagefortag",
+      "label": "uiLanguageForTag()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "handleDevices",
+      "file_type": "code",
+      "norm_label": "uilanguagefortag()",
+      "source_file": "server.js",
+      "source_location": "L756"
+    },
+    {
+      "id": "server_decodew3stringstocachedcsv",
+      "label": "decodeW3StringsToCachedCsv()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "decodeW3StringsToCachedCsv",
+      "file_type": "code",
+      "norm_label": "decodew3stringstocachedcsv()",
+      "source_file": "server.js",
+      "source_location": "L672"
+    },
+    {
+      "id": "server_hashw3stringsdictionarykeys",
+      "label": "hashW3StringsDictionaryKeys()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "decodeW3StringsToCachedCsv",
+      "file_type": "code",
+      "norm_label": "hashw3stringsdictionarykeys()",
+      "source_file": "server.js",
+      "source_location": "L712"
+    },
+    {
+      "id": "server_sortedw3stringsdictionarykeys",
+      "label": "sortedW3StringsDictionaryKeys()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "decodeW3StringsToCachedCsv",
+      "file_type": "code",
+      "norm_label": "sortedw3stringsdictionarykeys()",
+      "source_file": "server.js",
+      "source_location": "L720"
+    },
+    {
       "id": "server_w3stringstoolkind",
       "label": "w3StringsToolKind()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
+      "community": 15,
+      "community_name": "decodeW3StringsToCachedCsv",
       "file_type": "code",
       "norm_label": "w3stringstoolkind()",
       "source_file": "server.js",
@@ -177,8 +729,8 @@
       "label": "writeW3StringsDictionary()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "server.js",
+      "community": 15,
+      "community_name": "decodeW3StringsToCachedCsv",
       "file_type": "code",
       "norm_label": "writew3stringsdictionary()",
       "source_file": "server.js",
@@ -189,116 +741,44 @@
       "label": "addSyntaxDiagnostic()",
       "_callable": true,
       "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
+      "community": 16,
+      "community_name": "Design: Device-Centric UI",
       "file_type": "code",
       "norm_label": "addsyntaxdiagnostic()",
       "source_file": "server.js",
       "source_location": "L197"
     },
     {
-      "id": "server_assertvalidinputsettings",
-      "label": "assertValidInputSettings()",
+      "id": "server_labelkey",
+      "label": "labelKey()",
       "_callable": true,
       "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
+      "community": 16,
+      "community_name": "Design: Device-Centric UI",
       "file_type": "code",
-      "norm_label": "assertvalidinputsettings()",
+      "norm_label": "labelkey()",
       "source_file": "server.js",
-      "source_location": "L1325"
-    },
-    {
-      "id": "server_expandactionswithciritwins",
-      "label": "expandActionsWithCiriTwins()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
-      "file_type": "code",
-      "norm_label": "expandactionswithciritwins()",
-      "source_file": "server.js",
-      "source_location": "L1114"
-    },
-    {
-      "id": "server_handlesave",
-      "label": "handleSave()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
-      "file_type": "code",
-      "norm_label": "handlesave()",
-      "source_file": "server.js",
-      "source_location": "L1374"
-    },
-    {
-      "id": "server_parseinputsettings",
-      "label": "parseInputSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
-      "file_type": "code",
-      "norm_label": "parseinputsettings()",
-      "source_file": "server.js",
-      "source_location": "L87"
+      "source_location": "L305"
     },
     {
       "id": "server_parseinputsettingstext",
       "label": "parseInputSettingsText()",
       "_callable": true,
       "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
+      "community": 16,
+      "community_name": "Design: Device-Centric UI",
       "file_type": "code",
       "norm_label": "parseinputsettingstext()",
       "source_file": "server.js",
       "source_location": "L91"
     },
     {
-      "id": "server_parseoptionalinputsettings",
-      "label": "parseOptionalInputSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
-      "file_type": "code",
-      "norm_label": "parseoptionalinputsettings()",
-      "source_file": "server.js",
-      "source_location": "L300"
-    },
-    {
-      "id": "server_remap",
-      "label": "remap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
-      "file_type": "code",
-      "norm_label": "remap()",
-      "source_file": "server.js",
-      "source_location": "L1285"
-    },
-    {
-      "id": "server_sortinputsettingstext",
-      "label": "sortInputSettingsText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
-      "file_type": "code",
-      "norm_label": "sortinputsettingstext()",
-      "source_file": "server.js",
-      "source_location": "L258"
-    },
-    {
       "id": "server_splitbindingparams",
       "label": "splitBindingParams()",
       "_callable": true,
       "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
+      "community": 16,
+      "community_name": "Design: Device-Centric UI",
       "file_type": "code",
       "norm_label": "splitbindingparams()",
       "source_file": "server.js",
@@ -309,108 +789,12 @@
       "label": "validateInputSettingsSyntax()",
       "_callable": true,
       "_origin": "ast",
-      "community": 10,
-      "community_name": "parseInputSettingsText",
+      "community": 16,
+      "community_name": "Design: Device-Centric UI",
       "file_type": "code",
       "norm_label": "validateinputsettingssyntax()",
       "source_file": "server.js",
       "source_location": "L138"
-    },
-    {
-      "id": "server_activationbucket",
-      "label": "activationBucket()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "activationbucket()",
-      "source_file": "server.js",
-      "source_location": "L1048"
-    },
-    {
-      "id": "server_conflictrelevantitems",
-      "label": "conflictRelevantItems()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "conflictrelevantitems()",
-      "source_file": "server.js",
-      "source_location": "L1025"
-    },
-    {
-      "id": "server_findconflicts",
-      "label": "findConflicts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "findconflicts()",
-      "source_file": "server.js",
-      "source_location": "L975"
-    },
-    {
-      "id": "server_isbenigncommandset",
-      "label": "isBenignCommandSet()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "isbenigncommandset()",
-      "source_file": "server.js",
-      "source_location": "L1053"
-    },
-    {
-      "id": "server_isdebugcommand",
-      "label": "isDebugCommand()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "isdebugcommand()",
-      "source_file": "server.js",
-      "source_location": "L1061"
-    },
-    {
-      "id": "server_isvanillaonlyconflict",
-      "label": "isVanillaOnlyConflict()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "isvanillaonlyconflict()",
-      "source_file": "server.js",
-      "source_location": "L1272"
-    },
-    {
-      "id": "server_labelkey",
-      "label": "labelKey()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "labelkey()",
-      "source_file": "server.js",
-      "source_location": "L305"
-    },
-    {
-      "id": "server_riskykey",
-      "label": "riskyKey()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "findConflicts",
-      "file_type": "code",
-      "norm_label": "riskykey()",
-      "source_file": "server.js",
-      "source_location": "L1278"
     },
     {
       "id": "src_semantic_ui_enhancements_applyanimation",
@@ -569,18 +953,6 @@
       "source_location": "L2448"
     },
     {
-      "id": "public_app_applystatictexts",
-      "label": "applyStaticTexts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "applystatictexts()",
-      "source_file": "public/app.js",
-      "source_location": "L304"
-    },
-    {
       "id": "public_app_attachleadereditor",
       "label": "attachLeaderEditor()",
       "_callable": true,
@@ -591,6 +963,18 @@
       "norm_label": "attachleadereditor()",
       "source_file": "public/app.js",
       "source_location": "L1472"
+    },
+    {
+      "id": "public_app_boundactionnames",
+      "label": "boundActionNames()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "boundactionnames()",
+      "source_file": "public/app.js",
+      "source_location": "L2417"
     },
     {
       "id": "public_app_buildcolormap",
@@ -677,18 +1061,6 @@
       "source_location": "L1638"
     },
     {
-      "id": "public_app_clearbinding",
-      "label": "clearBinding()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "clearbinding()",
-      "source_file": "public/app.js",
-      "source_location": "L1799"
-    },
-    {
       "id": "public_app_collectsnaptargets",
       "label": "collectSnapTargets()",
       "_callable": true,
@@ -725,42 +1097,6 @@
       "source_location": "L1958"
     },
     {
-      "id": "public_app_confirmclear",
-      "label": "confirmClear()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "confirmclear()",
-      "source_file": "public/app.js",
-      "source_location": "L1790"
-    },
-    {
-      "id": "public_app_currentlanguage",
-      "label": "currentLanguage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "currentlanguage()",
-      "source_file": "public/app.js",
-      "source_location": "L287"
-    },
-    {
-      "id": "public_app_decodeinputsettingsbuffer",
-      "label": "decodeInputSettingsBuffer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "decodeinputsettingsbuffer()",
-      "source_file": "public/app.js",
-      "source_location": "L1019"
-    },
-    {
       "id": "public_app_detectbrowserlanguage",
       "label": "detectBrowserLanguage()",
       "_callable": true,
@@ -783,30 +1119,6 @@
       "norm_label": "deviceextent()",
       "source_file": "public/app.js",
       "source_location": "L2133"
-    },
-    {
-      "id": "public_app_devicehasbindings",
-      "label": "deviceHasBindings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "devicehasbindings()",
-      "source_file": "public/app.js",
-      "source_location": "L1290"
-    },
-    {
-      "id": "public_app_devicelabel",
-      "label": "deviceLabel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "devicelabel()",
-      "source_file": "public/app.js",
-      "source_location": "L1284"
     },
     {
       "id": "public_app_dominantvanillacategory",
@@ -857,52 +1169,16 @@
       "source_location": "L1627"
     },
     {
-      "id": "public_app_getlanguagechoice",
-      "label": "getLanguageChoice()",
+      "id": "public_app_hasresolvedname",
+      "label": "hasResolvedName()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "app.js",
       "file_type": "code",
-      "norm_label": "getlanguagechoice()",
+      "norm_label": "hasresolvedname()",
       "source_file": "public/app.js",
-      "source_location": "L282"
-    },
-    {
-      "id": "public_app_getprofile",
-      "label": "getProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "getprofile()",
-      "source_file": "public/app.js",
-      "source_location": "L1306"
-    },
-    {
-      "id": "public_app_handleloadfile",
-      "label": "handleLoadFile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "handleloadfile()",
-      "source_file": "public/app.js",
-      "source_location": "L976"
-    },
-    {
-      "id": "public_app_handlesavefile",
-      "label": "handleSaveFile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "handlesavefile()",
-      "source_file": "public/app.js",
-      "source_location": "L1046"
+      "source_location": "L664"
     },
     {
       "id": "public_app_iseditableprofile",
@@ -915,18 +1191,6 @@
       "norm_label": "iseditableprofile()",
       "source_file": "public/app.js",
       "source_location": "L1468"
-    },
-    {
-      "id": "public_app_languagequery",
-      "label": "languageQuery()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "languagequery()",
-      "source_file": "public/app.js",
-      "source_location": "L300"
     },
     {
       "id": "public_app_layoutlabelcolumn",
@@ -951,18 +1215,6 @@
       "norm_label": "leaderopt()",
       "source_file": "public/app.js",
       "source_location": "L2260"
-    },
-    {
-      "id": "public_app_load",
-      "label": "load()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "load()",
-      "source_file": "public/app.js",
-      "source_location": "L390"
     },
     {
       "id": "public_app_loadprofile",
@@ -1001,30 +1253,6 @@
       "source_location": "L1414"
     },
     {
-      "id": "public_app_markprofiledirty",
-      "label": "markProfileDirty()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "markprofiledirty()",
-      "source_file": "public/app.js",
-      "source_location": "L1640"
-    },
-    {
-      "id": "public_app_matchdevice",
-      "label": "matchDevice()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "matchdevice()",
-      "source_file": "public/app.js",
-      "source_location": "L1931"
-    },
-    {
       "id": "public_app_nearestsnap",
       "label": "nearestSnap()",
       "_callable": true,
@@ -1047,30 +1275,6 @@
       "norm_label": "onleaderdrag()",
       "source_file": "public/app.js",
       "source_location": "L1572"
-    },
-    {
-      "id": "public_app_opensavedialog",
-      "label": "openSaveDialog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "opensavedialog()",
-      "source_file": "public/app.js",
-      "source_location": "L1032"
-    },
-    {
-      "id": "public_app_promptlabeltext",
-      "label": "promptLabelText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "promptlabeltext()",
-      "source_file": "public/app.js",
-      "source_location": "L1647"
     },
     {
       "id": "public_app_readableondark",
@@ -1107,54 +1311,6 @@
       "norm_label": "redrawediting()",
       "source_file": "public/app.js",
       "source_location": "L1511"
-    },
-    {
-      "id": "public_app_remapinputsettingstext",
-      "label": "remapInputSettingsText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "remapinputsettingstext()",
-      "source_file": "public/app.js",
-      "source_location": "L1101"
-    },
-    {
-      "id": "public_app_remapsessioncontent",
-      "label": "remapSessionContent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "remapsessioncontent()",
-      "source_file": "public/app.js",
-      "source_location": "L1074"
-    },
-    {
-      "id": "public_app_renderdevicesvg",
-      "label": "renderDeviceSvg()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "renderdevicesvg()",
-      "source_file": "public/app.js",
-      "source_location": "L2500"
-    },
-    {
-      "id": "public_app_renderdeviceview",
-      "label": "renderDeviceView()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "renderdeviceview()",
-      "source_file": "public/app.js",
-      "source_location": "L1327"
     },
     {
       "id": "public_app_rendergamepadsvg",
@@ -1217,30 +1373,6 @@
       "source_location": "L2192"
     },
     {
-      "id": "public_app_resetleaderlayouts",
-      "label": "resetLeaderLayouts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "resetleaderlayouts()",
-      "source_file": "public/app.js",
-      "source_location": "L940"
-    },
-    {
-      "id": "public_app_resolvekeyboardprofile",
-      "label": "resolveKeyboardProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "resolvekeyboardprofile()",
-      "source_file": "public/app.js",
-      "source_location": "L425"
-    },
-    {
       "id": "public_app_round2",
       "label": "round2()",
       "_callable": true,
@@ -1253,18 +1385,6 @@
       "source_location": "L1637"
     },
     {
-      "id": "public_app_saveleaderlayouts",
-      "label": "saveLeaderLayouts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "saveleaderlayouts()",
-      "source_file": "public/app.js",
-      "source_location": "L952"
-    },
-    {
       "id": "public_app_showdeviceempty",
       "label": "showDeviceEmpty()",
       "_callable": true,
@@ -1275,42 +1395,6 @@
       "norm_label": "showdeviceempty()",
       "source_file": "public/app.js",
       "source_location": "L1388"
-    },
-    {
-      "id": "public_app_showloading",
-      "label": "showLoading()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "showloading()",
-      "source_file": "public/app.js",
-      "source_location": "L441"
-    },
-    {
-      "id": "public_app_showsyntaxstatus",
-      "label": "showSyntaxStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "showsyntaxstatus()",
-      "source_file": "public/app.js",
-      "source_location": "L1007"
-    },
-    {
-      "id": "public_app_showtoast",
-      "label": "showToast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "showtoast()",
-      "source_file": "public/app.js",
-      "source_location": "L2551"
     },
     {
       "id": "public_app_snap",
@@ -1373,42 +1457,6 @@
       "source_location": "L1448"
     },
     {
-      "id": "public_app_t",
-      "label": "t()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "t()",
-      "source_file": "public/app.js",
-      "source_location": "L292"
-    },
-    {
-      "id": "public_app_updateeditorbar",
-      "label": "updateEditorBar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "updateeditorbar()",
-      "source_file": "public/app.js",
-      "source_location": "L916"
-    },
-    {
-      "id": "public_app_updatetabstate",
-      "label": "updateTabState()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "app.js",
-      "file_type": "code",
-      "norm_label": "updatetabstate()",
-      "source_file": "public/app.js",
-      "source_location": "L1395"
-    },
-    {
       "id": "public_app_validateprofile",
       "label": "validateProfile()",
       "_callable": true,
@@ -1443,6 +1491,18 @@
       "norm_label": "vanillacategoryforcommand()",
       "source_file": "public/app.js",
       "source_location": "L1987"
+    },
+    {
+      "id": "scripts_seed_leader_layout_round",
+      "label": "round()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "round()",
+      "source_file": "scripts/seed-leader-layout.js",
+      "source_location": "L19"
     },
     {
       "id": "scripts_seed_leader_layout_seedprofile",
@@ -1757,18 +1817,6 @@
       "source_location": "L659"
     },
     {
-      "id": "server_collectwitcherscriptfiles",
-      "label": "collectWitcherScriptFiles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "buildLocalizationMap",
-      "file_type": "code",
-      "norm_label": "collectwitcherscriptfiles()",
-      "source_file": "server.js",
-      "source_location": "L571"
-    },
-    {
       "id": "server_detectlocalizationlanguage",
       "label": "detectLocalizationLanguage()",
       "_callable": true,
@@ -1779,18 +1827,6 @@
       "norm_label": "detectlocalizationlanguage()",
       "source_file": "server.js",
       "source_location": "L502"
-    },
-    {
-      "id": "server_findexecutableonpath",
-      "label": "findExecutableOnPath()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "buildLocalizationMap",
-      "file_type": "code",
-      "norm_label": "findexecutableonpath()",
-      "source_file": "server.js",
-      "source_location": "L637"
     },
     {
       "id": "server_findlocalizationcsvfiles",
@@ -1805,18 +1841,6 @@
       "source_location": "L470"
     },
     {
-      "id": "server_findw3stringsexe",
-      "label": "findW3StringsExe()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "buildLocalizationMap",
-      "file_type": "code",
-      "norm_label": "findw3stringsexe()",
-      "source_file": "server.js",
-      "source_location": "L610"
-    },
-    {
       "id": "server_findw3stringsfiles",
       "label": "findW3StringsFiles()",
       "_callable": true,
@@ -1827,18 +1851,6 @@
       "norm_label": "findw3stringsfiles()",
       "source_file": "server.js",
       "source_location": "L651"
-    },
-    {
-      "id": "server_findwitcherscriptfiles",
-      "label": "findWitcherScriptFiles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "buildLocalizationMap",
-      "file_type": "code",
-      "norm_label": "findwitcherscriptfiles()",
-      "source_file": "server.js",
-      "source_location": "L564"
     },
     {
       "id": "server_loadw3stringslocalizationmap",
@@ -1985,18 +1997,6 @@
       "source_location": "L1427"
     },
     {
-      "id": "public_app_boundactionnames",
-      "label": "boundActionNames()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "boundactionnames()",
-      "source_file": "public/app.js",
-      "source_location": "L2417"
-    },
-    {
       "id": "public_app_buildremappreview",
       "label": "buildRemapPreview()",
       "_callable": true,
@@ -2115,18 +2115,6 @@
       "norm_label": "groupconflicts()",
       "source_file": "public/app.js",
       "source_location": "L480"
-    },
-    {
-      "id": "public_app_hasresolvedname",
-      "label": "hasResolvedName()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "openPopover",
-      "file_type": "code",
-      "norm_label": "hasresolvedname()",
-      "source_file": "public/app.js",
-      "source_location": "L664"
     },
     {
       "id": "public_app_highlightconflicts",
@@ -2501,6 +2489,18 @@
       "source_location": "L948"
     },
     {
+      "id": "server_assertvalidinputsettings",
+      "label": "assertValidInputSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "server",
+      "file_type": "code",
+      "norm_label": "assertvalidinputsettings()",
+      "source_file": "server.js",
+      "source_location": "L1325"
+    },
+    {
       "id": "server_decodebuffer",
       "label": "decodeBuffer()",
       "_callable": true,
@@ -2513,28 +2513,16 @@
       "source_location": "L73"
     },
     {
-      "id": "server_detectdeviceswin32",
-      "label": "detectDevicesWin32()",
+      "id": "server_expandactionswithciritwins",
+      "label": "expandActionsWithCiriTwins()",
       "_callable": true,
       "_origin": "ast",
       "community": 8,
       "community_name": "server",
       "file_type": "code",
-      "norm_label": "detectdeviceswin32()",
+      "norm_label": "expandactionswithciritwins()",
       "source_file": "server.js",
-      "source_location": "L1469"
-    },
-    {
-      "id": "server_detectlayoutlanguagewin32",
-      "label": "detectLayoutLanguageWin32()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "server",
-      "file_type": "code",
-      "norm_label": "detectlayoutlanguagewin32()",
-      "source_file": "server.js",
-      "source_location": "L1496"
+      "source_location": "L1114"
     },
     {
       "id": "server_extractmultipartfile",
@@ -2549,16 +2537,16 @@
       "source_location": "L1344"
     },
     {
-      "id": "server_handledevices",
-      "label": "handleDevices()",
+      "id": "server_handlesave",
+      "label": "handleSave()",
       "_callable": true,
       "_origin": "ast",
       "community": 8,
       "community_name": "server",
       "file_type": "code",
-      "norm_label": "handledevices()",
+      "norm_label": "handlesave()",
       "source_file": "server.js",
-      "source_location": "L1536"
+      "source_location": "L1374"
     },
     {
       "id": "server_isallowedhost",
@@ -2585,6 +2573,42 @@
       "source_location": "L1603"
     },
     {
+      "id": "server_parseinputsettings",
+      "label": "parseInputSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "server",
+      "file_type": "code",
+      "norm_label": "parseinputsettings()",
+      "source_file": "server.js",
+      "source_location": "L87"
+    },
+    {
+      "id": "server_parseoptionalinputsettings",
+      "label": "parseOptionalInputSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "server",
+      "file_type": "code",
+      "norm_label": "parseoptionalinputsettings()",
+      "source_file": "server.js",
+      "source_location": "L300"
+    },
+    {
+      "id": "server_remap",
+      "label": "remap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "server",
+      "file_type": "code",
+      "norm_label": "remap()",
+      "source_file": "server.js",
+      "source_location": "L1285"
+    },
+    {
       "id": "server_resolvepublicpath",
       "label": "resolvePublicPath()",
       "_callable": true,
@@ -2595,30 +2619,6 @@
       "norm_label": "resolvepublicpath()",
       "source_file": "server.js",
       "source_location": "L1556"
-    },
-    {
-      "id": "server_runpowershell",
-      "label": "runPowerShell()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "server",
-      "file_type": "code",
-      "norm_label": "runpowershell()",
-      "source_file": "server.js",
-      "source_location": "L1458"
-    },
-    {
-      "id": "server_sendjson",
-      "label": "sendJson()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "server",
-      "file_type": "code",
-      "norm_label": "sendjson()",
-      "source_file": "server.js",
-      "source_location": "L1541"
     },
     {
       "id": "server_servestatic",
@@ -2633,19 +2633,19 @@
       "source_location": "L1564"
     },
     {
-      "id": "server_uilanguagefortag",
-      "label": "uiLanguageForTag()",
+      "id": "server_sortinputsettingstext",
+      "label": "sortInputSettingsText()",
       "_callable": true,
       "_origin": "ast",
       "community": 8,
       "community_name": "server",
       "file_type": "code",
-      "norm_label": "uilanguagefortag()",
+      "norm_label": "sortinputsettingstext()",
       "source_file": "server.js",
-      "source_location": "L756"
+      "source_location": "L258"
     },
     {
-      "id": "src_semantic_bindings_checkconflict",
+      "id": "public_semantic_bindings_checkconflict",
       "label": "checkConflict()",
       "_callable": true,
       "_origin": "ast",
@@ -2653,11 +2653,11 @@
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "checkconflict()",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L273"
     },
     {
-      "id": "src_semantic_bindings_converttosemanticbindings",
+      "id": "public_semantic_bindings_converttosemanticbindings",
       "label": "convertToSemanticBindings()",
       "_callable": true,
       "_origin": "ast",
@@ -2665,11 +2665,11 @@
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "converttosemanticbindings()",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L223"
     },
     {
-      "id": "src_semantic_bindings_findconflicts",
+      "id": "public_semantic_bindings_findconflicts",
       "label": "findConflicts()",
       "_callable": true,
       "_origin": "ast",
@@ -2677,11 +2677,11 @@
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "findconflicts()",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L324"
     },
     {
-      "id": "src_semantic_bindings_getactionsforcontext",
+      "id": "public_semantic_bindings_getactionsforcontext",
       "label": "getActionsForContext()",
       "_callable": true,
       "_origin": "ast",
@@ -2689,11 +2689,11 @@
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "getactionsforcontext()",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L299"
     },
     {
-      "id": "src_semantic_bindings_getsemanticgroupforaction",
+      "id": "public_semantic_bindings_getsemanticgroupforaction",
       "label": "getSemanticGroupForAction()",
       "_callable": true,
       "_origin": "ast",
@@ -2701,63 +2701,20 @@
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "getsemanticgroupforaction()",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L256"
     },
     {
-      "id": "scripts_seed_leader_layout",
-      "label": "seed-leader-layout.js",
+      "id": "docs_specs_device_centric_ui_design_client_components",
+      "label": "Client Components",
       "_origin": "ast",
       "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "file_type": "code",
-      "norm_label": "seed-leader-layout.js",
-      "source_file": "scripts/seed-leader-layout.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "scripts_seed_leader_layout_computeleaderlayout",
-      "label": "{ computeLeaderLayout }",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "file_type": "code",
-      "norm_label": "{ computeleaderlayout }",
-      "source_file": "scripts/seed-leader-layout.js",
-      "source_location": "L17"
-    },
-    {
-      "id": "scripts_seed_leader_layout_fs",
-      "label": "fs",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "file_type": "code",
-      "norm_label": "fs",
-      "source_file": "scripts/seed-leader-layout.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "scripts_seed_leader_layout_path",
-      "label": "path",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "file_type": "code",
-      "norm_label": "path",
-      "source_file": "scripts/seed-leader-layout.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "scripts_seed_leader_layout_profiles",
-      "label": "PROFILES",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "file_type": "code",
-      "norm_label": "profiles",
-      "source_file": "scripts/seed-leader-layout.js",
-      "source_location": "L20"
+      "community_name": "t",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "client components",
+      "source_file": "docs/specs/device-centric-ui/design.md",
+      "source_location": "L36"
     },
     {
       "id": "server",
@@ -3849,16 +3806,59 @@
       "source_location": "L1868"
     },
     {
-      "id": "docs_specs_device_centric_ui_design_client_components",
-      "label": "Client Components",
+      "id": "scripts_seed_leader_layout",
+      "label": "seed-leader-layout.js",
       "_origin": "ast",
       "community": 2,
       "community_name": "app.js",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "client components",
-      "source_file": "docs/specs/device-centric-ui/design.md",
-      "source_location": "L36"
+      "file_type": "code",
+      "norm_label": "seed-leader-layout.js",
+      "source_file": "scripts/seed-leader-layout.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "scripts_seed_leader_layout_computeleaderlayout",
+      "label": "{ computeLeaderLayout }",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "{ computeleaderlayout }",
+      "source_file": "scripts/seed-leader-layout.js",
+      "source_location": "L17"
+    },
+    {
+      "id": "scripts_seed_leader_layout_fs",
+      "label": "fs",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "fs",
+      "source_file": "scripts/seed-leader-layout.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "scripts_seed_leader_layout_path",
+      "label": "path",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "path",
+      "source_file": "scripts/seed-leader-layout.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "scripts_seed_leader_layout_profiles",
+      "label": "PROFILES",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "app.js",
+      "file_type": "code",
+      "norm_label": "profiles",
+      "source_file": "scripts/seed-leader-layout.js",
+      "source_location": "L20"
     },
     {
       "id": "docs_assets_readme",
@@ -4151,58 +4151,58 @@
       "source_location": "L1613"
     },
     {
-      "id": "src_semantic_bindings",
+      "id": "public_semantic_bindings",
       "label": "semantic-bindings.js",
       "_origin": "ast",
       "community": 9,
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "semantic-bindings.js",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L1"
     },
     {
-      "id": "src_semantic_bindings_conflict_groups",
+      "id": "public_semantic_bindings_conflict_groups",
       "label": "CONFLICT_GROUPS",
       "_origin": "ast",
       "community": 9,
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "conflict_groups",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L197"
     },
     {
-      "id": "src_semantic_bindings_context_functions",
+      "id": "public_semantic_bindings_context_functions",
       "label": "CONTEXT_FUNCTIONS",
       "_origin": "ast",
       "community": 9,
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "context_functions",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L131"
     },
     {
-      "id": "src_semantic_bindings_semantic_groups",
+      "id": "public_semantic_bindings_semantic_groups",
       "label": "SEMANTIC_GROUPS",
       "_origin": "ast",
       "community": 9,
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "semantic_groups",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L11"
     },
     {
-      "id": "src_semantic_bindings_technical_actions",
+      "id": "public_semantic_bindings_technical_actions",
       "label": "TECHNICAL_ACTIONS",
       "_origin": "ast",
       "community": 9,
       "community_name": "test-semantic-bindings.js",
       "file_type": "code",
       "norm_label": "technical_actions",
-      "source_file": "src/semantic-bindings.js",
+      "source_file": "public/semantic-bindings.js",
       "source_location": "L177"
     },
     {
@@ -4305,30 +4305,6 @@
       "source_location": "L72"
     },
     {
-      "id": "ref_fs",
-      "label": "ref_fs",
-      "_origin": "semantic",
-      "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_fs",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_path",
-      "label": "ref_path",
-      "_origin": "semantic",
-      "community": 0,
-      "community_name": "seed-leader-layout.js",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_path",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "ref_node_child_process",
       "label": "ref_node_child_process",
       "_origin": "semantic",
@@ -4373,6 +4349,30 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_url",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "ref_fs",
+      "label": "ref_fs",
+      "_origin": "semantic",
+      "community": 2,
+      "community_name": "app.js",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_fs",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "ref_path",
+      "label": "ref_path",
+      "_origin": "semantic",
+      "community": 2,
+      "community_name": "app.js",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_path",
       "source_file": "",
       "type": "external"
     },
@@ -7115,6 +7115,42 @@
       "weight": 1.0
     },
     {
+      "source": "public_semantic_bindings_checkconflict",
+      "target": "public_semantic_bindings_getsemanticgroupforaction",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L275",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings_converttosemanticbindings",
+      "target": "public_semantic_bindings_getsemanticgroupforaction",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings_findconflicts",
+      "target": "public_semantic_bindings_checkconflict",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L330",
+      "weight": 1.0
+    },
+    {
       "source": "scripts_seed_leader_layout_seedprofile",
       "target": "public_app_computeleaderlayout",
       "relation": "calls",
@@ -8531,42 +8567,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_semantic_bindings_checkconflict",
-      "target": "src_semantic_bindings_getsemanticgroupforaction",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L275",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings_converttosemanticbindings",
-      "target": "src_semantic_bindings_getsemanticgroupforaction",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L233",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings_findconflicts",
-      "target": "src_semantic_bindings_checkconflict",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L330",
-      "weight": 1.0
-    },
-    {
       "source": "test_render_smoke_test",
       "target": "test_render_smoke_test_el_queryselector",
       "relation": "calls",
@@ -9336,7 +9336,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_checkconflict",
+      "target": "public_semantic_bindings_checkconflict",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9348,7 +9348,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_conflict_groups",
+      "target": "public_semantic_bindings_conflict_groups",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9360,7 +9360,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_converttosemanticbindings",
+      "target": "public_semantic_bindings_converttosemanticbindings",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9372,7 +9372,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_findconflicts",
+      "target": "public_semantic_bindings_findconflicts",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9384,7 +9384,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_getactionsforcontext",
+      "target": "public_semantic_bindings_getactionsforcontext",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9396,7 +9396,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_getsemanticgroupforaction",
+      "target": "public_semantic_bindings_getsemanticgroupforaction",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9408,7 +9408,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings_semantic_groups",
+      "target": "public_semantic_bindings_semantic_groups",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9648,7 +9648,7 @@
     },
     {
       "source": "test_semantic_bindings",
-      "target": "src_semantic_bindings",
+      "target": "public_semantic_bindings",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11122,6 +11122,50 @@
       "weight": 1.0
     },
     {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_semantic_groups",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_context_functions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_technical_actions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_conflict_groups",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
       "source": "readme",
       "target": "readme_witcher_3_keymapper",
       "relation": "contains",
@@ -12090,105 +12134,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_semantic_groups",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_context_functions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L131",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_technical_actions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L177",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_conflict_groups",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L197",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_converttosemanticbindings",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L223",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_getsemanticgroupforaction",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L256",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_checkconflict",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L273",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_getactionsforcontext",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L299",
-      "weight": 1.0
-    },
-    {
-      "source": "src_semantic_bindings",
-      "target": "src_semantic_bindings_findconflicts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/semantic-bindings.js",
-      "source_location": "L324",
-      "weight": 1.0
-    },
-    {
       "source": "src_semantic_ui_enhancements",
       "target": "src_semantic_ui_enhancements_applybuttonfeedback",
       "relation": "contains",
@@ -13094,6 +13039,66 @@
       "weight": 1.0
     },
     {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_converttosemanticbindings",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "collection",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L352",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_getsemanticgroupforaction",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "collection",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L353",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_checkconflict",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "collection",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L354",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_getactionsforcontext",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "collection",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L355",
+      "weight": 1.0
+    },
+    {
+      "source": "public_semantic_bindings",
+      "target": "public_semantic_bindings_findconflicts",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "collection",
+      "source_file": "public/semantic-bindings.js",
+      "source_location": "L356",
+      "weight": 1.0
+    },
+    {
       "source": "server",
       "target": "server_findconflicts",
       "relation": "indirect_call",
@@ -13599,5 +13604,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c69870a9e36bef82bdf9f50d97be8192d8fc053f"
+  "built_at_commit": "524f0109925f6998c65c1553cafc6e1c6c29660a"
 }

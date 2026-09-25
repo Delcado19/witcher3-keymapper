@@ -1,6 +1,11 @@
 /**
  * UI-Verbesserungen für das semantische Bindings-Modell
  * Implementiert visuelle Feedback-Mechanismen und verbesserte Darstellung
+ *
+ * Loaded as a classic <script> before app.js, so these functions are browser
+ * globals (app.js and inline onmouse* handlers call them directly). This file is
+ * the single source; do not re-declare them in app.js — a later function
+ * declaration would silently override these.
  */
 
 /**
@@ -8,7 +13,7 @@
  * @param {string} groupKey - Der Schlüssel der semantischen Gruppe
  * @returns {Object} Stil- und Darstellungsinformationen
  */
-export function getSemanticGroupStyle(groupKey) {
+function getSemanticGroupStyle(groupKey) {
   const styles = {
     INTERACTION: {
       color: '#4CAF50',      // Grün für Interaktionen
@@ -90,7 +95,7 @@ export function getSemanticGroupStyle(groupKey) {
  * @param {Object} conflict - Der Konflikt
  * @returns {Object} Stil- und Darstellungsinformationen für Konflikte
  */
-export function getConflictStyle(conflict) {
+function getConflictStyle(conflict) {
   return {
     color: '#F44336',
     backgroundColor: '#FFEBEE',
@@ -106,7 +111,7 @@ export function getConflictStyle(conflict) {
  * @param {HTMLElement} element - Das HTML-Element
  * @param {string} eventType - Der Event-Typ ('press', 'release', 'hover')
  */
-export function applyButtonFeedback(element, eventType) {
+function applyButtonFeedback(element, eventType) {
   const styles = {
     press: {
       transform: 'scale(0.97)',
@@ -132,7 +137,7 @@ export function applyButtonFeedback(element, eventType) {
  * @param {string} actionType - Der Aktionstyp
  * @returns {Object} Stil- und Darstellungsinformationen
  */
-export function getActionTypeStyle(actionType) {
+function getActionTypeStyle(actionType) {
   const styles = {
     'normal': {
       color: '#333',
@@ -165,7 +170,7 @@ export function getActionTypeStyle(actionType) {
  * @param {HTMLElement} element - Das HTML-Element
  * @param {string} animationType - Der Animations-Typ ('fade', 'slide', 'bounce')
  */
-export function applyAnimation(element, animationType) {
+function applyAnimation(element, animationType) {
   const animations = {
     fade: {
       transition: 'opacity 200ms ease-out',
@@ -191,7 +196,7 @@ export function applyAnimation(element, animationType) {
  * @param {string} type - Der Typ des leeren Zustands
  * @returns {Object} Stil- und Darstellungsinformationen
  */
-export function getEmptyStateStyle(type) {
+function getEmptyStateStyle(type) {
   const styles = {
     'no-conflicts': {
       color: '#9E9E9E',
