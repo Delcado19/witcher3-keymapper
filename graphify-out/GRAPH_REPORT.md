@@ -1,17 +1,17 @@
 # Graph Report - witcher3-keymapper  (2026-09-25)
 
 ## Corpus Check
-- 23 files · ~58,478 words
+- 23 files · ~58,563 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 4, .css 2, .bat 1)
 
 ## Summary
-- 371 nodes · 779 edges · 21 communities (18 shown, 3 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 83 edges (avg confidence: 0.86)
+- 373 nodes · 787 edges · 22 communities (19 shown, 3 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 84 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b6e34250`
+- Built from commit: `9423897f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,71 +32,72 @@
 - Requirements: Device-Centric UI
 - findConflicts
 - Design: Device-Centric UI
-- collectLocalizationCsvFiles
+- parseInputSettingsText
 - Tasks: Device-Centric UI
+- decodeW3StringsToCachedCsv
 - assets/README.md
 - w3strings-ng/README.md
 
 ## God Nodes (most connected - your core abstractions)
-1. `t()` - 35 edges
-2. `renderDeviceView()` - 23 edges
+1. `t()` - 36 edges
+2. `renderDeviceView()` - 24 edges
 3. `buildScan()` - 21 edges
-4. `openPopover()` - 16 edges
+4. `openPopover()` - 17 edges
 5. `server` - 14 edges
 6. `Witcher 3 Keymapper` - 13 edges
 7. `load()` - 12 edges
 8. `onLeaderDrag()` - 12 edges
-9. `Requirements: Device-Centric UI` - 12 edges
-10. `svgNode()` - 11 edges
+9. `showToast()` - 12 edges
+10. `Requirements: Device-Centric UI` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Client Components` --references--> `renderDeviceSvg()`  [INFERRED]
-  docs/specs/device-centric-ui/design.md → public/app.js
-- `Server Components` --references--> `parseInputSettingsText()`  [INFERRED]
-  docs/specs/device-centric-ui/design.md → server.js
 - `Client Components` --references--> `applyStaticTexts()`  [INFERRED]
   docs/specs/device-centric-ui/design.md → public/app.js
 - `Client Components` --references--> `remapSessionContent()`  [INFERRED]
   docs/specs/device-centric-ui/design.md → public/app.js
 - `Client Components` --references--> `openPopover()`  [INFERRED]
   docs/specs/device-centric-ui/design.md → public/app.js
+- `Client Components` --references--> `renderDeviceSvg()`  [INFERRED]
+  docs/specs/device-centric-ui/design.md → public/app.js
+- `Server Components` --references--> `parseInputSettingsText()`  [INFERRED]
+  docs/specs/device-centric-ui/design.md → server.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (21 total, 3 thin omitted)
+## Communities (22 total, 3 thin omitted)
 
 ### Community 0 - "app.js"
 Cohesion: 0.07
-Nodes (82): Client Components, activeProfileId(), activeProfileIds(), applyColoring(), applyStaticTexts(), assignKeyToCommand(), attachKeyInteractions(), buildColorMap() (+74 more)
+Nodes (81): activateConflictEntry(), activeProfileId(), activeProfileIds(), applyColoring(), applyConflicts(), applyStaticTexts(), assignKeyToCommand(), attachKeyInteractions() (+73 more)
 
 ### Community 1 - "server.js"
-Cohesion: 0.08
-Nodes (33): ref_node_child_process, ref_node_crypto, ref_node_http, ref_node_url, assertValidProfilePayload(), BENIGN_COMMAND_GROUPS, CIRI_TWINS_BY_GERALT, compareInputKeys() (+25 more)
+Cohesion: 0.07
+Nodes (32): ref_node_child_process, ref_node_crypto, ref_node_http, ref_node_url, assertValidProfilePayload(), BENIGN_COMMAND_GROUPS, CIRI_TWINS_BY_GERALT, collectWitcherScriptFiles() (+24 more)
 
 ### Community 2 - "onLeaderDrag"
 Cohesion: 0.08
-Nodes (40): adjustEditorFont(), applyConflicts(), applyLeaderLabels(), attachLeaderEditor(), boundActionNames(), buildDebugGrid(), buildDeviceSvg(), buildKeyEl() (+32 more)
+Nodes (38): adjustEditorFont(), applyLeaderLabels(), attachLeaderEditor(), buildDebugGrid(), buildDeviceSvg(), buildKeyEl(), buildLeaderSceneInto(), clamp() (+30 more)
 
 ### Community 3 - "DOM Manipulation"
 Cohesion: 0.10
 Nodes (14): ref_node_assert, ref_node_fs, ref_node_path, assert, El, fs, gamepad, makeClassList() (+6 more)
 
 ### Community 4 - "device-ui.test.js"
-Cohesion: 0.09
-Nodes (21): buildRemapPreview(), COLORS, ikForKeyboardEvent(), KEYCODE_TO_IK, remapInputSettingsText(), ref_node_os, ALIAS_COMMAND_CANONICAL, CIRI_TWIN_ACTION (+13 more)
+Cohesion: 0.10
+Nodes (18): COLORS, KEYCODE_TO_IK, ref_node_os, ALIAS_COMMAND_CANONICAL, CIRI_TWIN_ACTION, cleanLocalizedDisplayName(), CURATED_DISPLAY_NAMES, humanizeDisplayName() (+10 more)
 
 ### Community 5 - "buildLocalizationMap"
 Cohesion: 0.19
-Nodes (16): buildLocalizationMap(), collectLocalizationDictionaryKeys(), collectWitcherScriptFiles(), findExecutableOnPath(), findLocalizationCsvFiles(), findW3StringsExe(), findWitcherScriptFiles(), loadW3StringsLocalizationMap() (+8 more)
+Nodes (17): buildLocalizationMap(), collectLocalizationCsvFiles(), collectLocalizationDictionaryKeys(), collectW3StringsFiles(), detectLocalizationLanguage(), findLocalizationCsvFiles(), findW3StringsFiles(), loadW3StringsLocalizationMap() (+9 more)
 
 ### Community 7 - "buildScan"
 Cohesion: 0.14
 Nodes (14): buildScan(), collectModInputXmlFiles(), collectRelevantFiles(), curatedDisplayName(), deviceForKey(), findActionSources(), findModInputXmlFiles(), isEngineInternalCommand() (+6 more)
 
 ### Community 8 - "server"
-Cohesion: 0.18
-Nodes (14): assertValidInputSettings(), decodeBuffer(), expandActionsWithCiriTwins(), extractMultipartFile(), handleSave(), isAllowedHost(), isAllowedOrigin(), parseInputSettings() (+6 more)
+Cohesion: 0.21
+Nodes (12): assertValidInputSettings(), decodeBuffer(), expandActionsWithCiriTwins(), extractMultipartFile(), handleSave(), isAllowedHost(), isAllowedOrigin(), remap() (+4 more)
 
 ### Community 9 - "test-semantic-bindings.js"
 Cohesion: 0.16
@@ -127,16 +128,20 @@ Cohesion: 0.29
 Nodes (7): activationBucket(), conflictRelevantItems(), findConflicts(), isBenignCommandSet(), isDebugCommand(), isVanillaOnlyConflict(), riskyKey()
 
 ### Community 16 - "Design: Device-Centric UI"
-Cohesion: 0.15
-Nodes (13): Data Flow, Design: Device-Centric UI, Device Profiles, Goals, Localization Rules, Overview, Safety, Server Components (+5 more)
+Cohesion: 0.13
+Nodes (15): Client Components, Data Flow, Design: Device-Centric UI, Device Profiles, Goals, Localization Rules, Overview, Safety (+7 more)
 
-### Community 17 - "collectLocalizationCsvFiles"
-Cohesion: 0.40
-Nodes (5): collectLocalizationCsvFiles(), collectW3StringsFiles(), detectLocalizationLanguage(), findW3StringsFiles(), safeReadLanguageMeta()
+### Community 17 - "parseInputSettingsText"
+Cohesion: 0.29
+Nodes (8): Server Components, addSyntaxDiagnostic(), labelKey(), parseInputSettings(), parseInputSettingsText(), parseOptionalInputSettings(), splitBindingParams(), validateInputSettingsSyntax()
 
 ### Community 18 - "Tasks: Device-Centric UI"
 Cohesion: 0.33
 Nodes (5): Completed, Current Verification, Maintenance Notes, Open Follow-Ups, Tasks: Device-Centric UI
+
+### Community 19 - "decodeW3StringsToCachedCsv"
+Cohesion: 0.50
+Nodes (5): decodeW3StringsToCachedCsv(), hashW3StringsDictionaryKeys(), sortedW3StringsDictionaryKeys(), w3StringsToolKind(), writeW3StringsDictionary()
 
 ## Knowledge Gaps
 - **105 isolated node(s):** `name`, `version`, `private`, `description`, `start` (+100 more)
@@ -146,17 +151,17 @@ Nodes (5): Completed, Current Verification, Maintenance Notes, Open Follow-Ups, 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Design: Device-Centric UI` connect `Design: Device-Centric UI` to `app.js`?**
+- **Why does `Design: Device-Centric UI` connect `Design: Device-Centric UI` to `parseInputSettingsText`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `Client Components` connect `app.js` to `Design: Device-Centric UI`, `onLeaderDrag`?**
+- **Why does `Client Components` connect `Design: Device-Centric UI` to `app.js`, `onLeaderDrag`?**
   _High betweenness centrality (0.021) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `openPopover()` (e.g. with `Client Components` and `onOutsideClick()`) actually correct?**
   _`openPopover()` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `version`, `private` to the rest of the system?**
   _105 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `app.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.06905671466353218 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07046070460704607 - nodes in this community are weakly interconnected._
 - **Should `server.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.0766488413547237 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07386363636363637 - nodes in this community are weakly interconnected._
 - **Should `onLeaderDrag` be split into smaller, more focused modules?**
-  _Cohesion score 0.07781649245063879 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected._

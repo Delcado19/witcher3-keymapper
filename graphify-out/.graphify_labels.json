@@ -16,8 +16,9 @@
   "14": "Requirements: Device-Centric UI",
   "15": "findConflicts",
   "16": "Design: Device-Centric UI",
-  "17": "collectLocalizationCsvFiles",
+  "17": "parseInputSettingsText",
   "18": "Tasks: Device-Centric UI",
+  "19": "decodeW3StringsToCachedCsv",
   "26": "assets/README.md",
   "27": "w3strings-ng/README.md"
 }

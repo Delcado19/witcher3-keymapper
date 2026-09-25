@@ -391,6 +391,18 @@ ok("topbar CSS: header uses the PNG directly without tiling", () => {
   assert.ok(css.includes("aspect-ratio: 2172 / 480;"));
   assert.strictEqual(css.includes("center / contain no-repeat"), false);
 });
+ok("command rows keep actions in compact disclosure instead of a fourth grid column", () => {
+  const app = fs.readFileSync(path.join(__dirname, "../public/app.js"), "utf8");
+  assert.strictEqual(app.includes('class="command-actions"'), false);
+  assert.ok(app.includes('class="compact-meta" title="${escapeHtml(command.actions.join(", "))}"'));
+  assert.strictEqual(app.includes('background-color: ${style.backgroundColor}'), false);
+});
+ok("conflict rows link back to device keys with mouse and keyboard", () => {
+  const app = fs.readFileSync(path.join(__dirname, "../public/app.js"), "utf8");
+  assert.ok(app.includes('data-conflict-key="${escapeHtml(grp.key)}" role="button" tabindex="0"'));
+  assert.ok(app.includes('addEventListener("click", activateConflictEntry)'));
+  assert.ok(app.includes('addEventListener("keydown", activateConflictEntry)'));
+});
 ok("dialog HTML: cancel buttons bypass required-field validation", () => {
   const html = fs.readFileSync(path.join(__dirname, "../public/index.html"), "utf8");
   const cancelButtons = html.match(/<button value="cancel" formnovalidate>/g) || [];

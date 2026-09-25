@@ -1,11 +1,11 @@
 {
-  "0": "t",
+  "0": "app.js",
   "1": "server.js",
-  "2": "app.js",
+  "2": "onLeaderDrag",
   "3": "DOM Manipulation",
   "4": "device-ui.test.js",
   "5": "buildLocalizationMap",
-  "6": "openPopover",
+  "6": "semantic-ui-enhancements.js",
   "7": "buildScan",
   "8": "server",
   "9": "test-semantic-bindings.js",
@@ -14,10 +14,11 @@
   "12": "Witcher 3 Keymapper",
   "13": "AGENTS.md - Entry Point For AI Coding Tools",
   "14": "Requirements: Device-Centric UI",
-  "15": "decodeW3StringsToCachedCsv",
+  "15": "findConflicts",
   "16": "Design: Device-Centric UI",
-  "17": "semantic-ui-enhancements.js",
+  "17": "parseInputSettingsText",
   "18": "Tasks: Device-Centric UI",
+  "19": "decodeW3StringsToCachedCsv",
   "26": "assets/README.md",
   "27": "w3strings-ng/README.md"
 }

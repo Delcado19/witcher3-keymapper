@@ -526,8 +526,8 @@ function renderConflicts() {
     els.conflicts.innerHTML = `<div class="empty muted" style="${Object.entries(emptyStyle).map(([k, v]) => `${k}: ${v}`).join('; ')}">${escapeHtml(t("noConflicts"))}</div>`;
     return;
   }
-  // data-conflict-key lets the SVG popover scroll to & highlight the entry
-  // (Requirement 5.5); sources[] shows vanilla vs. mod per command (Req 5.3).
+  // data-conflict-key links the SVG and sidebar in both directions (Requirement
+  // 5.5); sources[] shows vanilla vs. mod per command (Requirement 5.3).
   els.conflicts.innerHTML = groups.slice(0, 120).map((grp) => {
     const commandList = grp.commands.map((name, i) => {
       const src = grp.sources[i] || "unknown";
@@ -535,34 +535,17 @@ function renderConflicts() {
       // context-sensitive neighbours, so they stay dim.
       const isCause = grp.offenders?.has(name);
 
-      // Bestimme die semantische Gruppe für die Aktion
+      // Keep an unknown-action fallback so third-party bindings never break the list.
       let group = 'UNDEFINED';
       try {
         group = getSemanticGroupForAction(name);
       } catch (e) {
-        console.log(`Fehler bei getSemanticGroupForAction für Konflikt-Aktion: ${name}`, e);
+        console.warn(`Could not classify conflict action: ${name}`, e);
       }
       const style = getSemanticGroupStyle(group);
 
-      return `<span class="compact-token${isCause ? " cause" : ""}" title="${escapeHtml(src)}" style="color: ${style.color}; background-color: ${style.backgroundColor}; border-color: ${style.borderColor};">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
+      return `<span class="compact-token${isCause ? " cause" : ""}" title="${escapeHtml(src)}" style="color: ${style.color}; border-color: ${style.borderColor};">${escapeHtml(name)} <span>${escapeHtml(shortSource(src))}</span></span>`;
     }).join("");
-
-    // Bestimme die semantische Gruppe für die Konflikte
-    const conflictGroups = new Set();
-    grp.commands.forEach(cmd => {
-      let group = 'UNDEFINED';
-      try {
-        group = getSemanticGroupForAction(cmd);
-      } catch (e) {
-        console.log(`Fehler bei getSemanticGroupForAction für Konflikt-Gruppe: ${cmd}`, e);
-      }
-      if (group !== 'UNDEFINED') {
-        conflictGroups.add(group);
-      }
-    });
-
-    // Erstelle visuelle Darstellung für Konflikte
-    const conflictStyle = getConflictStyle(grp);
 
     // Show how many gameplay contexts share this overload instead of listing the
     // cryptic section names (Boat, *_Replacer_Ciri, …), which read as separate
@@ -571,7 +554,7 @@ function renderConflicts() {
     const severity = grp.severity === "high" ? t("critical") : t("context");
 
     return `
-    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" tabindex="0">
+    <article class="conflict ${grp.severity}" data-conflict-key="${escapeHtml(grp.key)}" role="button" tabindex="0">
       <div class="compact-key">
         <strong>${escapeHtml(grp.keyLabel)}</strong>
         <span>${escapeHtml(severity)}</span>
@@ -617,28 +600,6 @@ function renderCommands() {
     const sourceLine = commandSourceLine(command);
     const actions = commandActionsLine(command);
 
-    // Bestimme die semantische Gruppe für die Aktionen
-    const actionGroups = new Set();
-    command.actions.forEach(action => {
-      const group = getSemanticGroupForAction(action);
-      if (group !== 'UNDEFINED') {
-        actionGroups.add(group);
-      }
-    });
-
-    // Erstelle visuelle Darstellung für Aktionen
-    const actionElements = command.actions.map(action => {
-      // Fallback für Fehlerhandling
-      let group = 'UNDEFINED';
-      try {
-        group = getSemanticGroupForAction(action);
-      } catch (e) {
-        console.log(`Fehler bei getSemanticGroupForAction für Aktion: ${action}`, e);
-      }
-      const style = getSemanticGroupStyle(group);
-      return `<span class="action-tag" style="color: ${style.color}; background-color: ${style.backgroundColor}; border-color: ${style.borderColor};">${escapeHtml(action)}</span>`;
-    }).join(" ");
-
     return `
       <article class="command">
         <div class="compact-main">
@@ -647,7 +608,6 @@ function renderCommands() {
           ${actions ? `<div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>` : ""}
         </div>
         <div class="compact-keys">${keys.map((key) => keyChip(key)).join("")}</div>
-        <div class="command-actions">${actionElements}</div>
         <button class="compact-action" data-remap="${escapeHtml(command.id)}">${escapeHtml(t("change"))}</button>
       </article>
     `;
@@ -884,6 +844,9 @@ if (typeof document !== "undefined") {
     closePopover();
     renderDeviceView();
   });
+
+  els.conflicts?.addEventListener("click", activateConflictEntry);
+  els.conflicts?.addEventListener("keydown", activateConflictEntry);
 
   // Manual layout choice when no device/language could pre-select one (Req 8.8).
   els.layoutSelect?.addEventListener("change", () => {
@@ -1536,7 +1499,7 @@ function onOutsideClick(event) {
   if (popoverEl && !popoverEl.contains(event.target) && !event.target.closest("[data-key]")) closePopover();
 }
 
-function openPopover(ik, anchorEl) {
+function openPopover(ik, anchorEl, linkConflict = true) {
   closePopover(); // at most one popover open (Requirement 6.8)
   const cmds = scan.commands.filter((c) => c.keys.some((k) => k.key === ik));
   const conflicts = scan.conflicts.filter((cf) => cf.key === ik);
@@ -1604,7 +1567,7 @@ function openPopover(ik, anchorEl) {
 
   if (!cmds.length) wireAssignPicker(pop, ik); // free key: offer to bind a command
 
-  if (conflicts.length) highlightConflicts(ik);
+  if (conflicts.length && linkConflict) highlightConflicts(ik);
 
   document.addEventListener("keydown", onPopoverKeydown);
   // Defer so the opening click itself doesn't immediately close the popover.
@@ -1687,6 +1650,35 @@ async function clearBinding(ik, commandId) {
   } finally {
     showLoading(false);
   }
+}
+
+function activateConflictEntry(event) {
+  const entry = event.target.closest("[data-conflict-key]");
+  if (!entry) return;
+  if (event.type === "keydown") {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+  }
+  navigateToConflictKey(entry.dataset.conflictKey).catch((error) =>
+    showToast(error.message || t("profileLoadFailed"), "error"));
+}
+
+// Conflict rows link back to the matching physical key. Keep this inverse of
+// highlightConflicts so both the diagram and conflict list remain navigable.
+async function navigateToConflictKey(ik) {
+  const command = scan.commands.find((item) => item.keys.some((key) => key.key === ik));
+  const key = command?.keys.find((item) => item.key === ik);
+  if (key?.device === "keyboard") state.activeDevice = "keyboard";
+  if (key?.device === "mouse" || key?.device === "gamepad") state.activeDevice = "controllers";
+
+  closePopover();
+  await renderDeviceView();
+  const target = [...els.deviceSvg.querySelectorAll("[data-key]")]
+    .find((item) => item.getAttribute("data-key") === ik);
+  if (!target) return;
+  target.scrollIntoView({ block: "center" });
+  target.focus({ preventScroll: true });
+  openPopover(ik, target, false);
 }
 
 // Task 14: clicking a conflicting key highlights & scrolls the sidebar entry.
