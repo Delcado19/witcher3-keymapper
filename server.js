@@ -820,6 +820,27 @@ function mergeAliasCommands(commandMap) {
 // input defaults to the server-side input.settings, but /api/load passes a
 // pre-parsed in-memory upload so a loaded file is scanned without changing the
 // default path (Requirement 7.1, 7.10).
+// Public assignment projection: preserve trigger/context semantics without sending
+// thousands of repeated parser rows. Raw entries remain authoritative for writes.
+function summarizeAssignments(bindings) {
+  const groups = new Map();
+  for (const binding of bindings) {
+    const id = JSON.stringify([binding.key, binding.state, binding.idleTime]);
+    if (!groups.has(id)) groups.set(id, {
+      key: binding.key, label: binding.keyLabel, device: binding.device,
+      state: binding.state, idleTime: binding.idleTime,
+      contexts: new Set(), actions: new Set(), bindingCount: 0
+    });
+    const assignment = groups.get(id);
+    assignment.contexts.add(binding.section);
+    assignment.actions.add(binding.action);
+    assignment.bindingCount += 1;
+  }
+  return [...groups.values()].map((assignment) => ({
+    ...assignment, contexts: [...assignment.contexts], actions: [...assignment.actions]
+  }));
+}
+
 function buildScan(input = parseInputSettings(defaults.inputSettings), requestedLanguage = "") {
   assertValidInputSettings(input.syntax);
   const inputLanguage = detectLayoutLanguageWin32Sync();
@@ -896,21 +917,8 @@ function buildScan(input = parseInputSettings(defaults.inputSettings), requested
   mergeAliasCommands(commandMap);
 
   for (const command of commandMap.values()) {
-    const seen = new Set();
-    command.keys = command.bindings
-      .filter((binding) => {
-        const id = `${binding.key}|${binding.state}|${binding.idleTime}`;
-        if (seen.has(id)) return false;
-        seen.add(id);
-        return true;
-      })
-      .map((binding) => ({
-        key: binding.key,
-        label: binding.keyLabel,
-        device: binding.device,
-        state: binding.state,
-        idleTime: binding.idleTime
-      }));
+    command.keys = summarizeAssignments(command.bindings);
+    delete command.bindings;
   }
 
   // Debug/scene-debug bindings (Debug_KillTarget, SCN_DBG_*, …) are console-only
@@ -1704,6 +1712,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  summarizeAssignments,
+  buildScan,
   findConflicts,
   isVanillaOnlyConflict,
   conflictRelevantItems,

@@ -8,10 +8,10 @@ const path = require("node:path");
 
 const {
   validateProfile, matchDevice, computeTopMods, buildColorMap, COLORS, remapInputSettingsText, groupConflicts, buildRemapPreview, computeLeaderLayout,
-  ikForKeyboardEvent, KEYCODE_TO_IK
+  ikForKeyboardEvent, KEYCODE_TO_IK, buildKeyGroups
 } = require("../public/app.js");
 const {
-  findConflicts, isVanillaAction, vanillaDefaultFileForLanguage,
+  findConflicts, isVanillaAction, vanillaDefaultFileForLanguage, summarizeAssignments,
   validateInputSettingsSyntax, parseInputSettingsText, sortInputSettingsText, compareInputKeys,
   parseInputXmlText, parseLocalizationCsvText, parseWitcherScriptLocalizationKeys,
   findW3StringsExe, w3StringsToolKind, decodeW3StringsToCachedCsv,
@@ -391,10 +391,11 @@ ok("topbar CSS: header uses the PNG directly without tiling", () => {
   assert.ok(css.includes("aspect-ratio: 2172 / 480;"));
   assert.strictEqual(css.includes("center / contain no-repeat"), false);
 });
-ok("command rows keep actions in compact disclosure instead of a fourth grid column", () => {
+ok("key groups use native disclosure and key-scoped remapping", () => {
   const app = fs.readFileSync(path.join(__dirname, "../public/app.js"), "utf8");
   assert.strictEqual(app.includes('class="command-actions"'), false);
-  assert.ok(app.includes('class="compact-meta" title="${escapeHtml(command.actions.join(", "))}"'));
+  assert.ok(app.includes('<details class="key-group"'));
+  assert.ok(app.includes('data-old-key="${escapeHtml(group.key)}"'));
   assert.strictEqual(app.includes('background-color: ${style.backgroundColor}'), false);
 });
 ok("conflict rows link back to device keys with mouse and keyboard", () => {
@@ -497,12 +498,12 @@ ok("remapInputSettingsText: session remap respects action and oldKey", () => {
 ok("buildRemapPreview: total counts every binding, but collapses to distinct keys", () => {
   const command = {
     id: "SpecialAttackLight",
-    bindings: [
+    keys: summarizeAssignments([
       { section: "Combat", key: "IK_LeftMouse", keyLabel: "LMB", device: "mouse" },
       { section: "Exploration", key: "IK_LeftMouse", keyLabel: "LMB", device: "mouse" },
       { section: "Combat", key: "IK_None" },
       { section: "Exploration", key: "IK_Pad_X_SQUARE", keyLabel: "X", device: "gamepad" }
-    ]
+    ])
   };
   // remap() matches by action across all sections incl. IK_None, so `total` must
   // count every binding (the trust check that preview.total == server `changed`).
@@ -521,6 +522,66 @@ ok("buildRemapPreview: total counts every binding, but collapses to distinct key
   assert.strictEqual(buildRemapPreview(command, "Num3").newKey, "");
   // Missing bindings degrade gracefully.
   assert.strictEqual(buildRemapPreview({ id: "x" }, "IK_A").total, 0);
+  const scoped = buildRemapPreview(command, "IK_A", "IK_LeftMouse");
+  assert.strictEqual(scoped.total, 2);
+  assert.strictEqual(scoped.keys.length, 1);
+});
+
+ok("assignment model preserves triggers and contexts while key groups preserve control identity", () => {
+  const rows = [
+    { key: "IK_Space", keyLabel: "Space", device: "keyboard", action: "Jump", section: "Exploration", state: "Pressed" },
+    { key: "IK_Space", keyLabel: "Space", device: "keyboard", action: "Jump", section: "Combat", state: "Pressed" },
+    { key: "IK_Space", keyLabel: "Space", device: "keyboard", action: "Jump", section: "Combat", state: "Duration", idleTime: "0.3" }
+  ];
+  const assignments = summarizeAssignments(rows);
+  assert.strictEqual(assignments.length, 2);
+  assert.strictEqual(assignments[0].bindingCount, 2);
+  assert.deepStrictEqual(assignments[0].contexts, ["Exploration", "Combat"]);
+  const groups = buildKeyGroups([
+    { id: "Jump", keys: assignments },
+    { id: "Surface", keys: summarizeAssignments([{ ...rows[0], action: "Surface", section: "Swimming" }]) }
+  ]);
+  assert.strictEqual(groups.length, 1);
+  assert.strictEqual(groups[0].controls.length, 2);
+  assert.deepStrictEqual([...groups[0].controls[0].contexts], ["Exploration", "Combat"]);
+  const text = "[Exploration]\r\nIK_Space=(Action=Jump)\r\nIK_Pad_A_CROSS=(Action=Jump)\r\n";
+  const result = remapInputSettingsText(text, ["Jump"], "IK_E", "IK_Space");
+  assert.ok(result.content.includes("IK_Pad_A_CROSS=(Action=Jump)"));
+  assert.ok(result.content.includes("IK_E=(Action=Jump)"));
+});
+
+ok("compact assignments: empty input, duplicates, hold durations and unbound ordering", () => {
+  assert.deepStrictEqual(summarizeAssignments([]), []);
+  assert.deepStrictEqual(buildKeyGroups([]), []);
+  const row = { key: "IK_E", keyLabel: "E", device: "keyboard", action: "Use", section: "Combat", state: "Duration", idleTime: "0.2" };
+  const keys = summarizeAssignments([row, { ...row }, { ...row, idleTime: "0.5" },
+    { ...row, key: "IK_None", keyLabel: "Unbound", device: "unbound" }]);
+  assert.strictEqual(keys.length, 3);
+  assert.strictEqual(keys[0].bindingCount, 2);
+  assert.deepStrictEqual(keys[0].contexts, ["Combat"]);
+  assert.deepStrictEqual(keys[0].actions, ["Use"]);
+  const command = { id: "Use", keys };
+  assert.strictEqual(buildKeyGroups([command]).at(-1).key, "IK_None");
+  assert.strictEqual(buildRemapPreview(command, "IK_F", "IK_E").total, 3);
+  assert.strictEqual(buildRemapPreview(command, "IK_F", "IK_Unknown").total, 0);
+  assert.strictEqual(buildRemapPreview(null, null).total, 0);
+});
+
+ok("session remap: invalid parameters and empty scopes fail without changing input", () => {
+  const text = "[Combat]\nIK_E=(Action=Use)\n[Exploration]\nIK_E=(Action=Use)\n";
+  for (const actions of [null, [], "Use", [null], ["Missing"]]) {
+    assert.throws(() => remapInputSettingsText(text, actions, "IK_F", "IK_E"));
+  }
+  for (const key of [null, "", "F", "IK_", "IK_F\nInjected", "IK_F=(Action=Other)", {}]) {
+    assert.throws(() => remapInputSettingsText(text, ["Use"], key, "IK_E"));
+    assert.strictEqual(buildRemapPreview(null, key).newKey, "");
+  }
+  assert.throws(() => remapInputSettingsText(text, ["Use"], "IK_F", "IK_Unknown"));
+  assert.throws(() => remapInputSettingsText(text, ["Use"], "IK_F", "IK_E", []));
+  const scoped = remapInputSettingsText(text, ["Use"], " IK_F ", "IK_E", ["Combat"]);
+  assert.strictEqual(scoped.changed, 1);
+  assert.ok(scoped.content.includes("[Exploration]\nIK_E=(Action=Use)"));
+  assert.ok(text.includes("[Combat]\nIK_E=(Action=Use)"));
 });
 
 ok("findConflicts: reports the canonical id for merged aliases so the sidebar matches the list", () => {

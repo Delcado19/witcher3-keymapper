@@ -383,6 +383,26 @@ button:active {
 }
 
 /* Compact command and conflict lists. */
+.key-group { border-bottom: 1px solid var(--panel-border); }
+.key-group > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+.key-group > summary::before { content: "▸"; color: var(--muted); }
+.key-group[open] > summary::before { content: "▾"; }
+.key-group > summary::-webkit-details-marker { display: none; }
+.key-group > summary .chip { flex-shrink: 0; }
+.key-group-names { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.key-group-controls { padding: 0 12px 10px 28px; }
+.key-control { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 0; }
+.assignment-contexts { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.assignment-contexts summary { cursor: pointer; }
+.key-group > summary:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+
 .commands,
 .conflicts {
   display: grid;

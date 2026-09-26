@@ -1,5 +1,6 @@
 let scan = null;
 let activeCommand = null;
+let activeOldKey = "";
 let currentContent = "";
 
 // DOM lookups are guarded so this module can be required under Node for unit/
@@ -569,6 +570,29 @@ function shortSource(src) {
   return src === "game/input.xml" ? t("vanilla") : src;
 }
 
+// Commands keep their identity even when they share a physical key. Only the
+// presentation is grouped; remapping still targets one command and one old key.
+function buildKeyGroups(commands) {
+  const groups = new Map();
+  for (const command of commands) {
+    for (const assignment of command.keys) {
+      if (!groups.has(assignment.key)) groups.set(assignment.key, {
+        key: assignment.key, label: assignment.label, device: assignment.device, controls: []
+      });
+      const group = groups.get(assignment.key);
+      let control = group.controls.find((item) => item.command.id === command.id);
+      if (!control) {
+        control = { command, contexts: new Set() };
+        group.controls.push(control);
+      }
+      for (const context of assignment.contexts || []) control.contexts.add(context);
+    }
+  }
+  return [...groups.values()].sort((a, b) =>
+    (a.key === "IK_None") - (b.key === "IK_None") ||
+    a.device.localeCompare(b.device) || a.label.localeCompare(b.label, undefined, { numeric: true }));
+}
+
 function renderCommands() {
   const q = els.search.value.trim().toLowerCase();
   const source = els.sourceFilter.value;
@@ -588,33 +612,32 @@ function renderCommands() {
       command.source,
       command.actions.join(" "),
       command.keys.map((key) => `${key.key} ${key.label}`).join(" "),
-      command.bindings.map((binding) => binding.section).join(" ")
+      command.keys.flatMap((key) => key.contexts || []).join(" ")
     ].join(" ").toLowerCase();
     return haystack.includes(q);
   });
 
-  els.resultCount.textContent = t("results", { count: filtered.length });
-  els.commands.innerHTML = filtered.map((command) => {
-    const keys = command.keys.length ? command.keys : [{ label: t("unbound"), device: "unbound", key: "IK_None" }];
-    const title = commandTitleText(command);
-    const sourceLine = commandSourceLine(command);
-    const actions = commandActionsLine(command);
-
-    return `
-      <article class="command">
-        <div class="compact-main">
-          <div class="commandTitle">${escapeHtml(title)}</div>
-          <span class="source">${escapeHtml(sourceLine)}</span>
-          ${actions ? `<div class="compact-meta" title="${escapeHtml(command.actions.join(", "))}">${escapeHtml(actions)}</div>` : ""}
-        </div>
-        <div class="compact-keys">${keys.map((key) => keyChip(key)).join("")}</div>
-        <button class="compact-action" data-remap="${escapeHtml(command.id)}">${escapeHtml(t("change"))}</button>
-      </article>
-    `;
+  const groups = buildKeyGroups(filtered).filter((group) => !device || group.device === device);
+  els.resultCount.textContent = t("results", { count: groups.length });
+  els.commands.innerHTML = groups.map((group) => {
+    const label = group.key === "IK_None" ? t("unbound") : group.label;
+    const names = group.controls.map(({ command }) => commandTitleText(command));
+    return `<details class="key-group"${q ? " open" : ""}>
+      <summary>${keyChip({ ...group, label })}<span class="key-group-names">${escapeHtml(names.slice(0, 3).join(" · "))}${names.length > 3 ? ` +${names.length - 3}` : ""}</span><span class="muted">${names.length}</span></summary>
+      <div class="key-group-controls">${group.controls.map(({ command, contexts }) => `
+        <article class="key-control">
+          <div class="compact-main">
+            <div class="commandTitle">${escapeHtml(commandTitleText(command))}</div>
+            <span class="source">${escapeHtml(shortSource(command.source))}</span>
+            <details class="assignment-contexts"><summary>${escapeHtml(t("inContexts", { count: contexts.size }))}</summary><div>${escapeHtml([...contexts].join(" · "))}</div></details>
+          </div>
+          <button class="compact-action" data-remap="${escapeHtml(command.id)}" data-old-key="${escapeHtml(group.key)}">${escapeHtml(t("change"))}</button>
+        </article>`).join("")}</div>
+    </details>`;
   }).join("");
 
   document.querySelectorAll("[data-remap]").forEach((button) => {
-    button.addEventListener("click", () => openRemap(button.dataset.remap));
+    button.addEventListener("click", () => openRemap(button.dataset.remap, button.dataset.oldKey));
   });
 }
 
@@ -658,7 +681,8 @@ function keyChip(key) {
   return `<span class="chip ${key.device}" title="${escapeHtml(title)}" onmousedown="applyButtonFeedback(this, 'press')" onmouseup="applyButtonFeedback(this, 'release')" onmouseenter="applyButtonFeedback(this, 'hover')">${escapeHtml(key.label)}</span>`;
 }
 
-function openRemap(commandId) {
+function openRemap(commandId, oldKey = "") {
+  activeOldKey = oldKey;
   activeCommand = scan.commands.find((command) => command.id === commandId);
   if (!activeCommand) return;
   // Show the readable command name ("Schwerer Angriff"), not the raw bundled
@@ -683,30 +707,23 @@ function openRemap(commandId) {
   els.dialog.showModal();
 }
 
-// Pure preview of which bindings a remap would rewrite. remap() matches purely by
-// action across every section (including IK_None "unbound" slots), so the affected
-// set is exactly command.bindings and `total` equals the server's `changed` count
-// (the trust check: preview.total == server `changed`). To stay readable, the UI
-// collapses those bindings to the DISTINCT current keys: a bundled command like
-// Interaction has 1178 bindings but only ~7 distinct keys (E, gamepad A/Cross, …).
-// Deduping also keeps it honest — it surfaces that a keyboard remap also hits the
-// gamepad/mouse bindings, instead of burying that in a wall of repeated tokens. It
-// does NOT predict conflicts on purpose: the authoritative conflict view is the
-// re-scan after apply (the scanner is the single source of truth).
-function buildRemapPreview(command, newKey) {
-  const bindings = Array.isArray(command?.bindings) ? command.bindings : [];
+// Preview uses the compact assignment counts and the same old-key restriction
+// as the write request. Contexts stay distinct even when trigger variants share
+// a key. Conflict detection remains authoritative on the subsequent scan.
+function buildRemapPreview(command, newKey, oldKey = "") {
+  const bindings = (command?.keys || []).filter((key) => !oldKey || key.key === oldKey);
   const target = String(newKey || "").trim();
   const keyMap = new Map();
   for (const binding of bindings) {
     if (!keyMap.has(binding.key)) {
-      keyMap.set(binding.key, { key: binding.key, label: binding.keyLabel || binding.key, device: binding.device || "", count: 0 });
+      keyMap.set(binding.key, { key: binding.key, label: binding.label || binding.key, device: binding.device || "", count: 0 });
     }
-    keyMap.get(binding.key).count += 1;
+    keyMap.get(binding.key).count += binding.bindingCount;
   }
   const keys = [...keyMap.values()].sort((a, b) => b.count - a.count);
   return {
-    total: bindings.length,
-    sectionCount: new Set(bindings.map((b) => b.section)).size,
+    total: bindings.reduce((sum, binding) => sum + binding.bindingCount, 0),
+    sectionCount: new Set(bindings.flatMap((binding) => binding.contexts)).size,
     keys,
     newKey: /^IK_[A-Za-z0-9_]+$/.test(target) ? target : ""
   };
@@ -715,7 +732,7 @@ function buildRemapPreview(command, newKey) {
 function renderRemapPreview() {
   if (!els.remapPreview) return;
   if (!activeCommand) { els.remapPreview.innerHTML = ""; return; }
-  const preview = buildRemapPreview(activeCommand, els.newKey?.value);
+  const preview = buildRemapPreview(activeCommand, els.newKey?.value, activeOldKey);
   if (!preview.total) {
     els.remapPreview.innerHTML = `<p class="remap-preview-summary">${escapeHtml(t("remapPreviewEmpty"))}</p>`;
     return;
@@ -799,14 +816,14 @@ if (typeof document !== "undefined") {
     }
     if (!activeCommand) return;
     if (state.sessionFile) {
-      await remapSessionContent(activeCommand.actions, els.newKey.value);
+      await remapSessionContent(activeCommand.actions, els.newKey.value, activeOldKey);
       els.dialog.close();
       return;
     }
     const response = await fetch("/api/remap", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ actions: activeCommand.actions, newKey: els.newKey.value })
+      body: JSON.stringify({ actions: activeCommand.actions, newKey: els.newKey.value, oldKey: activeOldKey })
     });
     const result = await response.json();
     if (!response.ok) {
@@ -1561,7 +1578,7 @@ function openPopover(ik, anchorEl, linkConflict = true) {
   popoverEl = pop;
 
   pop.querySelectorAll('[data-act="remap"]').forEach((b) =>
-    b.addEventListener("click", () => { closePopover(); openRemap(b.dataset.cmd); }));
+    b.addEventListener("click", () => { closePopover(); openRemap(b.dataset.cmd, ik); }));
   pop.querySelectorAll('[data-act="clear"]').forEach((b) =>
     b.addEventListener("click", () => confirmClear(b, ik, b.dataset.cmd)));
 
@@ -2438,6 +2455,7 @@ if (typeof document !== "undefined") {
 // Node-only export for unit/property tests of the pure helpers (no DOM needed).
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
+    buildKeyGroups,
     validateProfile, loadRegistry, loadProfile, matchDevice,
     computeTopMods, buildColorMap, buildLegend, COLORS, MOD_PALETTE,
     renderDeviceSvg, renderKeyboardSvg, renderMouseSvg, renderGamepadSvg, renderLeaderDevice, computeLeaderLayout, drawEditHandles,
